@@ -1,0 +1,8 @@
+{"id":"ex1","question":"Who was the president of the country where the 2014 Winter Olympics were held?","answer":"Vladimir Putin","support_doc_ids":["doc1","doc2"]}
+{"id":"ex2","question":"Who wrote the novel that inspired the film Blade Runner?","answer":"Philip K. Dick","support_doc_ids":["doc3","doc4"]}
+{"id":"ex3","question":"Who wrote the novel that Peter Jackson adapted into a film trilogy?","answer":"J. R. R. Tolkien","support_doc_ids":["doc5","doc6"]}
+{"id":"ex4","question":"Who directed the film about the founding of the company co-founded by Mark Zuckerberg?","answer":"David Fincher","support_doc_ids":["doc7","doc8","doc9"]}
+{"id":"ex5","question":"What city hosted the Olympics in the country whose capital is Tokyo?","answer":"Tokyo","support_doc_ids":["doc11","doc12"]}
+{"id":"ex6","question":"Who wrote the novel that includes the character Emma and also wrote Pride and Prejudice?","answer":"Jane Austen","support_doc_ids":["doc13","doc14","doc15"]}
+{"id":"ex7","question":"Who directed the film Inception and later directed a film about J. Robert Oppenheimer?","answer":"Christopher Nolan","support_doc_ids":["doc16","doc17","doc18","doc19"]}
+{"id":"ex8","question":"What wartime project involved the physicist who is the subject of Christopher Nolan's 2023 film?","answer":"The Manhattan Project","support_doc_ids":["doc18","doc19","doc20"]}
