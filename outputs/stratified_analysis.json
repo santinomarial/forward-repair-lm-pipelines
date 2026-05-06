@@ -1,0 +1,226 @@
+{
+  "modes": [
+    "baseline",
+    "corrupted",
+    "repaired",
+    "repaired_iterative"
+  ],
+  "n": {
+    "total": 300,
+    "excluded": 0,
+    "single_hop": 223,
+    "multi_hop": 77,
+    "yesno": 21,
+    "bridge": 56
+  },
+  "metrics": {
+    "overall": {
+      "baseline": {
+        "exact_match": 0.31666666666666665,
+        "contains_answer": 0.4766666666666667,
+        "recall_at_k": 0.9566666666666667,
+        "all_support_recall_at_k": 0.52,
+        "em_given_full_retrieval": 0.4807692307692308,
+        "em_given_full_retrieval_n": 156
+      },
+      "corrupted": {
+        "exact_match": 0.11,
+        "contains_answer": 0.19,
+        "recall_at_k": 0.3933333333333333,
+        "all_support_recall_at_k": 0.04666666666666667,
+        "em_given_full_retrieval": 0.5,
+        "em_given_full_retrieval_n": 14
+      },
+      "repaired": {
+        "exact_match": 0.30333333333333334,
+        "contains_answer": 0.4666666666666667,
+        "recall_at_k": 0.9366666666666666,
+        "all_support_recall_at_k": 0.47,
+        "em_given_full_retrieval": 0.46808510638297873,
+        "em_given_full_retrieval_n": 141
+      },
+      "repaired_iterative": {
+        "exact_match": 0.3333333333333333,
+        "contains_answer": 0.4766666666666667,
+        "recall_at_k": 0.9666666666666667,
+        "all_support_recall_at_k": 0.5333333333333333,
+        "em_given_full_retrieval": 0.5,
+        "em_given_full_retrieval_n": 160
+      }
+    },
+    "single_hop": {
+      "baseline": {
+        "exact_match": 0.22869955156950672,
+        "contains_answer": 0.3721973094170404,
+        "recall_at_k": 0.9596412556053812,
+        "all_support_recall_at_k": 0.484304932735426,
+        "em_given_full_retrieval": 0.3888888888888889,
+        "em_given_full_retrieval_n": 108
+      },
+      "corrupted": {
+        "exact_match": 0.09417040358744394,
+        "contains_answer": 0.13901345291479822,
+        "recall_at_k": 0.42152466367713004,
+        "all_support_recall_at_k": 0.04484304932735426,
+        "em_given_full_retrieval": 0.6,
+        "em_given_full_retrieval_n": 10
+      },
+      "repaired": {
+        "exact_match": 0.23766816143497757,
+        "contains_answer": 0.37668161434977576,
+        "recall_at_k": 0.9641255605381166,
+        "all_support_recall_at_k": 0.4439461883408072,
+        "em_given_full_retrieval": 0.3939393939393939,
+        "em_given_full_retrieval_n": 99
+      },
+      "repaired_iterative": {
+        "exact_match": 0.23766816143497757,
+        "contains_answer": 0.3811659192825112,
+        "recall_at_k": 0.968609865470852,
+        "all_support_recall_at_k": 0.4977578475336323,
+        "em_given_full_retrieval": 0.3783783783783784,
+        "em_given_full_retrieval_n": 111
+      }
+    },
+    "multi_hop": {
+      "baseline": {
+        "exact_match": 0.5714285714285714,
+        "contains_answer": 0.7792207792207793,
+        "recall_at_k": 0.948051948051948,
+        "all_support_recall_at_k": 0.6233766233766234,
+        "em_given_full_retrieval": 0.6875,
+        "em_given_full_retrieval_n": 48
+      },
+      "corrupted": {
+        "exact_match": 0.15584415584415584,
+        "contains_answer": 0.33766233766233766,
+        "recall_at_k": 0.3116883116883117,
+        "all_support_recall_at_k": 0.05194805194805195,
+        "em_given_full_retrieval": 0.25,
+        "em_given_full_retrieval_n": 4
+      },
+      "repaired": {
+        "exact_match": 0.4935064935064935,
+        "contains_answer": 0.7272727272727273,
+        "recall_at_k": 0.8571428571428571,
+        "all_support_recall_at_k": 0.5454545454545454,
+        "em_given_full_retrieval": 0.6428571428571429,
+        "em_given_full_retrieval_n": 42
+      },
+      "repaired_iterative": {
+        "exact_match": 0.6103896103896104,
+        "contains_answer": 0.7532467532467533,
+        "recall_at_k": 0.961038961038961,
+        "all_support_recall_at_k": 0.6363636363636364,
+        "em_given_full_retrieval": 0.7755102040816326,
+        "em_given_full_retrieval_n": 49
+      }
+    },
+    "yesno": {
+      "baseline": {
+        "exact_match": 0.7142857142857143,
+        "contains_answer": 0.9047619047619048,
+        "recall_at_k": 1.0,
+        "all_support_recall_at_k": 0.7619047619047619,
+        "em_given_full_retrieval": 0.75,
+        "em_given_full_retrieval_n": 16
+      },
+      "corrupted": {
+        "exact_match": 0.0,
+        "contains_answer": 0.47619047619047616,
+        "recall_at_k": 0.047619047619047616,
+        "all_support_recall_at_k": 0.0,
+        "em_given_full_retrieval": NaN,
+        "em_given_full_retrieval_n": 0
+      },
+      "repaired": {
+        "exact_match": 0.47619047619047616,
+        "contains_answer": 0.8571428571428571,
+        "recall_at_k": 0.9047619047619048,
+        "all_support_recall_at_k": 0.5238095238095238,
+        "em_given_full_retrieval": 0.5454545454545454,
+        "em_given_full_retrieval_n": 11
+      },
+      "repaired_iterative": {
+        "exact_match": 0.7619047619047619,
+        "contains_answer": 0.8571428571428571,
+        "recall_at_k": 1.0,
+        "all_support_recall_at_k": 0.7142857142857143,
+        "em_given_full_retrieval": 0.8,
+        "em_given_full_retrieval_n": 15
+      }
+    },
+    "bridge": {
+      "baseline": {
+        "exact_match": 0.5178571428571429,
+        "contains_answer": 0.7321428571428571,
+        "recall_at_k": 0.9285714285714286,
+        "all_support_recall_at_k": 0.5714285714285714,
+        "em_given_full_retrieval": 0.65625,
+        "em_given_full_retrieval_n": 32
+      },
+      "corrupted": {
+        "exact_match": 0.21428571428571427,
+        "contains_answer": 0.2857142857142857,
+        "recall_at_k": 0.4107142857142857,
+        "all_support_recall_at_k": 0.07142857142857142,
+        "em_given_full_retrieval": 0.25,
+        "em_given_full_retrieval_n": 4
+      },
+      "repaired": {
+        "exact_match": 0.5,
+        "contains_answer": 0.6785714285714286,
+        "recall_at_k": 0.8392857142857143,
+        "all_support_recall_at_k": 0.5535714285714286,
+        "em_given_full_retrieval": 0.6774193548387096,
+        "em_given_full_retrieval_n": 31
+      },
+      "repaired_iterative": {
+        "exact_match": 0.5535714285714286,
+        "contains_answer": 0.7142857142857143,
+        "recall_at_k": 0.9464285714285714,
+        "all_support_recall_at_k": 0.6071428571428571,
+        "em_given_full_retrieval": 0.7647058823529411,
+        "em_given_full_retrieval_n": 34
+      }
+    }
+  },
+  "recovery": {
+    "overall": {
+      "repaired": {
+        "corrupted_broken": 267,
+        "repaired_fixed": 66,
+        "rate": 0.24719101123595505
+      },
+      "repaired_iterative": {
+        "corrupted_broken": 267,
+        "repaired_fixed": 73,
+        "rate": 0.27340823970037453
+      }
+    },
+    "single_hop": {
+      "repaired": {
+        "corrupted_broken": 202,
+        "repaired_fixed": 38,
+        "rate": 0.18811881188118812
+      },
+      "repaired_iterative": {
+        "corrupted_broken": 202,
+        "repaired_fixed": 37,
+        "rate": 0.18316831683168316
+      }
+    },
+    "multi_hop": {
+      "repaired": {
+        "corrupted_broken": 65,
+        "repaired_fixed": 28,
+        "rate": 0.4307692307692308
+      },
+      "repaired_iterative": {
+        "corrupted_broken": 65,
+        "repaired_fixed": 36,
+        "rate": 0.5538461538461539
+      }
+    }
+  }
+}

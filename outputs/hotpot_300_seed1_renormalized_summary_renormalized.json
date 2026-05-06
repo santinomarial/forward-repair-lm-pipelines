@@ -1,0 +1,25 @@
+{
+  "baseline": {
+    "exact_match": 0.31666666666666665,
+    "contains_answer": 0.4766666666666667,
+    "recall_at_k": 0.9566666666666667,
+    "all_support_recall_at_k": 0.52
+  },
+  "corrupted": {
+    "exact_match": 0.11333333333333333,
+    "contains_answer": 0.2,
+    "recall_at_k": 0.3433333333333333,
+    "all_support_recall_at_k": 0.06333333333333334
+  },
+  "repaired": {
+    "exact_match": 0.30333333333333334,
+    "contains_answer": 0.47333333333333333,
+    "recall_at_k": 0.9333333333333333,
+    "all_support_recall_at_k": 0.5
+  },
+  "recovery": {
+    "corrupted_broken_count": 266,
+    "repaired_fixed_count": 66,
+    "recovery_rate": 0.24812030075187969
+  }
+}

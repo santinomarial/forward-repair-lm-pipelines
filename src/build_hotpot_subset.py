@@ -1,3 +1,4 @@
+import argparse
 import json
 from pathlib import Path
 from datasets import load_dataset
@@ -20,6 +21,10 @@ def write_jsonl(path: Path, rows: list[dict]) -> None:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--n", type=int, default=50)
+    args = parser.parse_args()
+
     DATA_DIR.mkdir(exist_ok=True)
 
     dataset = load_dataset("hotpotqa/hotpot_qa", "distractor", split="validation")
@@ -29,7 +34,7 @@ def main() -> None:
     seen_doc_ids = set()
 
     for item in dataset:
-        if len(examples) >= 50:
+        if len(examples) >= args.n:
             break
 
         question = item["question"]
