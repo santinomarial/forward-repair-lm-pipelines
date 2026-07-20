@@ -32,7 +32,29 @@ def test_lm_usage_snapshot_counts_new_history_entries_only():
         "total_tokens": 30,
         "estimated_cost_usd": 0.02,
         "priced_calls": 1,
+        "estimated_token_calls": 0,
     }
+
+
+def test_lm_usage_snapshot_estimates_tokens_when_cached_usage_is_missing():
+    model = SimpleNamespace(history=[])
+    snapshot = LMUsageSnapshot([model])
+    model.history.append(
+        {
+            "model": "openai/gpt-4o-mini",
+            "messages": [{"role": "user", "content": "Reply with OK"}],
+            "outputs": ["OK"],
+            "usage": {},
+            "cost": None,
+        }
+    )
+
+    result = snapshot.finish()
+
+    assert result["prompt_tokens"] > 0
+    assert result["completion_tokens"] > 0
+    assert result["total_tokens"] == result["prompt_tokens"] + result["completion_tokens"]
+    assert result["estimated_token_calls"] == 1
 
 
 def _row(wall: float, calls: int, tokens: int, cost: float) -> dict:
