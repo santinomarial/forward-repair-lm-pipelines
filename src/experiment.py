@@ -21,6 +21,7 @@ from config import (
 from data_loader import load_jsonl
 from llm_backends import build_llm_backend
 from retriever import DenseRetriever, build_retriever
+from telemetry import LMUsageSnapshot
 from pipeline import ForwardRepairPipeline
 from metrics import (
     exact_match,
@@ -82,7 +83,11 @@ def main() -> None:
         openai_api_key=OPENAI_API_KEY,
         ollama_api_base=args.ollama_api_base,
     )
-    lm_stoch = llm_backend.configure(seed=args.seed)
+    lm_models = llm_backend.create_models(seed=args.seed)
+    import dspy
+
+    dspy.configure(lm=lm_models.deterministic)
+    lm_stoch = lm_models.stochastic
     OUTPUT_DIR.mkdir(exist_ok=True)
 
     corpus = load_jsonl(CORPUS_PATH)
@@ -113,13 +118,20 @@ def main() -> None:
         gold = example["answer"]
         support_doc_ids = example["support_doc_ids"]
 
+        usage = LMUsageSnapshot([lm_models.deterministic, lm_models.stochastic])
         baseline = pipeline.run_baseline(question)
-        corrupted = pipeline.run_corrupted(question)
+        baseline["telemetry"].update(usage.finish())
 
+        usage = LMUsageSnapshot([lm_models.deterministic, lm_models.stochastic])
+        corrupted = pipeline.run_corrupted(question)
+        corrupted["telemetry"].update(usage.finish())
+
+        usage = LMUsageSnapshot([lm_models.deterministic, lm_models.stochastic])
         if args.corrupt_stage == "query":
             repaired = pipeline.run_repaired(question=question, bad_query=corrupted["query"])
         else:
             repaired = pipeline.run_repaired(question=question, bad_answer=corrupted["answer"])
+        repaired["telemetry"].update(usage.finish())
 
         row = {
             "id": example["id"],
@@ -144,9 +156,11 @@ def main() -> None:
         }
 
         if args.include_iterative and args.corrupt_stage == "query":
+            usage = LMUsageSnapshot([lm_models.deterministic, lm_models.stochastic])
             rep_iter = pipeline.run_repaired_iterative(
                 question=question, bad_query=corrupted["query"]
             )
+            rep_iter["telemetry"].update(usage.finish())
             row["repaired_iterative"] = {
                 **rep_iter,
                 "doc_ids": doc_ids(rep_iter["docs"]),
@@ -187,8 +201,59 @@ def summarize(rows: list[dict]) -> dict:
     }
 
     summary["recovery"] = recovery_rate(rows)
+    summary["instrumentation"] = summarize_instrumentation(rows, modes)
 
     return summary
+
+
+def summarize_instrumentation(rows: list[dict], modes: list[str]) -> dict:
+    result = {
+        "cost_note": (
+            "estimated_cost_usd is DSPy/LiteLLM provider-reported cost; "
+            "cache hits and local calls may report zero"
+        )
+    }
+    for mode in modes:
+        telemetry = [row[mode]["telemetry"] for row in rows]
+        n = len(telemetry)
+        latency_keys = ["query_generation", "retrieval", "answer_generation"]
+        total_calls = sum(int(item["llm_calls"]) for item in telemetry)
+        total_tokens = sum(int(item["total_tokens"]) for item in telemetry)
+        total_cost = sum(float(item["estimated_cost_usd"]) for item in telemetry)
+        total_wall = sum(float(item["wall_clock_seconds"]) for item in telemetry)
+        result[mode] = {
+            "examples": n,
+            "llm_calls": {"total": total_calls, "per_example": total_calls / n},
+            "tokens": {
+                "prompt_total": sum(int(item["prompt_tokens"]) for item in telemetry),
+                "completion_total": sum(
+                    int(item["completion_tokens"]) for item in telemetry
+                ),
+                "total": total_tokens,
+                "per_example": total_tokens / n,
+            },
+            "estimated_cost_usd": {
+                "total": total_cost,
+                "per_example": total_cost / n,
+            },
+            "wall_clock_seconds": {
+                "total": total_wall,
+                "per_example": total_wall / n,
+            },
+            "stage_latency_seconds": {
+                key: {
+                    "total": sum(
+                        float(item["latency_seconds"][key]) for item in telemetry
+                    ),
+                    "per_example": sum(
+                        float(item["latency_seconds"][key]) for item in telemetry
+                    )
+                    / n,
+                }
+                for key in latency_keys
+            },
+        }
+    return result
 
 
 def print_summary(summary: dict) -> None:
@@ -211,6 +276,25 @@ def print_summary(summary: dict) -> None:
         )
 
     console.print(table)
+
+    instrumentation = summary.get("instrumentation", {})
+    if instrumentation:
+        usage_table = Table(title="Cost and Latency per Condition")
+        usage_table.add_column("Condition")
+        usage_table.add_column("Calls/example")
+        usage_table.add_column("Tokens/example")
+        usage_table.add_column("Cost/example")
+        usage_table.add_column("Latency/example")
+        for mode in [m for m in _all_modes if m in instrumentation]:
+            item = instrumentation[mode]
+            usage_table.add_row(
+                mode,
+                f"{item['llm_calls']['per_example']:.1f}",
+                f"{item['tokens']['per_example']:.0f}",
+                f"${item['estimated_cost_usd']['per_example']:.6f}",
+                f"{item['wall_clock_seconds']['per_example']:.3f}s",
+            )
+        console.print(usage_table)
 
 
 if __name__ == "__main__":
