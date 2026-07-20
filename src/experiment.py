@@ -2,6 +2,7 @@ import argparse
 import json
 from collections import defaultdict
 
+import dspy
 from rich.console import Console
 from rich.table import Table
 from tqdm import tqdm
@@ -20,16 +21,16 @@ from config import (
 )
 from data_loader import load_jsonl
 from llm_backends import build_llm_backend
-from retriever import DenseRetriever, build_retriever
-from telemetry import LMUsageSnapshot
-from pipeline import ForwardRepairPipeline
 from metrics import (
-    exact_match,
-    contains_answer,
-    recall_at_k,
     all_support_recall_at_k,
+    contains_answer,
+    exact_match,
+    recall_at_k,
     recovery_rate,
 )
+from pipeline import ForwardRepairPipeline
+from retriever import DenseRetriever, build_retriever
+from telemetry import LMUsageSnapshot
 
 
 console = Console()
@@ -84,8 +85,6 @@ def main() -> None:
         ollama_api_base=args.ollama_api_base,
     )
     lm_models = llm_backend.create_models(seed=args.seed)
-    import dspy
-
     dspy.configure(lm=lm_models.deterministic)
     lm_stoch = lm_models.stochastic
     OUTPUT_DIR.mkdir(exist_ok=True)

@@ -28,7 +28,8 @@ class LMUsageSnapshot:
             )
             prompt_tokens += prompt
             completion_tokens += completion
-            total_tokens += int(usage.get("total_tokens", prompt + completion) or 0)
+            total = usage.get("total_tokens")
+            total_tokens += int(total if total is not None else prompt + completion)
             if entry.get("cost") is not None:
                 estimated_cost += float(entry["cost"])
                 priced_calls += 1

@@ -1,0 +1,174 @@
+{
+  "baseline": {
+    "exact_match": 0.5,
+    "contains_answer": 0.6,
+    "recall_at_k": 1.0,
+    "all_support_recall_at_k": 0.6
+  },
+  "corrupted": {
+    "exact_match": 0.2,
+    "contains_answer": 0.3,
+    "recall_at_k": 0.3,
+    "all_support_recall_at_k": 0.1
+  },
+  "repaired": {
+    "exact_match": 0.5,
+    "contains_answer": 0.6,
+    "recall_at_k": 1.0,
+    "all_support_recall_at_k": 0.5
+  },
+  "repaired_iterative": {
+    "exact_match": 0.5,
+    "contains_answer": 0.5,
+    "recall_at_k": 1.0,
+    "all_support_recall_at_k": 0.5
+  },
+  "recovery": {
+    "corrupted_broken_count": 8,
+    "repaired_fixed_count": 3,
+    "recovery_rate": 0.375
+  },
+  "instrumentation": {
+    "cost_note": "estimated_cost_usd is DSPy/LiteLLM provider-reported cost; cache hits and local calls may report zero",
+    "baseline": {
+      "examples": 10,
+      "llm_calls": {
+        "total": 20,
+        "per_example": 2.0
+      },
+      "tokens": {
+        "prompt_total": 0,
+        "completion_total": 0,
+        "total": 0,
+        "per_example": 0.0
+      },
+      "estimated_cost_usd": {
+        "total": 0.00158805,
+        "per_example": 0.00015880499999999998
+      },
+      "wall_clock_seconds": {
+        "total": 0.08155012386851013,
+        "per_example": 0.008155012386851013
+      },
+      "stage_latency_seconds": {
+        "query_generation": {
+          "total": 0.047679708048235625,
+          "per_example": 0.004767970804823563
+        },
+        "retrieval": {
+          "total": 0.027431040885858238,
+          "per_example": 0.0027431040885858237
+        },
+        "answer_generation": {
+          "total": 0.006433336006011814,
+          "per_example": 0.0006433336006011814
+        }
+      }
+    },
+    "corrupted": {
+      "examples": 10,
+      "llm_calls": {
+        "total": 20,
+        "per_example": 2.0
+      },
+      "tokens": {
+        "prompt_total": 0,
+        "completion_total": 0,
+        "total": 0,
+        "per_example": 0.0
+      },
+      "estimated_cost_usd": {
+        "total": 0.0016863,
+        "per_example": 0.00016863
+      },
+      "wall_clock_seconds": {
+        "total": 0.03953304304741323,
+        "per_example": 0.003953304304741323
+      },
+      "stage_latency_seconds": {
+        "query_generation": {
+          "total": 0.00589220697293058,
+          "per_example": 0.000589220697293058
+        },
+        "retrieval": {
+          "total": 0.026853916875552386,
+          "per_example": 0.0026853916875552385
+        },
+        "answer_generation": {
+          "total": 0.0067816670634783804,
+          "per_example": 0.0006781667063478381
+        }
+      }
+    },
+    "repaired": {
+      "examples": 10,
+      "llm_calls": {
+        "total": 20,
+        "per_example": 2.0
+      },
+      "tokens": {
+        "prompt_total": 0,
+        "completion_total": 0,
+        "total": 0,
+        "per_example": 0.0
+      },
+      "estimated_cost_usd": {
+        "total": 0.0017675999999999998,
+        "per_example": 0.00017675999999999998
+      },
+      "wall_clock_seconds": {
+        "total": 0.04413437604671344,
+        "per_example": 0.004413437604671344
+      },
+      "stage_latency_seconds": {
+        "query_generation": {
+          "total": 0.006548584904521704,
+          "per_example": 0.0006548584904521703
+        },
+        "retrieval": {
+          "total": 0.030718166090082377,
+          "per_example": 0.0030718166090082377
+        },
+        "answer_generation": {
+          "total": 0.006862331880256534,
+          "per_example": 0.0006862331880256534
+        }
+      }
+    },
+    "repaired_iterative": {
+      "examples": 10,
+      "llm_calls": {
+        "total": 20,
+        "per_example": 2.0
+      },
+      "tokens": {
+        "prompt_total": 0,
+        "completion_total": 0,
+        "total": 0,
+        "per_example": 0.0
+      },
+      "estimated_cost_usd": {
+        "total": 0.0024363,
+        "per_example": 0.00024363000000000002
+      },
+      "wall_clock_seconds": {
+        "total": 0.06159808300435543,
+        "per_example": 0.006159808300435543
+      },
+      "stage_latency_seconds": {
+        "query_generation": {
+          "total": 0.006732001027557999,
+          "per_example": 0.0006732001027557998
+        },
+        "retrieval": {
+          "total": 0.046938211016822606,
+          "per_example": 0.004693821101682261
+        },
+        "answer_generation": {
+          "total": 0.007914666144642979,
+          "per_example": 0.0007914666144642979
+        }
+      }
+    }
+  }
+}

@@ -1,3 +1,5 @@
+from time import perf_counter
+
 from dspy_modules import (
     QueryGenerator,
     AnswerGenerator,
@@ -169,4 +171,3 @@ class ForwardRepairPipeline:
                 started_at, query_latency, retrieval_latency, answer_latency
             ),
         }
-from time import perf_counter
