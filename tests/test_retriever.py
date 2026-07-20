@@ -1,4 +1,7 @@
-from retriever import BM25Retriever, tokenize
+import numpy as np
+import pytest
+
+from retriever import BM25Retriever, DenseRetriever, build_retriever, tokenize
 
 
 def _corpus() -> list[dict]:
@@ -62,3 +65,29 @@ def test_retrieve_union_keeps_score_from_query_with_best_rank():
 
     assert results[0]["id"] == "python"
     assert results[0]["score"] == 5.0
+
+
+def test_dense_retriever_ranks_by_cosine_similarity_without_model_download():
+    vectors = {
+        "Python A programming language.": [1.0, 0.0],
+        "Pythonidae A family of snakes.": [0.0, 1.0],
+        "Java A programming language.": [0.8, 0.2],
+        "Coffee A brewed drink.": [-1.0, 0.0],
+        "language query": [1.0, 0.0],
+    }
+
+    def encoder(texts):
+        return np.array([vectors[text] for text in texts], dtype=np.float32)
+
+    retriever = DenseRetriever(_corpus(), top_k=2, encoder=encoder)
+
+    assert [doc["id"] for doc in retriever.retrieve("language query")] == [
+        "python",
+        "java",
+    ]
+
+
+def test_build_retriever_validates_backend():
+    assert isinstance(build_retriever("bm25", _corpus(), 2), BM25Retriever)
+    with pytest.raises(ValueError, match="Unknown retriever backend"):
+        build_retriever("unknown", _corpus(), 2)

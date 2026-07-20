@@ -53,7 +53,7 @@ flowchart LR
 | Stage | Technology |
 |:------|:-----------|
 | Query / answer modules | DSPy `Predict` over typed signatures (`src/dspy_modules.py`) |
-| Retrieval | BM25 ([`rank-bm25`](https://pypi.org/project/rank-bm25/)), `retrieve_union` merges ranked lists from two sub-queries |
+| Retrieval | Pluggable BM25 or sentence-transformer cosine retrieval; `retrieve_union` merges ranked lists from two sub-queries |
 | Orchestration | `ForwardRepairPipeline` in [`src/pipeline.py`](src/pipeline.py) |
 | Runs | [`src/experiment.py`](src/experiment.py): seeds, `--corrupt-stage`, optional `--include-iterative` |
 
@@ -204,6 +204,7 @@ pytest --cov=metrics --cov=retriever --cov-report=term-missing
 | **+ iterative repair** *(same corrupt query; adds `repaired_iterative` arm)* | `python src/experiment.py --seed 0 --output-suffix hotpot_300_iterative_seed0 --include-iterative` |
 | **Answer corruption** | `python src/experiment.py --seed 0 --output-suffix hotpot_300_answer_corruption_seed0 --corrupt-stage answer` |
 | **Limit examples** *(smoke tests)* | add `--max-examples 10` |
+| **Dense retrieval** | `pip install -r requirements-dense.txt`, then add `--retriever dense` (default model: `sentence-transformers/all-MiniLM-L6-v2`) |
 | **Re-score** *(no LM calls; e.g. after metric tweaks)* | `python src/rescore.py --input outputs/hotpot_300_seed0_results.jsonl` |
 | **Stratified analysis** | Single file: `python src/stratified_analysis.py --input outputs/hotpot_300_iterative_seed0_results_renormalized.jsonl`<br/>Multi-seed: pass comma-separated `--inputs` paths |
 | **Aggregate seeds** | Defaults: `python src/aggregate_seeds.py`<br/>Custom: `python src/aggregate_seeds.py --inputs outputs/run_seed0_results.jsonl outputs/run_seed1_results.jsonl --output outputs/run_aggregated.json` |
@@ -225,6 +226,10 @@ Each experiment appends rows to `outputs/<suffix>_results.jsonl` and writes `out
 | **Recovery rate** | Share of corrupted-broken items (corrupted EM = 0) where repair restores EM = 1 |
 
 Implementation: [`src/metrics.py`](src/metrics.py).
+
+### Retrieval backends
+
+`--retriever bm25` is the dependency-light default and reproduces the original experiment. `--retriever dense` builds an in-memory cosine index using sentence-transformer embeddings; use `--dense-model MODEL_ID` to select a different compatible encoder. Both implement the same `Retriever` interface, including iterative `retrieve_union`, so corruption and repair code is unchanged.
 
 ---
 

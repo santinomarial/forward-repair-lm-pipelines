@@ -18,7 +18,7 @@ from config import (
     experiment_paths,
 )
 from data_loader import load_jsonl
-from retriever import BM25Retriever
+from retriever import DenseRetriever, build_retriever
 from pipeline import ForwardRepairPipeline
 from metrics import (
     exact_match,
@@ -76,6 +76,12 @@ def main() -> None:
     parser.add_argument("--output-suffix", default=EXPERIMENT_DEFAULT_SUFFIX)
     parser.add_argument("--max-examples", type=int, default=None)
     parser.add_argument("--corrupt-stage", default="query", choices=["query", "answer"])
+    parser.add_argument("--retriever", choices=["bm25", "dense"], default="bm25")
+    parser.add_argument(
+        "--dense-model",
+        default=DenseRetriever.DEFAULT_MODEL,
+        help="Sentence-transformers model used by --retriever dense.",
+    )
     parser.add_argument("--include-iterative", action="store_true",
                         help="Also run the iterative repair condition (query corruption only)")
     args = parser.parse_args()
@@ -90,7 +96,12 @@ def main() -> None:
     if args.max_examples is not None:
         examples = examples[: args.max_examples]
 
-    retriever = BM25Retriever(corpus=corpus, top_k=TOP_K)
+    retriever = build_retriever(
+        backend=args.retriever,
+        corpus=corpus,
+        top_k=TOP_K,
+        dense_model=args.dense_model,
+    )
     pipeline = ForwardRepairPipeline(retriever=retriever, corrupt_stage=args.corrupt_stage)
 
     if args.corrupt_stage == "query":
