@@ -4,11 +4,12 @@ import math
 import re
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_RESULTS_PATH = ROOT / "outputs" / "hotpot_50_final_results_renormalized.jsonl"
-CORPUS_PATH = ROOT / "data" / "hotpot_corpus.jsonl"
-OUTPUT_PATH = ROOT / "outputs" / "stratified_analysis.json"
-MULTI_OUTPUT_PATH = ROOT / "outputs" / "stratified_300x3.json"
+from config import (
+    CORPUS_PATH,
+    RESCORED_RESULTS_PATH,
+    STRATIFIED_MULTI_RESULTS_PATH,
+    STRATIFIED_RESULTS_PATH,
+)
 
 _ALL_MODES = ["baseline", "corrupted", "repaired", "repaired_iterative"]
 MODES = _ALL_MODES[:3]  # default; overridden from data in main()
@@ -334,7 +335,7 @@ def _print_lift(rows: list[dict]) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input",  type=Path, default=DEFAULT_RESULTS_PATH,
+    parser.add_argument("--input",  type=Path, default=RESCORED_RESULTS_PATH,
                         help="Single result file (single-seed mode)")
     parser.add_argument("--inputs", type=str, default=None,
                         help="Comma-separated result files (multi-seed mode)")
@@ -355,8 +356,8 @@ def main() -> None:
         print_multi_seed(agg, per_seed_stats)
 
         output = {"n_seeds": len(paths), "per_seed": per_seed_stats, "aggregated": agg}
-        MULTI_OUTPUT_PATH.write_text(json.dumps(output, indent=2))
-        print(f"\nSaved to {MULTI_OUTPUT_PATH}")
+        STRATIFIED_MULTI_RESULTS_PATH.write_text(json.dumps(output, indent=2))
+        print(f"\nSaved to {STRATIFIED_MULTI_RESULTS_PATH}")
 
     else:
         rows = load_jsonl(args.input)
@@ -367,8 +368,8 @@ def main() -> None:
         if "repaired_iterative" in modes:
             _print_lift(rows)
 
-        OUTPUT_PATH.write_text(json.dumps(stats, indent=2))
-        print(f"\nSaved to {OUTPUT_PATH}")
+        STRATIFIED_RESULTS_PATH.write_text(json.dumps(stats, indent=2))
+        print(f"\nSaved to {STRATIFIED_RESULTS_PATH}")
 
 
 if __name__ == "__main__":

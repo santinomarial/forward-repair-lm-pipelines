@@ -1,12 +1,9 @@
+import argparse
 import json
 import math
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-OUTPUT_DIR = ROOT / "outputs"
-
-SEED_FILES = [OUTPUT_DIR / f"hotpot_300_seed{s}_results.jsonl" for s in range(3)]
-OUT_PATH = OUTPUT_DIR / "hotpot_300_aggregated.json"
+from config import AGGREGATED_RESULTS_PATH, AGGREGATE_SEED_PATHS
 
 MODES = ["baseline", "corrupted", "repaired"]
 METRIC_KEYS = ["exact_match", "contains_answer", "recall_at_k", "all_support_recall_at_k"]
@@ -34,8 +31,19 @@ def mean_std(values: list[float]) -> tuple[float, float]:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description="Aggregate metrics across experiment seeds.")
+    parser.add_argument(
+        "--inputs",
+        nargs="+",
+        type=Path,
+        default=list(AGGREGATE_SEED_PATHS),
+        help="Result JSONL files, one per seed.",
+    )
+    parser.add_argument("--output", type=Path, default=AGGREGATED_RESULTS_PATH)
+    args = parser.parse_args()
+
     per_seed: list[dict[str, dict[str, float]]] = []
-    for path in SEED_FILES:
+    for path in args.inputs:
         rows = load_jsonl(path)
         per_seed.append(seed_averages(rows))
         print(f"  Loaded {len(rows)} rows from {path.name}")
@@ -44,7 +52,7 @@ def main() -> None:
     for mode in MODES:
         aggregated[mode] = {}
         for k in METRIC_KEYS:
-            vals = [per_seed[s][mode][k] for s in range(len(SEED_FILES))]
+            vals = [seed[mode][k] for seed in per_seed]
             mu, sd = mean_std(vals)
             aggregated[mode][k] = {"mean": mu, "std": sd, "per_seed": vals}
 
@@ -53,7 +61,7 @@ def main() -> None:
     header = f"| {'Condition':<10} | " + " | ".join(f"{'  ' + c + '  ':^20}" for c in col_labels) + " |"
     sep = "|" + "|".join("-" * (len(s) + 2) for s in header.split("|")[1:-1]) + "|"
 
-    print(f"\n### Aggregated Results (mean ± std across {len(SEED_FILES)} seeds, n=300 each)\n")
+    print(f"\n### Aggregated Results (mean ± std across {len(args.inputs)} seeds)\n")
     print(header)
     print(sep)
     for mode in MODES:
@@ -64,8 +72,9 @@ def main() -> None:
             cells.append(f"{mu:.2f} ± {sd:.2f}")
         print(f"| {mode:<10} | " + " | ".join(f"{c:^20}" for c in cells) + " |")
 
-    OUT_PATH.write_text(json.dumps(aggregated, indent=2))
-    print(f"\nSaved to {OUT_PATH}")
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(aggregated, indent=2))
+    print(f"\nSaved to {args.output}")
 
 
 if __name__ == "__main__":

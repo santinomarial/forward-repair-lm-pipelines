@@ -1,13 +1,10 @@
 import argparse
 import json
 from pathlib import Path
+
 from datasets import load_dataset
 
-ROOT = Path(__file__).resolve().parents[1]
-DATA_DIR = ROOT / "data"
-
-EXAMPLES_OUT = DATA_DIR / "hotpot_examples.jsonl"
-CORPUS_OUT = DATA_DIR / "hotpot_corpus.jsonl"
+from config import CORPUS_PATH, DATA_DIR, EXAMPLES_PATH
 
 
 def safe_doc_id(title: str) -> str:
@@ -72,11 +69,11 @@ def main() -> None:
                 }
             )
 
-    write_jsonl(EXAMPLES_OUT, examples)
-    write_jsonl(CORPUS_OUT, corpus)
+    write_jsonl(EXAMPLES_PATH, examples)
+    write_jsonl(CORPUS_PATH, corpus)
 
-    print(f"Wrote {len(examples)} examples to {EXAMPLES_OUT}")
-    print(f"Wrote {len(corpus)} documents to {CORPUS_OUT}")
+    print(f"Wrote {len(examples)} examples to {EXAMPLES_PATH}")
+    print(f"Wrote {len(corpus)} documents to {CORPUS_PATH}")
 
 
 if __name__ == "__main__":

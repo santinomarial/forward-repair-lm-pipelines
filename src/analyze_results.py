@@ -1,9 +1,8 @@
+import argparse
 import json
 from pathlib import Path
 
-
-RESULTS_PATH = Path("outputs/hotpot_50_final_results.jsonl")
-SUMMARY_PATH = Path("outputs/hotpot_50_final_summary.json")
+from config import RESULTS_PATH, SUMMARY_PATH
 
 
 def load_rows(path: Path) -> list[dict]:
@@ -11,8 +10,13 @@ def load_rows(path: Path) -> list[dict]:
 
 
 def main() -> None:
-    rows = load_rows(RESULTS_PATH)
-    summary = json.loads(SUMMARY_PATH.read_text())
+    parser = argparse.ArgumentParser(description="Inspect a saved forward-repair run.")
+    parser.add_argument("--results", type=Path, default=RESULTS_PATH)
+    parser.add_argument("--summary", type=Path, default=SUMMARY_PATH)
+    args = parser.parse_args()
+
+    rows = load_rows(args.results)
+    summary = json.loads(args.summary.read_text())
 
     print("\n=== Quantitative Summary ===")
     for mode in ["baseline", "corrupted", "repaired"]:

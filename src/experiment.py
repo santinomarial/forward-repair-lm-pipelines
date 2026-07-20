@@ -12,8 +12,10 @@ from config import (
     OPENAI_MODEL,
     CORPUS_PATH,
     EXAMPLES_PATH,
+    EXPERIMENT_DEFAULT_SUFFIX,
     OUTPUT_DIR,
     TOP_K,
+    experiment_paths,
 )
 from data_loader import load_jsonl
 from retriever import BM25Retriever
@@ -71,15 +73,14 @@ def doc_ids(docs: list[dict]) -> list[str]:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--seed", type=int, default=0)
-    parser.add_argument("--output-suffix", default="hotpot_50")
+    parser.add_argument("--output-suffix", default=EXPERIMENT_DEFAULT_SUFFIX)
     parser.add_argument("--max-examples", type=int, default=None)
     parser.add_argument("--corrupt-stage", default="query", choices=["query", "answer"])
     parser.add_argument("--include-iterative", action="store_true",
                         help="Also run the iterative repair condition (query corruption only)")
     args = parser.parse_args()
 
-    results_path = OUTPUT_DIR / f"{args.output_suffix}_results.jsonl"
-    summary_path = OUTPUT_DIR / f"{args.output_suffix}_summary.json"
+    results_path, summary_path = experiment_paths(args.output_suffix)
 
     lm_stoch = configure_dspy(seed=args.seed)
     OUTPUT_DIR.mkdir(exist_ok=True)

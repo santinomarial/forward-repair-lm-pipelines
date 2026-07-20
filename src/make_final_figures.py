@@ -11,18 +11,21 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
 
-ROOT = Path(__file__).resolve().parents[1]
-OUT_FIGS = ROOT / "outputs" / "figures"
-OUT_TABS = ROOT / "outputs" / "tables"
+from config import (
+    CORPUS_PATH,
+    FIGURE_ANSWER_PATH,
+    FIGURE_ITERATIVE_PATH,
+    FIGURE_QUERY_SEED_PATHS,
+    FIGURES_DIR,
+    TABLES_DIR,
+)
 
-QUERY_SEEDS = [
-    ROOT / "outputs" / "hotpot_300_seed0_results_renormalized.jsonl",
-    ROOT / "outputs" / "hotpot_300_seed1_results_renormalized.jsonl",
-    ROOT / "outputs" / "hotpot_300_seed2_results_renormalized.jsonl",
-]
-ANSWER_FILE = ROOT / "outputs" / "hotpot_300_answer_corruption_seed0_results_renormalized.jsonl"
-ITERATIVE_FILE = ROOT / "outputs" / "hotpot_300_iterative_seed0_results_renormalized.jsonl"
-CORPUS_FILE = ROOT / "data" / "hotpot_corpus.jsonl"
+OUT_FIGS = FIGURES_DIR
+OUT_TABS = TABLES_DIR
+QUERY_SEEDS = list(FIGURE_QUERY_SEED_PATHS)
+ANSWER_FILE = FIGURE_ANSWER_PATH
+ITERATIVE_FILE = FIGURE_ITERATIVE_PATH
+CORPUS_FILE = CORPUS_PATH
 
 # Wong colorblind-safe palette
 COLORS = {

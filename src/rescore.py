@@ -6,10 +6,8 @@ from collections import defaultdict
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
+from config import RESULTS_PATH
 from metrics import exact_match
-
-ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_IN = ROOT / "outputs" / "hotpot_50_final_results.jsonl"
 
 _ALL_MODES = ["baseline", "corrupted", "repaired", "repaired_iterative"]
 
@@ -54,7 +52,7 @@ def summarize(rows: list[dict]) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input", type=Path, default=DEFAULT_IN)
+    parser.add_argument("--input", type=Path, default=RESULTS_PATH)
     parser.add_argument("--output", type=Path, default=None)
     args = parser.parse_args()
 

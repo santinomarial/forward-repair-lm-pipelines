@@ -4,7 +4,7 @@ import json
 import math
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+from config import STAGE_COMPARISON_PATH
 
 
 def load_jsonl(path: Path) -> list[dict]:
@@ -56,7 +56,7 @@ def main() -> None:
     parser.add_argument("--answer-inputs", required=True,
                         help="Comma-separated result files for answer-corruption runs")
     parser.add_argument("--output", type=Path,
-                        default=ROOT / "outputs" / "stage_comparison.json")
+                        default=STAGE_COMPARISON_PATH)
     args = parser.parse_args()
 
     def load_stage(csv: str) -> list[dict]:

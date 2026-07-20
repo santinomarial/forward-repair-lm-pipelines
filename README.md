@@ -136,7 +136,7 @@ forward_repair/
 ├── requirements.txt
 └── src/
     ├── aggregate_seeds.py       # Mean ± std across *_seed*_results.jsonl
-    ├── analyze_results.py       # Lightweight console summary (paths are script-local)
+    ├── analyze_results.py       # Lightweight console summary
     ├── build_hotpot_subset.py   # HotpotQA → jsonl corpus + examples
     ├── compare_stages.py       # Query vs answer corruption summaries
     ├── config.py               # Paths, TOP_K, OpenAI env
@@ -206,7 +206,8 @@ pytest --cov=metrics --cov=retriever --cov-report=term-missing
 | **Limit examples** *(smoke tests)* | add `--max-examples 10` |
 | **Re-score** *(no LM calls; e.g. after metric tweaks)* | `python src/rescore.py --input outputs/hotpot_300_seed0_results.jsonl` |
 | **Stratified analysis** | Single file: `python src/stratified_analysis.py --input outputs/hotpot_300_iterative_seed0_results_renormalized.jsonl`<br/>Multi-seed: pass comma-separated `--inputs` paths |
-| **Aggregate seeds** *(script expects default hotpot paths; edit `SEED_FILES` inside if yours differ)* | `python src/aggregate_seeds.py` |
+| **Aggregate seeds** | Defaults: `python src/aggregate_seeds.py`<br/>Custom: `python src/aggregate_seeds.py --inputs outputs/run_seed0_results.jsonl outputs/run_seed1_results.jsonl --output outputs/run_aggregated.json` |
+| **Analyze results** | Defaults: `python src/analyze_results.py`<br/>Custom: add `--results … --summary …` |
 | **All figures & tables** | `python src/make_final_figures.py` |
 
 Each experiment appends rows to `outputs/<suffix>_results.jsonl` and writes `outputs/<suffix>_summary.json`; delete the `.jsonl` first if you need a clean re-run (`experiment.py` overwrites summaries but only truncates `.jsonl` at job start).
