@@ -101,6 +101,17 @@ Examples are stratified **post hoc** ([`src/stratified_analysis.py`](src/stratif
 | Corrupted (answer) | 0.077 | 0.650 | 0.957 | 0.520 | — |
 | Repaired (answer) | 0.070 | 0.467 | 0.957 | 0.520 | 2.2% |
 
+### Paired bootstrap comparisons
+
+Seed-0 iterative run, 20,000 paired resamples, 95% percentile confidence intervals:
+
+| Comparison | Estimate A | Estimate B | Paired difference (B − A), 95% CI |
+|:---|:---:|:---:|:---:|
+| Corrupted EM → repaired EM (*n* = 300) | 11.0% | 30.3% | **+19.3 pp** [14.3, 24.7] |
+| Single-shot → iterative recovery (*n* = 267 corrupted-broken) | 24.7% | 27.3% | +2.6 pp [−1.5, 7.1] |
+
+The repaired-versus-corrupted EM gain is clearly positive under this paired interval. The overall iterative recovery lift is directionally positive but its interval includes zero; the strongest iterative gains are concentrated in the multi-hop strata below rather than established across all questions.
+
 ### Stratified results *(query corruption, seed 0)*
 
 | Stratum | *n* | Baseline EM | Corrupted EM | Repaired EM | Iterative EM |
@@ -224,6 +235,7 @@ pytest --cov=metrics --cov=retriever --cov-report=term-missing
 | **Stratified analysis** | Single file: `python src/stratified_analysis.py --input outputs/hotpot_300_iterative_seed0_results_renormalized.jsonl`<br/>Multi-seed: pass comma-separated `--inputs` paths |
 | **Aggregate seeds** | Defaults: `python src/aggregate_seeds.py`<br/>Custom: `python src/aggregate_seeds.py --inputs outputs/run_seed0_results.jsonl outputs/run_seed1_results.jsonl --output outputs/run_aggregated.json` |
 | **Analyze results** | Defaults: `python src/analyze_results.py`<br/>Custom: add `--results … --summary …` |
+| **Bootstrap confidence intervals** | `python src/significance.py` (add `--input … --resamples … --seed …` as needed) |
 | **All figures & tables** | `python src/make_final_figures.py` |
 
 Each experiment appends rows to `outputs/<suffix>_results.jsonl` and writes `outputs/<suffix>_summary.json`; delete the `.jsonl` first if you need a clean re-run (`experiment.py` overwrites summaries but only truncates `.jsonl` at job start).

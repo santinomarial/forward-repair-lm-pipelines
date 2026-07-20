@@ -1,0 +1,54 @@
+{
+  "method": "paired percentile bootstrap",
+  "confidence": 0.95,
+  "n_resamples": 20000,
+  "seed": 2026,
+  "corrupted_vs_repaired_em": {
+    "n": 300,
+    "corrupted": {
+      "estimate": 0.11,
+      "ci": [
+        0.07666666666666666,
+        0.14666666666666667
+      ]
+    },
+    "repaired": {
+      "estimate": 0.30333333333333334,
+      "ci": [
+        0.25333333333333335,
+        0.35333333333333333
+      ]
+    },
+    "difference_repaired_minus_corrupted": {
+      "estimate": 0.19333333333333333,
+      "ci": [
+        0.14333333333333334,
+        0.24666666666666667
+      ]
+    }
+  },
+  "single_shot_vs_iterative_recovery": {
+    "n_corrupted_broken": 267,
+    "single_shot": {
+      "estimate": 0.24719101123595505,
+      "ci": [
+        0.1947565543071161,
+        0.299625468164794
+      ]
+    },
+    "iterative": {
+      "estimate": 0.27340823970037453,
+      "ci": [
+        0.2209737827715356,
+        0.3295880149812734
+      ]
+    },
+    "difference_iterative_minus_single": {
+      "estimate": 0.026217228464419477,
+      "ci": [
+        -0.0149812734082397,
+        0.07116104868913857
+      ]
+    }
+  }
+}
