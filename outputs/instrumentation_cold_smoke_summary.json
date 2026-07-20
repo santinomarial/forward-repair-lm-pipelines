@@ -1,0 +1,182 @@
+{
+  "baseline": {
+    "exact_match": 0.5,
+    "contains_answer": 0.6,
+    "recall_at_k": 1.0,
+    "all_support_recall_at_k": 0.5
+  },
+  "corrupted": {
+    "exact_match": 0.2,
+    "contains_answer": 0.3,
+    "recall_at_k": 0.3,
+    "all_support_recall_at_k": 0.0
+  },
+  "repaired": {
+    "exact_match": 0.5,
+    "contains_answer": 0.7,
+    "recall_at_k": 1.0,
+    "all_support_recall_at_k": 0.5
+  },
+  "repaired_iterative": {
+    "exact_match": 0.5,
+    "contains_answer": 0.6,
+    "recall_at_k": 1.0,
+    "all_support_recall_at_k": 0.5
+  },
+  "recovery": {
+    "corrupted_broken_count": 8,
+    "repaired_fixed_count": 4,
+    "recovery_rate": 0.5
+  },
+  "instrumentation": {
+    "cost_note": "estimated_cost_usd is DSPy/LiteLLM provider-reported cost; cache hits and local calls may report zero",
+    "baseline": {
+      "examples": 10,
+      "llm_calls": {
+        "total": 20,
+        "per_example": 2.0
+      },
+      "tokens": {
+        "prompt_total": 9451,
+        "completion_total": 378,
+        "total": 9829,
+        "per_example": 982.9
+      },
+      "estimated_cost_usd": {
+        "total": 0.00164445,
+        "per_example": 0.000164445
+      },
+      "wall_clock_seconds": {
+        "total": 20.047289249952883,
+        "per_example": 2.0047289249952884
+      },
+      "stage_latency_seconds": {
+        "query_generation": {
+          "total": 13.225483041955158,
+          "per_example": 1.3225483041955157
+        },
+        "retrieval": {
+          "total": 0.11416916799498722,
+          "per_example": 0.011416916799498722
+        },
+        "answer_generation": {
+          "total": 6.707609249046072,
+          "per_example": 0.6707609249046073
+        }
+      }
+    },
+    "corrupted": {
+      "examples": 10,
+      "llm_calls": {
+        "total": 20,
+        "per_example": 2.0
+      },
+      "tokens": {
+        "prompt_total": 10858,
+        "completion_total": 341,
+        "total": 11199,
+        "per_example": 1119.9
+      },
+      "estimated_cost_usd": {
+        "total": 0.0018333,
+        "per_example": 0.00018333
+      },
+      "wall_clock_seconds": {
+        "total": 17.910016542940866,
+        "per_example": 1.7910016542940865
+      },
+      "stage_latency_seconds": {
+        "query_generation": {
+          "total": 10.216758582973853,
+          "per_example": 1.0216758582973853
+        },
+        "retrieval": {
+          "total": 0.11782579106511548,
+          "per_example": 0.011782579106511547
+        },
+        "answer_generation": {
+          "total": 7.575395833933726,
+          "per_example": 0.7575395833933726
+        }
+      }
+    },
+    "repaired": {
+      "examples": 10,
+      "llm_calls": {
+        "total": 20,
+        "per_example": 2.0
+      },
+      "tokens": {
+        "prompt_total": 10797,
+        "completion_total": 433,
+        "total": 11230,
+        "per_example": 1123.0
+      },
+      "estimated_cost_usd": {
+        "total": 0.00187935,
+        "per_example": 0.000187935
+      },
+      "wall_clock_seconds": {
+        "total": 17.80738741607638,
+        "per_example": 1.7807387416076381
+      },
+      "stage_latency_seconds": {
+        "query_generation": {
+          "total": 9.656327500124462,
+          "per_example": 0.9656327500124462
+        },
+        "retrieval": {
+          "total": 0.15909874998033047,
+          "per_example": 0.015909874998033046
+        },
+        "answer_generation": {
+          "total": 7.991926415998023,
+          "per_example": 0.7991926415998023
+        }
+      }
+    },
+    "repaired_iterative": {
+      "examples": 10,
+      "llm_calls": {
+        "total": 20,
+        "per_example": 2.0
+      },
+      "tokens": {
+        "prompt_total": 11546,
+        "completion_total": 1275,
+        "total": 12821,
+        "per_example": 1282.1
+      },
+      "estimated_cost_usd": {
+        "total": 0.0024969,
+        "per_example": 0.00024969
+      },
+      "wall_clock_seconds": {
+        "total": 26.382495250029024,
+        "per_example": 2.6382495250029026
+      },
+      "stage_latency_seconds": {
+        "query_generation": {
+          "total": 18.497759374964517,
+          "per_example": 1.8497759374964517
+        },
+        "retrieval": {
+          "total": 0.21645987505326048,
+          "per_example": 0.021645987505326047
+        },
+        "answer_generation": {
+          "total": 7.668213291093707,
+          "per_example": 0.7668213291093707
+        }
+      }
+    }
+  },
+  "run_config": {
+    "seed": 0,
+    "llm_backend": "openai",
+    "model": "gpt-4o-mini",
+    "retriever": "bm25",
+    "dense_model": null,
+    "lm_cache": false
+  }
+}
