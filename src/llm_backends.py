@@ -13,9 +13,10 @@ class LMSet:
 class LLMBackend(ABC):
     """Factory interface for the deterministic and corruption LMs."""
 
-    def __init__(self, model: str, max_tokens: int = 300):
+    def __init__(self, model: str, max_tokens: int = 300, cache: bool = True):
         self.model = model
         self.max_tokens = max_tokens
+        self.cache = cache
 
     @abstractmethod
     def create_lm(self, temperature: float, seed: int | None = None) -> dspy.LM:
@@ -34,10 +35,16 @@ class LLMBackend(ABC):
 
 
 class OpenAIBackend(LLMBackend):
-    def __init__(self, model: str, api_key: str | None, max_tokens: int = 300):
+    def __init__(
+        self,
+        model: str,
+        api_key: str | None,
+        max_tokens: int = 300,
+        cache: bool = True,
+    ):
         if not api_key:
             raise RuntimeError("OPENAI_API_KEY is missing. Add it to your .env file.")
-        super().__init__(model=model, max_tokens=max_tokens)
+        super().__init__(model=model, max_tokens=max_tokens, cache=cache)
         self.api_key = api_key
 
     def create_lm(self, temperature: float, seed: int | None = None) -> dspy.LM:
@@ -47,6 +54,7 @@ class OpenAIBackend(LLMBackend):
             "api_key": self.api_key,
             "temperature": temperature,
             "max_tokens": self.max_tokens,
+            "cache": self.cache,
         }
         if seed is not None:
             kwargs["seed"] = seed
@@ -54,8 +62,14 @@ class OpenAIBackend(LLMBackend):
 
 
 class OllamaBackend(LLMBackend):
-    def __init__(self, model: str, api_base: str, max_tokens: int = 300):
-        super().__init__(model=model, max_tokens=max_tokens)
+    def __init__(
+        self,
+        model: str,
+        api_base: str,
+        max_tokens: int = 300,
+        cache: bool = True,
+    ):
+        super().__init__(model=model, max_tokens=max_tokens, cache=cache)
         self.api_base = api_base.rstrip("/")
 
     def create_lm(self, temperature: float, seed: int | None = None) -> dspy.LM:
@@ -69,6 +83,7 @@ class OllamaBackend(LLMBackend):
             "api_base": self.api_base,
             "temperature": temperature,
             "max_tokens": self.max_tokens,
+            "cache": self.cache,
         }
         if seed is not None:
             kwargs["seed"] = seed
@@ -82,9 +97,20 @@ def build_llm_backend(
     openai_api_key: str | None = None,
     ollama_api_base: str = "http://localhost:11434",
     max_tokens: int = 300,
+    cache: bool = True,
 ) -> LLMBackend:
     if backend == "openai":
-        return OpenAIBackend(model=model, api_key=openai_api_key, max_tokens=max_tokens)
+        return OpenAIBackend(
+            model=model,
+            api_key=openai_api_key,
+            max_tokens=max_tokens,
+            cache=cache,
+        )
     if backend == "ollama":
-        return OllamaBackend(model=model, api_base=ollama_api_base, max_tokens=max_tokens)
+        return OllamaBackend(
+            model=model,
+            api_base=ollama_api_base,
+            max_tokens=max_tokens,
+            cache=cache,
+        )
     raise ValueError(f"Unknown LLM backend: {backend!r}")

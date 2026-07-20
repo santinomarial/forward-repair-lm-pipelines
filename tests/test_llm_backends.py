@@ -21,6 +21,7 @@ def test_openai_backend_builds_deterministic_and_seeded_models(mock_lm):
         "api_key": "test-key",
         "temperature": 0,
         "max_tokens": 300,
+        "cache": True,
     }
     assert mock_lm.call_args_list[1].kwargs["seed"] == 17
 
@@ -36,6 +37,7 @@ def test_ollama_backend_uses_local_chat_endpoint(mock_lm):
         "api_base": "http://localhost:11434",
         "temperature": 0,
         "max_tokens": 300,
+        "cache": True,
     }
 
 

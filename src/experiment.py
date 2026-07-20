@@ -67,6 +67,11 @@ def main() -> None:
     )
     parser.add_argument("--ollama-api-base", default=OLLAMA_API_BASE)
     parser.add_argument(
+        "--disable-lm-cache",
+        action="store_true",
+        help="Bypass DSPy's response cache for cold latency measurements.",
+    )
+    parser.add_argument(
         "--dense-model",
         default=DenseRetriever.DEFAULT_MODEL,
         help="Sentence-transformers model used by --retriever dense.",
@@ -83,6 +88,7 @@ def main() -> None:
         model,
         openai_api_key=OPENAI_API_KEY,
         ollama_api_base=args.ollama_api_base,
+        cache=not args.disable_lm_cache,
     )
     lm_models = llm_backend.create_models(seed=args.seed)
     dspy.configure(lm=lm_models.deterministic)
@@ -172,6 +178,14 @@ def main() -> None:
             f.write(json.dumps(row) + "\n")
 
     summary = summarize(rows)
+    summary["run_config"] = {
+        "seed": args.seed,
+        "llm_backend": args.llm,
+        "model": model,
+        "retriever": args.retriever,
+        "dense_model": args.dense_model if args.retriever == "dense" else None,
+        "lm_cache": not args.disable_lm_cache,
+    }
 
     with summary_path.open("w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2)
