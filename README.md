@@ -175,6 +175,8 @@ forward_repair/
     └── stratified_analysis.py  # Hop strata; single or multi-input
 ```
 
+The interactive demo lives in `demo/app.py` and calls the same pipeline/backend code as the experiment runner.
+
 Artifacts such as `outputs/hotpot_300_seed{0,1,2}_results_renormalized.jsonl` appear after rescoring (`rescore.py`) or your own naming convention from `--output-suffix`.
 
 ---
@@ -217,13 +219,22 @@ python src/experiment.py --llm openai --model gpt-4o-mini --max-examples 10
 
 Both providers implement the same `LLMBackend` factory and produce deterministic and seeded stochastic DSPy LMs, so experiment orchestration is provider-independent. Local and hosted model outputs are not expected to be numerically identical.
 
+### 3 · Interactive demo
+
+```bash
+pip install -r requirements-demo.txt
+streamlit run demo/app.py
+```
+
+Enter a multi-hop question and run the baseline to inspect its query, answer, and ranked documents. Then trigger corruption and localized repair to compare the broken and repaired paths side by side. The sidebar exposes query/answer corruption, BM25/dense retrieval, and OpenAI/Ollama; dense mode additionally needs `requirements-dense.txt`.
+
 First-time HotpotQA download may require disk space and Hugging Face access depending on mirror settings.
 
-### 3 · Dependencies
+### 4 · Dependencies
 
 `pip install -r requirements.txt` pulls in DSPy (**`dspy-ai`**, import `dspy`), **`matplotlib`** and **`numpy`** for [`src/make_final_figures.py`](src/make_final_figures.py), plus OpenAI/HF/eval tooling listed in that file.
 
-### 4 · Tests
+### 5 · Tests
 
 The test suite uses deterministic fixtures and mock scores; it never calls an LM or external service.
 
