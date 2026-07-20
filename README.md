@@ -1,6 +1,7 @@
 <p align="center">
   <strong>Localized Forward Repair</strong><br/>
-  <em>Multi-stage LM pipelines · staged failure injection · HotpotQA</em>
+  <em>Multi-stage LM pipelines · staged failure injection · HotpotQA</em><br/>
+  <a href="https://github.com/santinomarial/forward-repair-lm-pipelines/actions/workflows/ci.yml"><img src="https://github.com/santinomarial/forward-repair-lm-pipelines/actions/workflows/ci.yml/badge.svg" alt="CI status"/></a>
 </p>
 
 <hr/>
