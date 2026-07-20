@@ -2,7 +2,6 @@ import argparse
 import json
 from collections import defaultdict
 
-import dspy
 from rich.console import Console
 from rich.table import Table
 from tqdm import tqdm
@@ -10,6 +9,8 @@ from tqdm import tqdm
 from config import (
     OPENAI_API_KEY,
     OPENAI_MODEL,
+    OLLAMA_API_BASE,
+    OLLAMA_MODEL,
     CORPUS_PATH,
     EXAMPLES_PATH,
     EXPERIMENT_DEFAULT_SUFFIX,
@@ -18,6 +19,7 @@ from config import (
     experiment_paths,
 )
 from data_loader import load_jsonl
+from llm_backends import build_llm_backend
 from retriever import DenseRetriever, build_retriever
 from pipeline import ForwardRepairPipeline
 from metrics import (
@@ -30,28 +32,6 @@ from metrics import (
 
 
 console = Console()
-
-
-def configure_dspy(seed: int) -> dspy.LM:
-    if not OPENAI_API_KEY:
-        raise RuntimeError("OPENAI_API_KEY is missing. Add it to your .env file.")
-
-    lm_det = dspy.LM(
-        model=f"openai/{OPENAI_MODEL}",
-        api_key=OPENAI_API_KEY,
-        temperature=0,
-        max_tokens=300,
-    )
-    dspy.configure(lm=lm_det)
-
-    lm_stoch = dspy.LM(
-        model=f"openai/{OPENAI_MODEL}",
-        api_key=OPENAI_API_KEY,
-        temperature=0.7,
-        max_tokens=300,
-        seed=seed,
-    )
-    return lm_stoch
 
 
 def score_run(run: dict, gold: str, support_doc_ids: list[str]) -> dict:
@@ -77,6 +57,13 @@ def main() -> None:
     parser.add_argument("--max-examples", type=int, default=None)
     parser.add_argument("--corrupt-stage", default="query", choices=["query", "answer"])
     parser.add_argument("--retriever", choices=["bm25", "dense"], default="bm25")
+    parser.add_argument("--llm", choices=["openai", "ollama"], default="openai")
+    parser.add_argument(
+        "--model",
+        default=None,
+        help="Provider model name (defaults to OPENAI_MODEL or OLLAMA_MODEL).",
+    )
+    parser.add_argument("--ollama-api-base", default=OLLAMA_API_BASE)
     parser.add_argument(
         "--dense-model",
         default=DenseRetriever.DEFAULT_MODEL,
@@ -88,7 +75,14 @@ def main() -> None:
 
     results_path, summary_path = experiment_paths(args.output_suffix)
 
-    lm_stoch = configure_dspy(seed=args.seed)
+    model = args.model or (OPENAI_MODEL if args.llm == "openai" else OLLAMA_MODEL)
+    llm_backend = build_llm_backend(
+        args.llm,
+        model,
+        openai_api_key=OPENAI_API_KEY,
+        ollama_api_base=args.ollama_api_base,
+    )
+    lm_stoch = llm_backend.configure(seed=args.seed)
     OUTPUT_DIR.mkdir(exist_ok=True)
 
     corpus = load_jsonl(CORPUS_PATH)

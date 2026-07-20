@@ -178,6 +178,21 @@ OPENAI_MODEL=gpt-4o-mini
 
 [`src/config.py`](src/config.py) loads these automatically; omit `OPENAI_MODEL` to keep the default `gpt-4o-mini`.
 
+For a local, API-key-free backend, install [Ollama](https://ollama.com/), start it, and pull the default model:
+
+```bash
+ollama pull llama3.2:3b
+python src/experiment.py --llm ollama --model llama3.2:3b --max-examples 10
+```
+
+The endpoint defaults to `http://localhost:11434`; override it with `--ollama-api-base` or `OLLAMA_API_BASE`. The OpenAI path remains the default:
+
+```bash
+python src/experiment.py --llm openai --model gpt-4o-mini --max-examples 10
+```
+
+Both providers implement the same `LLMBackend` factory and produce deterministic and seeded stochastic DSPy LMs, so experiment orchestration is provider-independent. Local and hosted model outputs are not expected to be numerically identical.
+
 First-time HotpotQA download may require disk space and Hugging Face access depending on mirror settings.
 
 ### 3 · Dependencies
