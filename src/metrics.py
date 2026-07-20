@@ -42,3 +42,32 @@ def all_support_recall_at_k(retrieved_docs: list[dict], support_doc_ids: list[st
     retrieved_ids = {doc["id"] for doc in retrieved_docs}
     support_ids = set(support_doc_ids)
     return int(support_ids.issubset(retrieved_ids))
+
+
+def recovery_rate(
+    rows: list[dict],
+    corrupted_mode: str = "corrupted",
+    repaired_mode: str = "repaired",
+) -> dict[str, int | float]:
+    """Measure repair success among examples broken by corruption.
+
+    A row is eligible when the corrupted condition has exact match equal to zero.
+    The recovery rate is the fraction of those rows whose repaired condition has
+    exact match equal to one. An empty eligible set has rate ``0.0`` so summaries
+    remain JSON-safe.
+    """
+    broken = [
+        row
+        for row in rows
+        if row[corrupted_mode]["metrics"]["exact_match"] == 0
+    ]
+    fixed = [
+        row
+        for row in broken
+        if row[repaired_mode]["metrics"]["exact_match"] == 1
+    ]
+    return {
+        "corrupted_broken_count": len(broken),
+        "repaired_fixed_count": len(fixed),
+        "recovery_rate": len(fixed) / len(broken) if broken else 0.0,
+    }

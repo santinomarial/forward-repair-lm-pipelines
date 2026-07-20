@@ -23,6 +23,7 @@ from metrics import (
     contains_answer,
     recall_at_k,
     all_support_recall_at_k,
+    recovery_rate,
 )
 
 
@@ -179,23 +180,7 @@ def summarize(rows: list[dict]) -> dict:
         for mode in modes
     }
 
-    corrupted_broken = 0
-    repaired_fixed = 0
-
-    for row in rows:
-        corrupted_correct = row["corrupted"]["metrics"]["exact_match"] == 1
-        repaired_correct = row["repaired"]["metrics"]["exact_match"] == 1
-
-        if not corrupted_correct:
-            corrupted_broken += 1
-            if repaired_correct:
-                repaired_fixed += 1
-
-    summary["recovery"] = {
-        "corrupted_broken_count": corrupted_broken,
-        "repaired_fixed_count": repaired_fixed,
-        "recovery_rate": repaired_fixed / corrupted_broken if corrupted_broken else 0.0,
-    }
+    summary["recovery"] = recovery_rate(rows)
 
     return summary
 
