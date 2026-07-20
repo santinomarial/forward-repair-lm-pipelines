@@ -2,6 +2,7 @@ import pytest
 
 from metrics import (
     all_support_recall_at_k,
+    contains_answer,
     exact_match,
     recall_at_k,
     recovery_rate,
@@ -13,6 +14,7 @@ from metrics import (
     [
         ("PARIS", "paris"),
         ("Paris!", "Paris"),
+        ("Paris, France", "Paris France"),
         ("The Eiffel Tower", "Eiffel Tower"),
         ("  an   apple\n", "apple"),
         ("Yes, it was.", "yes"),
@@ -34,6 +36,11 @@ def test_exact_match_normalization(prediction, gold):
 )
 def test_exact_match_rejects_non_matches(prediction, gold):
     assert exact_match(prediction, gold) == 0
+
+
+def test_contains_answer_normalizes_case_punctuation_and_whitespace():
+    assert contains_answer("It was NEW-YORK.\n", "new york") == 1
+    assert contains_answer("It was Boston.", "new york") == 0
 
 
 def test_recall_at_k_requires_any_support_document():

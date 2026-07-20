@@ -11,7 +11,7 @@ def normalize(text: str) -> str:
 
 def _normalize_em(text: str) -> str:
     text = text.lower()
-    text = text.strip(string.punctuation + " ")
+    text = "".join(char for char in text if char not in string.punctuation)
     text = re.sub(r"\b(a|an|the)\b", " ", text)
     text = re.sub(r"\s+", " ", text).strip()
     return text

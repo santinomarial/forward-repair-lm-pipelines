@@ -183,6 +183,15 @@ First-time HotpotQA download may require disk space and Hugging Face access depe
 
 `pip install -r requirements.txt` pulls in DSPy (**`dspy-ai`**, import `dspy`), **`matplotlib`** and **`numpy`** for [`src/make_final_figures.py`](src/make_final_figures.py), plus OpenAI/HF/eval tooling listed in that file.
 
+### 4 · Tests
+
+The test suite uses deterministic fixtures and mock scores; it never calls an LM or external service.
+
+```bash
+pip install -r requirements-dev.txt
+pytest --cov=metrics --cov=retriever --cov-report=term-missing
+```
+
 ---
 
 ## Running experiments
