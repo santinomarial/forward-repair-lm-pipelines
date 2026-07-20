@@ -4,4 +4,6 @@ __pycache__/
 *.pyc
 .coverage
 .pytest_cache/
+outputs/instrumentation_smoke_*
+outputs/instrumentation_cold_smoke_results.jsonl
 .DS_Store

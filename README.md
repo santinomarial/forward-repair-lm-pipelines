@@ -112,6 +112,19 @@ Seed-0 iterative run, 20,000 paired resamples, 95% percentile confidence interva
 
 The repaired-versus-corrupted EM gain is clearly positive under this paired interval. The overall iterative recovery lift is directionally positive but its interval includes zero; the strongest iterative gains are concentrated in the multi-hop strata below rather than established across all questions.
 
+### Cost and latency
+
+Cold-call instrumentation snapshot (BM25 + OpenAI `gpt-4o-mini`, 10 examples, LM cache disabled):
+
+| Condition | LM calls / example | Tokens / example | Est. cost / example | Query gen | Retrieval | Answer gen | Total latency |
+|:---|---:|---:|---:|---:|---:|---:|---:|
+| Baseline | 2.0 | 983 | $0.000164 | 1.323s | 0.011s | 0.671s | 2.005s |
+| Corrupted | 2.0 | 1,120 | $0.000183 | 1.022s | 0.012s | 0.758s | 1.791s |
+| Repaired single-shot | 2.0 | 1,123 | $0.000188 | 0.966s | 0.016s | 0.799s | 1.781s |
+| Repaired iterative | 2.0 | 1,282 | $0.000250 | 1.850s | 0.022s | 0.767s | 2.638s |
+
+Iterative repair generates both sub-queries in one LM call, so it does not add a call in this implementation. It does use about 14% more tokens, costs about 33% more, and takes about 48% longer than single-shot repair in this snapshot; retrieval also runs twice. Latency is environment-dependent, so every new experiment stores raw per-example telemetry and aggregated per-condition totals in its result JSONL and summary JSON. DSPy/LiteLLM supplies token usage and estimated cost; cached entries without usage fall back to local token counting.
+
 ### Stratified results *(query corruption, seed 0)*
 
 | Stratum | *n* | Baseline EM | Corrupted EM | Repaired EM | Iterative EM |
@@ -230,6 +243,7 @@ pytest --cov=metrics --cov=retriever --cov-report=term-missing
 | **+ iterative repair** *(same corrupt query; adds `repaired_iterative` arm)* | `python src/experiment.py --seed 0 --output-suffix hotpot_300_iterative_seed0 --include-iterative` |
 | **Answer corruption** | `python src/experiment.py --seed 0 --output-suffix hotpot_300_answer_corruption_seed0 --corrupt-stage answer` |
 | **Limit examples** *(smoke tests)* | add `--max-examples 10` |
+| **Cold latency benchmark** | add `--disable-lm-cache` |
 | **Dense retrieval** | `pip install -r requirements-dense.txt`, then add `--retriever dense` (default model: `sentence-transformers/all-MiniLM-L6-v2`) |
 | **Re-score** *(no LM calls; e.g. after metric tweaks)* | `python src/rescore.py --input outputs/hotpot_300_seed0_results.jsonl` |
 | **Stratified analysis** | Single file: `python src/stratified_analysis.py --input outputs/hotpot_300_iterative_seed0_results_renormalized.jsonl`<br/>Multi-seed: pass comma-separated `--inputs` paths |
