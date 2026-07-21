@@ -1,290 +1,210 @@
-<p align="center">
-  <strong>Localized Forward Repair</strong><br/>
-  <em>Multi-stage LM pipelines · staged failure injection · HotpotQA</em><br/>
-  <a href="https://github.com/santinomarial/forward-repair-lm-pipelines/actions/workflows/ci.yml"><img src="https://github.com/santinomarial/forward-repair-lm-pipelines/actions/workflows/ci.yml/badge.svg" alt="CI status"/></a>
-</p>
+<div align="center">
 
-<hr/>
+# Forward Repair for RAG Pipelines
 
-This repository implements experiments on **localized forward repair**: we corrupt exactly one stage of a question-answering pipeline (either query generation or answer generation), repair **only that stage**, and measure whether the fix propagates to retrieval quality and final exact-match scores. The pipeline is wired with [DSPy](https://github.com/stanfordnlp/dspy) signatures and evaluated on HotpotQA-style multi-hop QA with BM25 retrieval.
+**When one stage fails, repair that stage—not the entire pipeline.**
 
----
+[![CI](https://github.com/santinomarial/forward-repair-lm-pipelines/actions/workflows/ci.yml/badge.svg)](https://github.com/santinomarial/forward-repair-lm-pipelines/actions/workflows/ci.yml)
 
-### Contents
+</div>
 
-- [Pipeline](#pipeline) — flow and localized repair hooks  
-- [Experimental conditions](#experimental-conditions)  
-- [Dataset](#dataset)  
-- [Main results \& findings](#main-results)  
-- [Repository layout](#repository-layout)  
-- [Setup](#setup)  
-- [Running experiments](#running-experiments)  
-- [Metrics](#metrics)
+This project studies failure recovery in a multi-stage RAG system. It injects a controlled failure into query or answer generation, repairs only the damaged stage, and measures how well that repair propagates downstream.
 
----
+The result is a reproducible [DSPy](https://github.com/stanfordnlp/dspy) evaluation pipeline with swappable retrieval and LLM backends, paired statistical tests, and per-stage cost and latency telemetry.
 
-## Pipeline
+## Why this matters
 
-The default **forward** path mirrors a simple RAG stack: synthesize a search query → retrieve passages → produce an answer. **Repair** rewinds to the corrupted stage and re-runs only from there onward (plus optional iterative retrieval for query repair).
+RAG failures are rarely uniform. A poor query, weak retrieval, and an ungrounded answer require different interventions. Retrying the full pipeline hides that distinction and spends more compute without identifying the source of failure.
 
-```mermaid
-flowchart LR
-  Q(("Question"))
+This repository makes the failure boundary explicit:
 
-  subgraph Forward["Forward pass"]
-    GQ["DSPy: query generator"]
-    R["BM25 top-K"]
-    GA["DSPy: answer generator"]
-  end
+- Query repair regenerates the query, retrieves again, and answers from new evidence.
+- Answer repair keeps retrieval fixed and revises only the answer.
+- Iterative repair decomposes a failed query into two searches and merges their ranked results.
 
-  Q --> GQ --> R --> GA --> A(("Answer"))
-
-  subgraph Repair["Localized repair"]
-    rq["Repair query / iterative merge"]
-    ra["Repair answer<br/>(same retrieval)"]
-  end
-
-  GQ -.->|"if query corrupted"| rq
-  rq --> R
-  GA -.->|"if answer corrupted"| ra
-  ra --> A
-```
-
-| Stage | Technology |
-|:------|:-----------|
-| Query / answer modules | DSPy `Predict` over typed signatures (`src/dspy_modules.py`) |
-| Retrieval | Pluggable BM25 or sentence-transformer cosine retrieval; `retrieve_union` merges ranked lists from two sub-queries |
-| Orchestration | `ForwardRepairPipeline` in [`src/pipeline.py`](src/pipeline.py) |
-| Runs | [`src/experiment.py`](src/experiment.py): seeds, `--corrupt-stage`, optional `--include-iterative` |
-
----
-
-## Experimental conditions
-
-| Condition | What happens |
-|:----------|:-------------|
-| **Baseline** | Deterministic query generation (`temperature = 0`) → retrieve → answer |
-| **Corrupted (query)** | Vague query (`temperature = 0.7`, seeded) hurts retrieval downstream |
-| **Repaired single-shot** | One corrected query from the bad query → re-retrieve → re-answer |
-| **Repaired iterative** | Two targeted sub-queries merged with `retrieve_union` (query corruption only) |
-| **Corrupted (answer)** | Good retrieval; answer ignores context (forces ungrounded answers) |
-| **Repaired (answer)** | Same documents; LM asked to revise answer using evidence |
-
----
-
-## Dataset
-
-| | |
-|:---|:---|
-| **Source** | HotpotQA *distractor* split via Hugging Face ([`datasets`](https://pypi.org/project/datasets/)) |
-| **Build script** | [`src/build_hotpot_subset.py`](src/build_hotpot_subset.py) `--n …` writes `data/hotpot_examples.jsonl` and `data/hotpot_corpus.jsonl` |
-| **Scale in paper-style runs** | 300 validation examples; BM25 corpus on the order of ~3k documents for that subset |
-
-Examples are stratified **post hoc** ([`src/stratified_analysis.py`](src/stratified_analysis.py)):
-
-- **Single-hop-sufficient** — gold answer traceable from one support doc  
-- **Genuinely multi-hop** — comparison / yes-no or evidence needs both docs  
-- **Answer-not-in-support** — excluded from stratified slices where noted  
-
----
+The main finding: **repairing retrieval upstream is effective; repairing an already-confident answer is not.**
 
 ## Main results
 
-*Sample size n = 300; three seeds; table shows mean ± std where aggregated.*
+HotpotQA distractor split · 300 examples · three seeds · BM25 · `gpt-4o-mini`
 
-| Condition | Exact Match | Contains Answer | Recall@K | AllSupport@K | Recovery Rate |
-|:---:|:---:|:---:|:---:|:---:|:---:|
-| Baseline | 0.317 | 0.477 | 0.957 | 0.520 | — |
-| Corrupted (query) | 0.113 ± 0.003 | 0.201 ± 0.012 | 0.367 ± 0.025 | 0.058 ± 0.010 | — |
-| Repaired single-shot | 0.300 ± 0.006 | 0.464 ± 0.010 | 0.937 ± 0.003 | 0.483 ± 0.015 | 24.6% ± 0.4% |
-| Repaired iterative | 0.333 | 0.477 | 0.967 | 0.533 | 27.3% |
-| Corrupted (answer) | 0.077 | 0.650 | 0.957 | 0.520 | — |
-| Repaired (answer) | 0.070 | 0.467 | 0.957 | 0.520 | 2.2% |
+| Condition | Exact match | Recall@K | All support@K | Recovery rate |
+|:--|--:|--:|--:|--:|
+| Baseline | 31.7% | 95.7% | 52.0% | — |
+| Corrupted query | 11.3% ± 0.3 | 36.7% ± 2.5 | 5.8% ± 1.0 | — |
+| Single-shot query repair | 30.0% ± 0.6 | 93.7% ± 0.3 | 48.3% ± 1.5 | 24.6% ± 0.4 |
+| Iterative query repair | **33.3%** | **96.7%** | **53.3%** | **27.3%** |
+| Corrupted answer | 7.7% | 95.7% | 52.0% | — |
+| Answer repair | 7.0% | 95.7% | 52.0% | 2.2% |
 
-### Paired bootstrap comparisons
+Query repair restores most of the baseline retrieval and exact-match performance. Iterative repair is especially useful on genuinely multi-hop questions: EM rises from 49.4% with single-shot repair to 61.0%. Answer-stage repair barely recovers failures despite receiving the same evidence, suggesting that revision remains anchored to the original wrong answer.
 
-Seed-0 iterative run, 20,000 paired resamples, 95% percentile confidence intervals:
+### Statistical check
 
-| Comparison | Estimate A | Estimate B | Paired difference (B − A), 95% CI |
-|:---|:---:|:---:|:---:|
-| Corrupted EM → repaired EM (*n* = 300) | 11.0% | 30.3% | **+19.3 pp** [14.3, 24.7] |
-| Single-shot → iterative recovery (*n* = 267 corrupted-broken) | 24.7% | 27.3% | +2.6 pp [−1.5, 7.1] |
+Paired bootstrap · seed 0 · 20,000 resamples · 95% percentile intervals
 
-The repaired-versus-corrupted EM gain is clearly positive under this paired interval. The overall iterative recovery lift is directionally positive but its interval includes zero; the strongest iterative gains are concentrated in the multi-hop strata below rather than established across all questions.
+| Comparison | Paired difference | 95% CI |
+|:--|--:|:--|
+| Corrupted → repaired query EM | **+19.3 pp** | [14.3, 24.7] |
+| Single-shot → iterative recovery | +2.6 pp | [−1.5, 7.1] |
 
-### Cost and latency
+The query-repair gain is clearly positive. The aggregate iterative lift is promising but not conclusive; its strongest gains are concentrated in multi-hop and yes/no strata.
 
-Cold-call instrumentation snapshot (BM25 + OpenAI `gpt-4o-mini`, 10 examples, LM cache disabled):
+### Cost of repair
 
-| Condition | LM calls / example | Tokens / example | Est. cost / example | Query gen | Retrieval | Answer gen | Total latency |
-|:---|---:|---:|---:|---:|---:|---:|---:|
-| Baseline | 2.0 | 983 | $0.000164 | 1.323s | 0.011s | 0.671s | 2.005s |
-| Corrupted | 2.0 | 1,120 | $0.000183 | 1.022s | 0.012s | 0.758s | 1.791s |
-| Repaired single-shot | 2.0 | 1,123 | $0.000188 | 0.966s | 0.016s | 0.799s | 1.781s |
-| Repaired iterative | 2.0 | 1,282 | $0.000250 | 1.850s | 0.022s | 0.767s | 2.638s |
+Cold-cache snapshot · 10 examples · `gpt-4o-mini`
 
-Iterative repair generates both sub-queries in one LM call, so it does not add a call in this implementation. It does use about 14% more tokens, costs about 33% more, and takes about 48% longer than single-shot repair in this snapshot; retrieval also runs twice. Latency is environment-dependent, so every new experiment stores raw per-example telemetry and aggregated per-condition totals in its result JSONL and summary JSON. DSPy/LiteLLM supplies token usage and estimated cost; cached entries without usage fall back to local token counting.
+| Condition | Calls / example | Tokens / example | Cost / example | Latency / example |
+|:--|--:|--:|--:|--:|
+| Baseline | 2.0 | 983 | $0.000164 | 2.01s |
+| Corrupted query | 2.0 | 1,120 | $0.000183 | 1.79s |
+| Single-shot repair | 2.0 | 1,123 | $0.000188 | 1.78s |
+| Iterative repair | 2.0 | 1,282 | $0.000250 | 2.64s |
 
-### Stratified results *(query corruption, seed 0)*
+Iterative repair generates both sub-queries in one LLM call, but performs retrieval twice. In this run it used 14% more tokens, cost 33% more, and took 48% longer than single-shot repair. Every run records raw per-example telemetry and per-condition aggregates; latency will vary by environment.
 
-| Stratum | *n* | Baseline EM | Corrupted EM | Repaired EM | Iterative EM |
-|:---:|:---:|:---:|:---:|:---:|:---:|
-| Single-hop | 223 | 0.229 | 0.094 | 0.238 | 0.238 |
-| Multi-hop | 77 | 0.571 | 0.156 | 0.494 | **0.610** |
-| Yes/No | 21 | 0.714 | 0.000 | 0.476 | **0.762** |
-| Bridge | 56 | 0.518 | 0.214 | 0.500 | 0.554 |
+## How it works
 
----
+```mermaid
+flowchart LR
+    Q[Question] --> G[Generate query]
+    G --> R[Retrieve top-K]
+    R --> A[Generate answer]
 
-## Key findings
+    G -.->|query failure| QR[Repair query]
+    QR --> R
 
-1. **Query repair recovers grounded behavior; answer repair barely does.** Single-shot query repair restores exact match on roughly a quarter of cases that break under corruption. Answer-stage repair hovers near chance-level recovery (~2%), consistent with the model anchoring on a confident wrong hypothesis instead of revising from context.
-
-2. **Iterative query repair disproportionately helps true multi-hop items.** Splitting missing evidence into two sub-queries and merging retrieval lifts multi-hop exact match relative to single-shot repair; yes/no comparison strata can match baseline after repair under this setting.
-
-3. **Retrieval repair has a predictable “partial → full support” ladder.** Among examples where single-shot repair finds only one gold document, iterative merging often completes full support retrieval; a subset of those also flip to EM = 1.
-
----
-
-## Repository layout
-
-```text
-forward_repair/
-├── data/
-│   ├── hotpot_corpus.jsonl      # BM25 corpus (built)
-│   └── hotpot_examples.jsonl    # Questions + answers + support ids (built)
-├── outputs/
-│   ├── figures/                 # Produced by make_final_figures.py
-│   ├── tables/                  # Markdown tables for write-ups
-│   └── *.jsonl / *.json         # Runs, summaries, aggregates
-├── requirements.txt
-└── src/
-    ├── aggregate_seeds.py       # Mean ± std across *_seed*_results.jsonl
-    ├── analyze_results.py       # Lightweight console summary
-    ├── build_hotpot_subset.py   # HotpotQA → jsonl corpus + examples
-    ├── compare_stages.py       # Query vs answer corruption summaries
-    ├── config.py               # Paths, TOP_K, OpenAI env
-    ├── data_loader.py
-    ├── dspy_modules.py         # DSPy signatures + modules
-    ├── experiment.py           # CLI experiment driver
-    ├── make_final_figures.py    # Figures + markdown tables (needs matplotlib + numpy)
-    ├── metrics.py              # EM normalization + retrieval metrics
-    ├── pipeline.py             # ForwardRepairPipeline
-    ├── rescore.py              # Refresh metrics on saved jsonl without new LM calls
-    ├── retriever.py            # BM25Retriever + retrieve_union
-    └── stratified_analysis.py  # Hop strata; single or multi-input
+    A -.->|answer failure| AR[Repair answer]
+    AR --> O[Output]
+    A --> O
 ```
 
-The interactive demo lives in `demo/app.py` and calls the same pipeline/backend code as the experiment runner.
+`ForwardRepairPipeline` owns orchestration; the retriever and LLM are injected behind stable interfaces. The corruption and repair logic therefore stays unchanged across backends.
 
-Artifacts such as `outputs/hotpot_300_seed{0,1,2}_results_renormalized.jsonl` appear after rescoring (`rescore.py`) or your own naming convention from `--output-suffix`.
+| Component | Implementations |
+|:--|:--|
+| Retrieval | BM25; sentence-transformer cosine similarity |
+| LLM | OpenAI; local Ollama models through DSPy/LiteLLM |
+| Evaluation | Exact match, contains-answer, Recall@K, AllSupport@K, recovery rate |
+| Analysis | Multi-hop strata, seed aggregation, paired bootstrap confidence intervals |
 
----
+## Quick start
 
-## Setup
-
-### 1 · Python environment
-
-Use Python **3.10+** (3.11 recommended).
+Python 3.11 is recommended.
 
 ```bash
 python3 -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
+source .venv/bin/activate
 pip install -r requirements.txt
+pip install -r requirements-dev.txt
 ```
 
-### 2 · Credentials
+### OpenAI
 
-Create `.env` in the repository root (see [python-dotenv](https://pypi.org/project/python-dotenv/)):
+Create a `.env` file in the repository root:
 
 ```env
 OPENAI_API_KEY=sk-...
 OPENAI_MODEL=gpt-4o-mini
 ```
 
-[`src/config.py`](src/config.py) loads these automatically; omit `OPENAI_MODEL` to keep the default `gpt-4o-mini`.
+Run a small experiment:
 
-For a local, API-key-free backend, install [Ollama](https://ollama.com/), start it, and pull the default model:
+```bash
+python src/experiment.py --max-examples 10
+```
+
+### Local inference with Ollama
+
+Install [Ollama](https://ollama.com/), then pull and run a local model—no API key required:
 
 ```bash
 ollama pull llama3.2:3b
-python src/experiment.py --llm ollama --model llama3.2:3b --max-examples 10
+python src/experiment.py \
+  --llm ollama \
+  --model llama3.2:3b \
+  --max-examples 10
 ```
 
-The endpoint defaults to `http://localhost:11434`; override it with `--ollama-api-base` or `OLLAMA_API_BASE`. The OpenAI path remains the default:
+The default endpoint is `http://localhost:11434`. Override it with `--ollama-api-base` or `OLLAMA_API_BASE`.
 
-```bash
-python src/experiment.py --llm openai --model gpt-4o-mini --max-examples 10
-```
-
-Both providers implement the same `LLMBackend` factory and produce deterministic and seeded stochastic DSPy LMs, so experiment orchestration is provider-independent. Local and hosted model outputs are not expected to be numerically identical.
-
-### 3 · Interactive demo
+### Interactive demo
 
 ```bash
 pip install -r requirements-demo.txt
 streamlit run demo/app.py
 ```
 
-Enter a multi-hop question and run the baseline to inspect its query, answer, and ranked documents. Then trigger corruption and localized repair to compare the broken and repaired paths side by side. The sidebar exposes query/answer corruption, BM25/dense retrieval, and OpenAI/Ollama; dense mode additionally needs `requirements-dense.txt`.
+The demo exposes the generated query, ranked documents, and answer, then shows corruption and repair side by side. It uses the same pipeline code as the experiment runner.
 
-First-time HotpotQA download may require disk space and Hugging Face access depending on mirror settings.
+## Reproduce the study
 
-### 4 · Dependencies
-
-`pip install -r requirements.txt` pulls in DSPy (**`dspy-ai`**, import `dspy`), **`matplotlib`** and **`numpy`** for [`src/make_final_figures.py`](src/make_final_figures.py), plus OpenAI/HF/eval tooling listed in that file.
-
-### 5 · Tests
-
-The test suite uses deterministic fixtures and mock scores; it never calls an LM or external service.
+Build the 300-example HotpotQA subset:
 
 ```bash
-pip install -r requirements-dev.txt
-pytest --cov=metrics --cov=retriever --cov-report=term-missing
+python src/build_hotpot_subset.py --n 300
 ```
 
----
+Run query corruption, iterative repair, and answer corruption:
 
-## Running experiments
+```bash
+python src/experiment.py --seed 0 --output-suffix hotpot_300_seed0
+python src/experiment.py --seed 0 --output-suffix hotpot_300_iterative_seed0 --include-iterative
+python src/experiment.py --seed 0 --output-suffix hotpot_300_answer_seed0 --corrupt-stage answer
+```
 
-| Step | Command |
-|:-----|:--------|
-| **Build corpus + subset** *(default n = 50; use 300 for full study)* | `python src/build_hotpot_subset.py --n 300` |
-| **Query corruption, seeds 0–2** | `python src/experiment.py --seed 0 --output-suffix hotpot_300_seed0` |
-| **+ iterative repair** *(same corrupt query; adds `repaired_iterative` arm)* | `python src/experiment.py --seed 0 --output-suffix hotpot_300_iterative_seed0 --include-iterative` |
-| **Answer corruption** | `python src/experiment.py --seed 0 --output-suffix hotpot_300_answer_corruption_seed0 --corrupt-stage answer` |
-| **Limit examples** *(smoke tests)* | add `--max-examples 10` |
-| **Cold latency benchmark** | add `--disable-lm-cache` |
-| **Dense retrieval** | `pip install -r requirements-dense.txt`, then add `--retriever dense` (default model: `sentence-transformers/all-MiniLM-L6-v2`) |
-| **Re-score** *(no LM calls; e.g. after metric tweaks)* | `python src/rescore.py --input outputs/hotpot_300_seed0_results.jsonl` |
-| **Stratified analysis** | Single file: `python src/stratified_analysis.py --input outputs/hotpot_300_iterative_seed0_results_renormalized.jsonl`<br/>Multi-seed: pass comma-separated `--inputs` paths |
-| **Aggregate seeds** | Defaults: `python src/aggregate_seeds.py`<br/>Custom: `python src/aggregate_seeds.py --inputs outputs/run_seed0_results.jsonl outputs/run_seed1_results.jsonl --output outputs/run_aggregated.json` |
-| **Analyze results** | Defaults: `python src/analyze_results.py`<br/>Custom: add `--results … --summary …` |
-| **Bootstrap confidence intervals** | `python src/significance.py` (add `--input … --resamples … --seed …` as needed) |
-| **All figures & tables** | `python src/make_final_figures.py` |
+Then analyze the saved outputs without making new LLM calls:
 
-Each experiment appends rows to `outputs/<suffix>_results.jsonl` and writes `outputs/<suffix>_summary.json`; delete the `.jsonl` first if you need a clean re-run (`experiment.py` overwrites summaries but only truncates `.jsonl` at job start).
+```bash
+python src/aggregate_seeds.py
+python src/stratified_analysis.py \
+  --input outputs/hotpot_300_iterative_seed0_results_renormalized.jsonl
+python src/significance.py
+python src/make_final_figures.py
+```
 
----
+Useful switches:
 
-## Metrics
+| Goal | Option |
+|:--|:--|
+| Dense retrieval | Install `requirements-dense.txt`, then pass `--retriever dense` |
+| Different encoder | `--dense-model sentence-transformers/all-MiniLM-L6-v2` |
+| Cold latency measurement | `--disable-lm-cache` |
+| Fast smoke run | `--max-examples 10` |
+| Re-score saved generations | `python src/rescore.py --input <results.jsonl>` |
 
-| Metric | Definition |
-|:-------|:-----------|
-| **Exact Match (EM)** | Hotpot-style normalization (case, punctuation, articles, whitespace; yes/no words handled specially) |
-| **Contains Answer** | Normalized gold string appears inside normalized prediction |
-| **Recall@K** | At least one annotated support doc in the top-*K* hits |
-| **AllSupport@K** | Full support set covered in top-*K* |
-| **Recovery rate** | Share of corrupted-broken items (corrupted EM = 0) where repair restores EM = 1 |
+Results are written to `outputs/<suffix>_results.jsonl`; aggregate summaries go to `outputs/<suffix>_summary.json`.
 
-Implementation: [`src/metrics.py`](src/metrics.py).
+## Engineering quality
 
-### Retrieval backends
+The test suite uses deterministic fixtures and mocks—never live LLM calls.
 
-`--retriever bm25` is the dependency-light default and reproduces the original experiment. `--retriever dense` builds an in-memory cosine index using sentence-transformer embeddings; use `--dense-model MODEL_ID` to select a different compatible encoder. Both implement the same `Retriever` interface, including iterative `retrieve_union`, so corruption and repair code is unchanged.
+```bash
+pytest --cov=metrics --cov=retriever --cov-report=term-missing --cov-fail-under=90
+ruff check src tests demo
+mypy src/metrics.py src/retriever.py
+```
 
----
+CI runs the same checks on every push and pull request. The suite covers metric normalization and recovery math, BM25 ranking and union semantics, backend contracts, telemetry, significance testing, and stratification.
 
-<p align="center">
-  <sub>Experiment outputs may contain model-generated text cached under <code>outputs/</code>; do not commit API keys (<code>.env</code> is gitignored).</sub>
-</p>
+## Project map
+
+```text
+src/
+├── pipeline.py             # forward pass, corruption, and localized repair
+├── experiment.py           # experiment CLI and condition runner
+├── retriever.py            # Retriever interface, BM25, and dense search
+├── llm_backends.py         # OpenAI and Ollama backend factory
+├── dspy_modules.py         # typed DSPy signatures and modules
+├── metrics.py              # answer and retrieval metrics
+├── telemetry.py            # calls, tokens, cost, and stage latency
+├── significance.py         # paired bootstrap comparisons
+├── stratified_analysis.py  # single-hop and multi-hop analysis
+└── make_final_figures.py   # publication-ready figures and tables
+
+demo/app.py                 # Streamlit walkthrough
+tests/                      # deterministic unit and integration tests
+outputs/                    # saved runs, summaries, figures, and tables
+```
+
+The implementation favors explicit interfaces, saved intermediate results, and analysis that can be repeated without paying for another model run. That keeps backend changes isolated and experimental claims auditable.
