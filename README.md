@@ -10,7 +10,7 @@
 
 This project studies failure recovery in a multi-stage RAG system. It injects a controlled failure into query or answer generation, repairs only the damaged stage, and measures how well that repair propagates downstream.
 
-The result is a reproducible [DSPy](https://github.com/stanfordnlp/dspy) evaluation pipeline with swappable retrieval and LLM backends, paired statistical tests, and per-stage cost and latency telemetry.
+The result is a reproducible [DSPy](https://github.com/stanfordnlp/dspy) evaluation pipeline with swappable retrieval and LLM backends, gold-free failure routing, paired statistical tests, and per-stage cost and latency telemetry.
 
 ## Why this matters
 
@@ -85,8 +85,21 @@ flowchart LR
 |:--|:--|
 | Retrieval | BM25; sentence-transformer cosine similarity |
 | LLM | OpenAI; local Ollama models through DSPy/LiteLLM |
+| Routing | Gold-free lexical diagnostics; transparent heuristic repair policy |
 | Evaluation | Exact match, contains-answer, Recall@K, AllSupport@K, recovery rate |
 | Analysis | Multi-hop strata, seed aggregation, paired bootstrap confidence intervals |
+
+### Adaptive routing
+
+`--include-adaptive` evaluates the corrupted output exactly as a deployed system would see it: without the gold answer or support labels. The detector measures retrieval-score separation, question/query coverage in the retrieved documents, and answer grounding. The policy then accepts the output or dispatches query, answer, or iterative repair.
+
+```bash
+python src/experiment.py \
+  --include-adaptive \
+  --max-examples 10
+```
+
+The current heuristic is an interpretable baseline for the learned router—not a claim that lexical signals solve failure attribution. In particular, it handles yes/no answers conservatively because lexical overlap cannot establish entailment.
 
 ## Quick start
 
@@ -170,6 +183,7 @@ Useful switches:
 | Dense retrieval | Install `requirements-dense.txt`, then pass `--retriever dense` |
 | Different encoder | `--dense-model sentence-transformers/all-MiniLM-L6-v2` |
 | Cold latency measurement | `--disable-lm-cache` |
+| Gold-free repair routing | `--include-adaptive` |
 | Fast smoke run | `--max-examples 10` |
 | Re-score saved generations | `python src/rescore.py --input <results.jsonl>` |
 
@@ -180,9 +194,9 @@ Results are written to `outputs/<suffix>_results.jsonl`; aggregate summaries go 
 The test suite uses deterministic fixtures and mocks—never live LLM calls.
 
 ```bash
-pytest --cov=metrics --cov=retriever --cov-report=term-missing --cov-fail-under=90
+pytest --cov=metrics --cov=retriever --cov=routing --cov-report=term-missing --cov-fail-under=90
 ruff check src tests demo
-mypy src/metrics.py src/retriever.py
+mypy src/metrics.py src/retriever.py src/routing.py
 ```
 
 CI runs the same checks on every push and pull request. The suite covers metric normalization and recovery math, BM25 ranking and union semantics, backend contracts, telemetry, significance testing, and stratification.
@@ -197,6 +211,7 @@ src/
 ├── llm_backends.py         # OpenAI and Ollama backend factory
 ├── dspy_modules.py         # typed DSPy signatures and modules
 ├── metrics.py              # answer and retrieval metrics
+├── routing.py              # gold-free failure signals and repair policies
 ├── telemetry.py            # calls, tokens, cost, and stage latency
 ├── significance.py         # paired bootstrap comparisons
 ├── stratified_analysis.py  # single-hop and multi-hop analysis

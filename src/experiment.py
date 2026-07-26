@@ -77,8 +77,11 @@ def main() -> None:
         default=DenseRetriever.DEFAULT_MODEL,
         help="Sentence-transformers model used by --retriever dense.",
     )
-    parser.add_argument("--include-iterative", action="store_true",
-                        help="Also run the iterative repair condition (query corruption only)")
+    parser.add_argument(
+        "--include-iterative",
+        action="store_true",
+        help="Also run the iterative repair condition (query corruption only)",
+    )
     parser.add_argument(
         "--include-adaptive",
         action="store_true",
@@ -285,10 +288,7 @@ def combine_lm_usage(
 
 def summarize_routing(rows: list[dict]) -> dict:
     actions = Counter(row["adaptive"]["routing"]["action"] for row in rows)
-    repairs = sum(
-        int(row["adaptive"]["routing"]["repaired"])
-        for row in rows
-    )
+    repairs = sum(int(row["adaptive"]["routing"]["repaired"]) for row in rows)
     return {
         "policy": rows[0]["adaptive"]["routing"]["policy"],
         "examples": len(rows),
