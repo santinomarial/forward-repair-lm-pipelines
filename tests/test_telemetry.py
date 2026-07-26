@@ -1,6 +1,6 @@
 from types import SimpleNamespace
 
-from experiment import summarize_instrumentation
+from experiment import combine_lm_usage, summarize_instrumentation
 from telemetry import LMUsageSnapshot
 
 
@@ -86,3 +86,34 @@ def test_summarize_instrumentation_aggregates_totals_and_per_example():
     assert result["estimated_cost_usd"]["total"] == 0.04
     assert result["wall_clock_seconds"] == {"total": 4.0, "per_example": 2.0}
     assert result["stage_latency_seconds"]["retrieval"]["per_example"] == 0.2
+
+
+def test_combine_lm_usage_includes_initial_and_routed_repair():
+    initial = {
+        "llm_calls": 2,
+        "prompt_tokens": 90,
+        "completion_tokens": 10,
+        "total_tokens": 100,
+        "estimated_cost_usd": 0.01,
+        "priced_calls": 2,
+        "estimated_token_calls": 0,
+    }
+    repair = {
+        "llm_calls": 1,
+        "prompt_tokens": 45,
+        "completion_tokens": 5,
+        "total_tokens": 50,
+        "estimated_cost_usd": 0.005,
+        "priced_calls": 1,
+        "estimated_token_calls": 0,
+    }
+
+    assert combine_lm_usage(initial, repair) == {
+        "llm_calls": 3,
+        "prompt_tokens": 135,
+        "completion_tokens": 15,
+        "total_tokens": 150,
+        "priced_calls": 3,
+        "estimated_token_calls": 0,
+        "estimated_cost_usd": 0.015,
+    }

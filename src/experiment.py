@@ -1,6 +1,6 @@
 import argparse
 import json
-from collections import defaultdict
+from collections import Counter, defaultdict
 
 import dspy
 from rich.console import Console
@@ -30,6 +30,7 @@ from metrics import (
 )
 from pipeline import ForwardRepairPipeline
 from retriever import DenseRetriever, build_retriever
+from routing import HeuristicRepairPolicy, LexicalFailureDetector
 from telemetry import LMUsageSnapshot
 
 
@@ -78,6 +79,14 @@ def main() -> None:
     )
     parser.add_argument("--include-iterative", action="store_true",
                         help="Also run the iterative repair condition (query corruption only)")
+    parser.add_argument(
+        "--include-adaptive",
+        action="store_true",
+        help=(
+            "Diagnose the corrupted run without gold labels and route it through "
+            "the heuristic repair policy."
+        ),
+    )
     args = parser.parse_args()
 
     results_path, summary_path = experiment_paths(args.output_suffix)
@@ -107,6 +116,8 @@ def main() -> None:
         dense_model=args.dense_model,
     )
     pipeline = ForwardRepairPipeline(retriever=retriever, corrupt_stage=args.corrupt_stage)
+    failure_detector = LexicalFailureDetector()
+    repair_policy = HeuristicRepairPolicy()
 
     if args.corrupt_stage == "query":
         pipeline.corrupted_query_generator.generate.set_lm(lm_stoch)
@@ -172,6 +183,23 @@ def main() -> None:
                 "metrics": score_run(rep_iter, gold, support_doc_ids),
             }
 
+        if args.include_adaptive:
+            usage = LMUsageSnapshot([lm_models.deterministic, lm_models.stochastic])
+            adaptive = pipeline.run_adaptive(
+                question,
+                detector=failure_detector,
+                policy=repair_policy,
+                initial_run=corrupted,
+            )
+            adaptive["telemetry"].update(
+                combine_lm_usage(corrupted["telemetry"], usage.finish())
+            )
+            row["adaptive"] = {
+                **adaptive,
+                "doc_ids": doc_ids(adaptive["docs"]),
+                "metrics": score_run(adaptive, gold, support_doc_ids),
+            }
+
         rows.append(row)
 
         with results_path.open("a", encoding="utf-8") as f:
@@ -185,6 +213,7 @@ def main() -> None:
         "retriever": args.retriever,
         "dense_model": args.dense_model if args.retriever == "dense" else None,
         "lm_cache": not args.disable_lm_cache,
+        "adaptive_policy": repair_policy.name if args.include_adaptive else None,
     }
 
     with summary_path.open("w", encoding="utf-8") as f:
@@ -195,7 +224,13 @@ def main() -> None:
 
 def summarize(rows: list[dict]) -> dict:
     totals = defaultdict(lambda: defaultdict(float))
-    _all_modes = ["baseline", "corrupted", "repaired", "repaired_iterative"]
+    _all_modes = [
+        "baseline",
+        "corrupted",
+        "repaired",
+        "repaired_iterative",
+        "adaptive",
+    ]
     modes = [m for m in _all_modes if m in rows[0]]
 
     for row in rows:
@@ -214,9 +249,52 @@ def summarize(rows: list[dict]) -> dict:
     }
 
     summary["recovery"] = recovery_rate(rows)
+    if "adaptive" in modes:
+        summary["adaptive_recovery"] = recovery_rate(
+            rows,
+            repaired_mode="adaptive",
+        )
+        summary["routing"] = summarize_routing(rows)
     summary["instrumentation"] = summarize_instrumentation(rows, modes)
 
     return summary
+
+
+def combine_lm_usage(
+    initial: dict,
+    incremental: dict[str, int | float],
+) -> dict[str, int | float]:
+    """Combine usage already recorded on an initial run with routed repair usage."""
+    integer_keys = (
+        "llm_calls",
+        "prompt_tokens",
+        "completion_tokens",
+        "total_tokens",
+        "priced_calls",
+        "estimated_token_calls",
+    )
+    combined: dict[str, int | float] = {
+        key: int(initial.get(key, 0)) + int(incremental.get(key, 0))
+        for key in integer_keys
+    }
+    combined["estimated_cost_usd"] = float(
+        initial.get("estimated_cost_usd", 0.0)
+    ) + float(incremental.get("estimated_cost_usd", 0.0))
+    return combined
+
+
+def summarize_routing(rows: list[dict]) -> dict:
+    actions = Counter(row["adaptive"]["routing"]["action"] for row in rows)
+    repairs = sum(
+        int(row["adaptive"]["routing"]["repaired"])
+        for row in rows
+    )
+    return {
+        "policy": rows[0]["adaptive"]["routing"]["policy"],
+        "examples": len(rows),
+        "action_counts": dict(actions),
+        "repair_rate": repairs / len(rows),
+    }
 
 
 def summarize_instrumentation(rows: list[dict], modes: list[str]) -> dict:
@@ -278,7 +356,13 @@ def print_summary(summary: dict) -> None:
     table.add_column("Recall@K")
     table.add_column("All Support Recall@K")
 
-    _all_modes = ["baseline", "corrupted", "repaired", "repaired_iterative"]
+    _all_modes = [
+        "baseline",
+        "corrupted",
+        "repaired",
+        "repaired_iterative",
+        "adaptive",
+    ]
     for mode in [m for m in _all_modes if m in summary]:
         table.add_row(
             mode,
