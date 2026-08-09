@@ -1,12 +1,15 @@
 from dataclasses import replace
+import json
 from types import SimpleNamespace
 
 import pytest
 
 from pipeline import ForwardRepairPipeline
 from routing import (
+    FEATURE_NAMES,
     FailureSignals,
     HeuristicRepairPolicy,
+    LearnedRepairPolicy,
     LexicalFailureDetector,
     RepairAction,
     RepairPolicy,
@@ -118,6 +121,56 @@ def test_lexical_detector_handles_empty_retrieval_and_unknown_answer():
 )
 def test_heuristic_policy_routes_expected_failure_class(signals, expected):
     assert HeuristicRepairPolicy().decide(signals) == expected
+
+
+def test_learned_policy_predicts_and_round_trips(tmp_path):
+    feature_count = len(FEATURE_NAMES)
+    coefficients = [[0.0] * feature_count for _ in RepairAction]
+    coefficients[2][6] = 5.0
+    policy = LearnedRepairPolicy(
+        actions=list(RepairAction),
+        coefficients=coefficients,
+        intercepts=[0.0, -1.0, -0.5, -2.0],
+        feature_means=[0.0] * feature_count,
+        feature_scales=[1.0] * feature_count,
+    )
+    unknown = _signals(
+        answer_in_context=False,
+        answer_context_overlap=0.0,
+        answer_is_unknown=True,
+    )
+
+    assert policy.decide(unknown) == RepairAction.REPAIR_ANSWER
+    probabilities = policy.predict_proba(unknown)
+    assert sum(probabilities.values()) == pytest.approx(1.0)
+    assert max(probabilities, key=probabilities.get) == "repair_answer"
+    metadata = policy.decision_metadata(unknown)
+    assert metadata["probabilities"] == probabilities
+    assert metadata["confidence"] == probabilities["repair_answer"]
+
+    restored = LearnedRepairPolicy.from_dict(policy.to_dict())
+    assert restored.decide(unknown) == RepairAction.REPAIR_ANSWER
+    assert restored.to_dict() == policy.to_dict()
+
+    model_path = tmp_path / "router.json"
+    model_path.write_text(json.dumps(policy.to_dict()), encoding="utf-8")
+    loaded = LearnedRepairPolicy.load(model_path)
+    assert loaded.decide(unknown) == RepairAction.REPAIR_ANSWER
+
+
+def test_learned_policy_rejects_feature_schema_drift():
+    feature_count = len(FEATURE_NAMES)
+    payload = LearnedRepairPolicy(
+        actions=list(RepairAction),
+        coefficients=[[0.0] * feature_count for _ in RepairAction],
+        intercepts=[0.0] * len(RepairAction),
+        feature_means=[0.0] * feature_count,
+        feature_scales=[1.0] * feature_count,
+    ).to_dict()
+    payload["feature_names"][0] = "renamed_feature"
+
+    with pytest.raises(ValueError, match="feature schema"):
+        LearnedRepairPolicy.from_dict(payload)
 
 
 class FixedPolicy(RepairPolicy):

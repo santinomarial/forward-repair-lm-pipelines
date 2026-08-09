@@ -99,7 +99,20 @@ python src/experiment.py \
   --max-examples 10
 ```
 
-The current heuristic is an interpretable baseline for the learned router—not a claim that lexical signals solve failure attribution. In particular, it handles yes/no answers conservatively because lexical overlap cannot establish entailment.
+The heuristic policy is an interpretable four-action baseline. A learned three-way stage router can be trained offline from the existing controlled runs:
+
+```bash
+python src/train_router.py
+python src/experiment.py \
+  --include-adaptive \
+  --adaptive-policy learned \
+  --router-model outputs/adaptive_router_model.json \
+  --max-examples 10
+```
+
+Training is grouped by question ID, so baseline, query-corrupted, and answer-corrupted variants of a question never cross the train/test boundary. Across five 80/20 grouped holdouts, the router reaches **79.3% ± 2.0% accuracy** and **0.788 ± 0.020 macro-F1** on stage attribution. On this balanced attribution benchmark, it predicts repair for **70.7% ± 4.0%** of cases, avoiding about 29% of unconditional repairs.
+
+These are attribution results, not end-to-end recovery claims. Iterative escalation remains heuristic because the current data contains only 24 iterative-only successes—too few for a defensible learned fourth class. The next evaluation is a held-out live run measuring recovered EM per added call.
 
 ## Quick start
 
@@ -184,6 +197,7 @@ Useful switches:
 | Different encoder | `--dense-model sentence-transformers/all-MiniLM-L6-v2` |
 | Cold latency measurement | `--disable-lm-cache` |
 | Gold-free repair routing | `--include-adaptive` |
+| Learned stage router | Add `--adaptive-policy learned` after running `src/train_router.py` |
 | Fast smoke run | `--max-examples 10` |
 | Re-score saved generations | `python src/rescore.py --input <results.jsonl>` |
 
@@ -196,7 +210,7 @@ The test suite uses deterministic fixtures and mocks—never live LLM calls.
 ```bash
 pytest --cov=metrics --cov=retriever --cov=routing --cov-report=term-missing --cov-fail-under=90
 ruff check src tests demo
-mypy src/metrics.py src/retriever.py src/routing.py
+mypy -m metrics -m retriever -m routing -m train_router
 ```
 
 CI runs the same checks on every push and pull request. The suite covers metric normalization and recovery math, BM25 ranking and union semantics, backend contracts, telemetry, significance testing, and stratification.
@@ -212,6 +226,7 @@ src/
 ├── dspy_modules.py         # typed DSPy signatures and modules
 ├── metrics.py              # answer and retrieval metrics
 ├── routing.py              # gold-free failure signals and repair policies
+├── train_router.py         # grouped training and held-out router evaluation
 ├── telemetry.py            # calls, tokens, cost, and stage latency
 ├── significance.py         # paired bootstrap comparisons
 ├── stratified_analysis.py  # single-hop and multi-hop analysis

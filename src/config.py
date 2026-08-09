@@ -38,6 +38,8 @@ STRATIFIED_RESULTS_PATH = OUTPUT_DIR / "stratified_analysis.json"
 STRATIFIED_MULTI_RESULTS_PATH = OUTPUT_DIR / "stratified_300x3.json"
 STAGE_COMPARISON_PATH = OUTPUT_DIR / "stage_comparison.json"
 SIGNIFICANCE_PATH = OUTPUT_DIR / "significance.json"
+ROUTER_MODEL_PATH = OUTPUT_DIR / "adaptive_router_model.json"
+ROUTER_METRICS_PATH = OUTPUT_DIR / "adaptive_router_metrics.json"
 
 FIGURE_QUERY_SEED_PATHS = tuple(
     OUTPUT_DIR / f"hotpot_300_seed{seed}_results_renormalized.jsonl"

@@ -1,6 +1,7 @@
 import argparse
 import json
 from collections import Counter, defaultdict
+from pathlib import Path
 
 import dspy
 from rich.console import Console
@@ -16,6 +17,8 @@ from config import (
     EXAMPLES_PATH,
     EXPERIMENT_DEFAULT_SUFFIX,
     OUTPUT_DIR,
+    ROOT_DIR,
+    ROUTER_MODEL_PATH,
     TOP_K,
     experiment_paths,
 )
@@ -30,11 +33,19 @@ from metrics import (
 )
 from pipeline import ForwardRepairPipeline
 from retriever import DenseRetriever, build_retriever
-from routing import HeuristicRepairPolicy, LexicalFailureDetector
+from routing import HeuristicRepairPolicy, LearnedRepairPolicy, LexicalFailureDetector
 from telemetry import LMUsageSnapshot
 
 
 console = Console()
+
+
+def display_path(path: Path) -> str:
+    resolved = path.resolve()
+    try:
+        return resolved.relative_to(ROOT_DIR).as_posix()
+    except ValueError:
+        return str(resolved)
 
 
 def score_run(run: dict, gold: str, support_doc_ids: list[str]) -> dict:
@@ -87,8 +98,20 @@ def main() -> None:
         action="store_true",
         help=(
             "Diagnose the corrupted run without gold labels and route it through "
-            "the heuristic repair policy."
+            "the selected repair policy."
         ),
+    )
+    parser.add_argument(
+        "--adaptive-policy",
+        choices=["heuristic", "learned"],
+        default="heuristic",
+        help="Policy used by --include-adaptive.",
+    )
+    parser.add_argument(
+        "--router-model",
+        type=Path,
+        default=ROUTER_MODEL_PATH,
+        help="Serialized model used by --adaptive-policy learned.",
     )
     args = parser.parse_args()
 
@@ -120,7 +143,11 @@ def main() -> None:
     )
     pipeline = ForwardRepairPipeline(retriever=retriever, corrupt_stage=args.corrupt_stage)
     failure_detector = LexicalFailureDetector()
-    repair_policy = HeuristicRepairPolicy()
+    repair_policy = (
+        LearnedRepairPolicy.load(args.router_model)
+        if args.adaptive_policy == "learned"
+        else HeuristicRepairPolicy()
+    )
 
     if args.corrupt_stage == "query":
         pipeline.corrupted_query_generator.generate.set_lm(lm_stoch)
@@ -217,6 +244,11 @@ def main() -> None:
         "dense_model": args.dense_model if args.retriever == "dense" else None,
         "lm_cache": not args.disable_lm_cache,
         "adaptive_policy": repair_policy.name if args.include_adaptive else None,
+        "router_model": (
+            display_path(args.router_model)
+            if args.include_adaptive and args.adaptive_policy == "learned"
+            else None
+        ),
     }
 
     with summary_path.open("w", encoding="utf-8") as f:

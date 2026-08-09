@@ -3,7 +3,22 @@
 from abc import ABC, abstractmethod
 from dataclasses import asdict, dataclass
 from enum import Enum
+import json
+import math
+from pathlib import Path
 import re
+
+
+FEATURE_NAMES = (
+    "retrieval_score_margin",
+    "positive_score_fraction",
+    "question_document_overlap",
+    "query_document_overlap",
+    "answer_context_overlap",
+    "answer_in_context",
+    "answer_is_unknown",
+    "answer_is_binary",
+)
 
 
 _STOP_WORDS = {
@@ -76,6 +91,10 @@ class FailureSignals:
 
     def to_dict(self) -> dict[str, float | bool]:
         return asdict(self)
+
+    def to_vector(self) -> list[float]:
+        values = self.to_dict()
+        return [float(values[name]) for name in FEATURE_NAMES]
 
 
 class FailureDetector(ABC):
@@ -156,6 +175,10 @@ class RepairPolicy(ABC):
     def decide(self, signals: FailureSignals) -> RepairAction:
         """Choose whether and where to repair one completed RAG run."""
 
+    def decision_metadata(self, signals: FailureSignals) -> dict:
+        """Return optional policy-specific evidence for audit logs."""
+        return {}
+
 
 class HeuristicRepairPolicy(RepairPolicy):
     """Transparent first policy for benchmarking future learned routers."""
@@ -205,3 +228,119 @@ class HeuristicRepairPolicy(RepairPolicy):
             return RepairAction.REPAIR_ANSWER
 
         return RepairAction.ACCEPT
+
+
+class LearnedRepairPolicy(RepairPolicy):
+    """Serialized multiclass linear policy trained on controlled failures."""
+
+    def __init__(
+        self,
+        *,
+        actions: list[RepairAction],
+        coefficients: list[list[float]],
+        intercepts: list[float],
+        feature_means: list[float],
+        feature_scales: list[float],
+        name: str = "softmax_v1",
+    ):
+        feature_count = len(FEATURE_NAMES)
+        if not actions:
+            raise ValueError("actions must not be empty")
+        if len(coefficients) != len(actions) or len(intercepts) != len(actions):
+            raise ValueError("one coefficient row and intercept are required per action")
+        if any(len(row) != feature_count for row in coefficients):
+            raise ValueError(f"each coefficient row must have {feature_count} values")
+        if len(feature_means) != feature_count or len(feature_scales) != feature_count:
+            raise ValueError(f"feature statistics must have {feature_count} values")
+        if any(scale <= 0 for scale in feature_scales):
+            raise ValueError("feature scales must be positive")
+
+        self.actions = actions
+        self.coefficients = coefficients
+        self.intercepts = intercepts
+        self.feature_means = feature_means
+        self.feature_scales = feature_scales
+        self.name = name
+
+    def _scores(self, signals: FailureSignals) -> list[float]:
+        features = [
+            (value - mean) / scale
+            for value, mean, scale in zip(
+                signals.to_vector(),
+                self.feature_means,
+                self.feature_scales,
+                strict=True,
+            )
+        ]
+        return [
+            intercept
+            + sum(
+                coefficient * feature
+                for coefficient, feature in zip(row, features, strict=True)
+            )
+            for row, intercept in zip(
+                self.coefficients,
+                self.intercepts,
+                strict=True,
+            )
+        ]
+
+    def predict_proba(self, signals: FailureSignals) -> dict[str, float]:
+        scores = self._scores(signals)
+        maximum = max(scores)
+        exponentials = [math.exp(score - maximum) for score in scores]
+        denominator = sum(exponentials)
+        return {
+            action.value: value / denominator
+            for action, value in zip(self.actions, exponentials, strict=True)
+        }
+
+    def decide(self, signals: FailureSignals) -> RepairAction:
+        scores = self._scores(signals)
+        best_index = max(range(len(scores)), key=scores.__getitem__)
+        return self.actions[best_index]
+
+    def decision_metadata(self, signals: FailureSignals) -> dict:
+        probabilities = self.predict_proba(signals)
+        return {
+            "probabilities": probabilities,
+            "confidence": max(probabilities.values()),
+        }
+
+    def to_dict(self) -> dict:
+        return {
+            "schema_version": 1,
+            "policy_type": "multiclass_linear",
+            "name": self.name,
+            "feature_names": list(FEATURE_NAMES),
+            "actions": [action.value for action in self.actions],
+            "coefficients": self.coefficients,
+            "intercepts": self.intercepts,
+            "feature_means": self.feature_means,
+            "feature_scales": self.feature_scales,
+        }
+
+    @classmethod
+    def from_dict(cls, payload: dict) -> "LearnedRepairPolicy":
+        if payload.get("schema_version") != 1:
+            raise ValueError(
+                f"Unsupported router schema: {payload.get('schema_version')!r}"
+            )
+        if tuple(payload.get("feature_names", ())) != FEATURE_NAMES:
+            raise ValueError("Router feature schema does not match this code version")
+        return cls(
+            actions=[RepairAction(value) for value in payload["actions"]],
+            coefficients=[
+                [float(value) for value in row]
+                for row in payload["coefficients"]
+            ],
+            intercepts=[float(value) for value in payload["intercepts"]],
+            feature_means=[float(value) for value in payload["feature_means"]],
+            feature_scales=[float(value) for value in payload["feature_scales"]],
+            name=str(payload.get("name", "softmax_v1")),
+        )
+
+    @classmethod
+    def load(cls, path: Path) -> "LearnedRepairPolicy":
+        with path.open("r", encoding="utf-8") as file:
+            return cls.from_dict(json.load(file))

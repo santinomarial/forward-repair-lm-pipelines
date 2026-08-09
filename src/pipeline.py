@@ -291,6 +291,7 @@ class ForwardRepairPipeline:
             "repaired": action != RepairAction.ACCEPT,
             "decision_latency_seconds": decision_latency,
             "signals": signals.to_dict(),
+            **policy.decision_metadata(signals),
         }
         final["initial"] = {
             "query": initial["query"],

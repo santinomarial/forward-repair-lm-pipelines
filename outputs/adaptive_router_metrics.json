@@ -1,0 +1,220 @@
+{
+  "schema_version": 1,
+  "policy": "softmax_stage_router_v1",
+  "split": {
+    "grouped_by": "question_id",
+    "seed": 42,
+    "test_fraction": 0.2,
+    "test_question_ids": [
+      "5a713ea95542994082a3e6e4",
+      "5a7320565542991f9a20c61d",
+      "5a7332935542991f9a20c67d",
+      "5a760ab65542994ccc918697",
+      "5a774e9c55429972597f14f3",
+      "5a77724455429972597f153e",
+      "5a791a97554299148911f9f2",
+      "5a7997a2554299029c4b5f59",
+      "5a7a1cd85542990783324e65",
+      "5a7a230e5542996a35c170ee",
+      "5a7b7ff75542995eb53be93d",
+      "5a7cbf8c554299452d57b9f4",
+      "5a8325b35542990548d0b18f",
+      "5a85eed75542996432c5713b",
+      "5a86769c5542994775f60776",
+      "5a87d8215542994775f60800",
+      "5a88d745554299206df2b378",
+      "5a88e605554299206df2b39c",
+      "5a8979f4554299669944a52e",
+      "5a89f5815542993b751ca9c5",
+      "5a8b63fa55429950cd6afcd7",
+      "5a8b987f5542997f31a41d7a",
+      "5a8c7595554299585d9e36b6",
+      "5a8db19d5542994ba4e3dd00",
+      "5a8f4c8d554299458435d5a3",
+      "5ab1e984554299340b525428",
+      "5ab2a186554299295394677b",
+      "5ab47d765542991751b4d78f",
+      "5ab6369655429953192ad2a1",
+      "5ab642845542995eadeeff8e",
+      "5ab8688b55429934fafe6daa",
+      "5ab9debb55429955dce3ed97",
+      "5abc0a5d5542993f40c73c64",
+      "5abc3a65554299700f9d782d",
+      "5abcfc365542993a06baf9d6",
+      "5ac119335542992a796dede4",
+      "5ac120c55542992a796dedfc",
+      "5ac1b8ee5542994d76dccedc",
+      "5ac3e0f7554299194317388b",
+      "5adbfbd555429947ff173893",
+      "5adc53f75542996e6852530a",
+      "5add673e5542992ae4cec54d",
+      "5adddccd5542997dc7907069",
+      "5adf37a95542995ec70e8f97",
+      "5adf65555542992d7e9f9334",
+      "5adffe7155429906c02daa9e",
+      "5ae0006755429925eb1afbd3",
+      "5ae057fd55429945ae959328",
+      "5ae058e855429945ae959331",
+      "5ae0a59a55429945ae9593e2",
+      "5ae0aaf455429945ae959401",
+      "5ae2dd2055429928c423950d",
+      "5ae406245542995dadf242e2",
+      "5ae4563e5542996836b02c7f",
+      "5ae52c0f5542992663a4f12e",
+      "5ae67dba55429908198fa5f0",
+      "5ae6828f5542996d980e7bb9",
+      "5ae791ef55429952e35ea979",
+      "5ae7eaf65542994a481bbe1d",
+      "5ae7edee554299540e5a56ad"
+    ]
+  },
+  "train": {
+    "examples": 720,
+    "accuracy": 0.7819444444444444,
+    "macro_f1": 0.7764790189771432,
+    "predicted_repair_rate": 0.7125,
+    "per_action": {
+      "accept": {
+        "precision": 0.7246376811594203,
+        "recall": 0.625,
+        "f1": 0.6711409395973154,
+        "support": 240
+      },
+      "repair_query": {
+        "precision": 0.7922077922077922,
+        "recall": 0.7625,
+        "f1": 0.7770700636942675,
+        "support": 240
+      },
+      "repair_answer": {
+        "precision": 0.8156028368794326,
+        "recall": 0.9583333333333334,
+        "f1": 0.8812260536398467,
+        "support": 240
+      }
+    },
+    "confusion_matrix": {
+      "accept": {
+        "accept": 150,
+        "repair_query": 46,
+        "repair_answer": 44
+      },
+      "repair_query": {
+        "accept": 49,
+        "repair_query": 183,
+        "repair_answer": 8
+      },
+      "repair_answer": {
+        "accept": 8,
+        "repair_query": 2,
+        "repair_answer": 230
+      }
+    },
+    "predicted_action_counts": {
+      "accept": 207,
+      "repair_query": 231,
+      "repair_answer": 282
+    }
+  },
+  "test": {
+    "examples": 180,
+    "accuracy": 0.7888888888888889,
+    "macro_f1": 0.7796296296296297,
+    "predicted_repair_rate": 0.75,
+    "per_action": {
+      "accept": {
+        "precision": 0.7777777777777778,
+        "recall": 0.5833333333333334,
+        "f1": 0.6666666666666666,
+        "support": 60
+      },
+      "repair_query": {
+        "precision": 0.7833333333333333,
+        "recall": 0.7833333333333333,
+        "f1": 0.7833333333333333,
+        "support": 60
+      },
+      "repair_answer": {
+        "precision": 0.8,
+        "recall": 1.0,
+        "f1": 0.888888888888889,
+        "support": 60
+      }
+    },
+    "confusion_matrix": {
+      "accept": {
+        "accept": 35,
+        "repair_query": 13,
+        "repair_answer": 12
+      },
+      "repair_query": {
+        "accept": 10,
+        "repair_query": 47,
+        "repair_answer": 3
+      },
+      "repair_answer": {
+        "accept": 0,
+        "repair_query": 0,
+        "repair_answer": 60
+      }
+    },
+    "predicted_action_counts": {
+      "repair_query": 60,
+      "repair_answer": 75,
+      "accept": 45
+    }
+  },
+  "repeated_holdout": {
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "accuracy": {
+      "mean": 0.7933333333333333,
+      "std": 0.019688939051854818
+    },
+    "macro_f1": {
+      "mean": 0.7881426338836094,
+      "std": 0.020413637125055437
+    },
+    "predicted_repair_rate": {
+      "mean": 0.7066666666666667,
+      "std": 0.03965904066127724
+    },
+    "runs": [
+      {
+        "seed": 0,
+        "accuracy": 0.7833333333333333,
+        "macro_f1": 0.782258064516129,
+        "predicted_repair_rate": 0.6444444444444444
+      },
+      {
+        "seed": 1,
+        "accuracy": 0.7722222222222223,
+        "macro_f1": 0.7660008229529046,
+        "predicted_repair_rate": 0.7111111111111111
+      },
+      {
+        "seed": 2,
+        "accuracy": 0.8111111111111111,
+        "macro_f1": 0.8080968769266352,
+        "predicted_repair_rate": 0.6833333333333333
+      },
+      {
+        "seed": 3,
+        "accuracy": 0.8222222222222222,
+        "macro_f1": 0.8159267912772585,
+        "predicted_repair_rate": 0.7388888888888889
+      },
+      {
+        "seed": 4,
+        "accuracy": 0.7777777777777778,
+        "macro_f1": 0.7684306137451196,
+        "predicted_repair_rate": 0.7555555555555555
+      }
+    ]
+  }
+}

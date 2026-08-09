@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "policy_type": "multiclass_linear",
+  "name": "softmax_stage_router_v1",
+  "feature_names": [
+    "retrieval_score_margin",
+    "positive_score_fraction",
+    "question_document_overlap",
+    "query_document_overlap",
+    "answer_context_overlap",
+    "answer_in_context",
+    "answer_is_unknown",
+    "answer_is_binary"
+  ],
+  "actions": [
+    "accept",
+    "repair_query",
+    "repair_answer"
+  ],
+  "coefficients": [
+    [
+      0.3313842358124044,
+      0.0,
+      0.6098971375517167,
+      -0.08015062042447862,
+      -0.33424641185682075,
+      0.545462544016426,
+      0.38966197940392283,
+      0.2717388321531729
+    ],
+    [
+      -0.7061366068241959,
+      0.0,
+      -0.5818513045551998,
+      0.09267839958434329,
+      -0.2529669416333294,
+      0.9199774024686985,
+      1.295581521422791,
+      -0.12046660910861273
+    ],
+    [
+      0.3747523710117901,
+      0.0,
+      -0.028045832996517656,
+      -0.01252777915986454,
+      0.5872133534901487,
+      -1.4654399464851275,
+      -1.6852435008267164,
+      -0.1512722230445598
+    ]
+  ],
+  "intercepts": [
+    0.6504639583296757,
+    -0.04018259553841843,
+    -0.610281362791256
+  ],
+  "feature_means": [
+    0.0960774121994202,
+    1.0,
+    0.7290096147128207,
+    0.8287048615418715,
+    0.5763064673607387,
+    0.2638888888888889,
+    0.33611111111111114,
+    0.005555555555555556
+  ],
+  "feature_scales": [
+    0.09690849443879995,
+    1.0,
+    0.23038023455290324,
+    0.15094349415521055,
+    0.44040945359151396,
+    0.44073976812840204,
+    0.4723774254753943,
+    0.07432826755699885
+  ],
+  "training": {
+    "query_results": {
+      "path": "outputs/hotpot_300_iterative_seed0_results_renormalized.jsonl",
+      "sha256": "97307276a0c1a570c02dce2c4d18d5613ef6e353633cc9449cb895df03a03419"
+    },
+    "answer_results": {
+      "path": "outputs/hotpot_300_answer_corruption_seed0_results_renormalized.jsonl",
+      "sha256": "563da2692b95dc7b6901ebf4d3c99d1f2fc84c3b5bb20b0f8e1cb766f2ddd587"
+    },
+    "seed": 42,
+    "test_fraction": 0.2,
+    "epochs": 2000,
+    "learning_rate": 0.1,
+    "l2": 0.001,
+    "class_weight_power": 0.5,
+    "train_examples": 720,
+    "test_examples": 180,
+    "train_question_ids": 240,
+    "test_question_ids": 60,
+    "train_action_counts": {
+      "accept": 240,
+      "repair_query": 240,
+      "repair_answer": 240
+    }
+  }
+}
