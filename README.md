@@ -12,6 +12,10 @@ This project studies failure recovery in a multi-stage RAG system. It injects a 
 
 The result is a reproducible [DSPy](https://github.com/stanfordnlp/dspy) evaluation pipeline with swappable retrieval and LLM backends, gold-free failure routing, paired statistical tests, and per-stage cost and latency telemetry.
 
+- Architected a **Python/DSPy** framework that injects, isolates, and repairs query- or answer-stage RAG failures without rerunning unaffected stages.
+- Demonstrated across **300 HotpotQA examples** that query repair improved exact match by **19.3 percentage points**, while answer repair recovered only **2.2%** of failures.
+- Engineered interchangeable **BM25/dense retrieval** and **OpenAI/Ollama** backends with cost and latency telemetry, **54 deterministic tests**, **93% targeted coverage**, and automated CI.
+
 ## Why this matters
 
 RAG failures are rarely uniform. A poor query, weak retrieval, and an ungrounded answer require different interventions. Retrying the full pipeline hides that distinction and spends more compute without identifying the source of failure.
@@ -26,7 +30,9 @@ The main finding: **repairing retrieval upstream is effective; repairing an alre
 
 ## Main results
 
-HotpotQA distractor split · 300 examples · three seeds · BM25 · `gpt-4o-mini`
+HotpotQA distractor split · BM25 · `gpt-4o-mini`
+
+Query repair: 300 examples × 3 seeds. Iterative and answer-stage analyses: 300 examples, seed 0.
 
 | Condition | Exact match | Recall@K | All support@K | Recovery rate |
 |:--|--:|--:|--:|--:|
@@ -38,6 +44,8 @@ HotpotQA distractor split · 300 examples · three seeds · BM25 · `gpt-4o-mini
 | Answer repair | 7.0% | 95.7% | 52.0% | 2.2% |
 
 Query repair restores most of the baseline retrieval and exact-match performance. Iterative repair is especially useful on genuinely multi-hop questions: EM rises from 49.4% with single-shot repair to 61.0%. Answer-stage repair barely recovers failures despite receiving the same evidence, suggesting that revision remains anchored to the original wrong answer.
+
+![Exact-match and retrieval results across repair conditions](outputs/figures/main_results.png)
 
 ### Statistical check
 
@@ -123,6 +131,12 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 pip install -r requirements-dev.txt
+```
+
+Verify the checkout with one command:
+
+```bash
+make check
 ```
 
 ### OpenAI
@@ -214,6 +228,13 @@ mypy -m metrics -m retriever -m routing -m train_router
 ```
 
 CI runs the same checks on every push and pull request. The suite covers metric normalization and recovery math, BM25 ranking and union semantics, backend contracts, telemetry, significance testing, and stratification.
+
+## Limitations
+
+- Failures are deliberately injected, so their frequency does not represent production traffic.
+- The learned router is evaluated within the HotpotQA benchmark family; cross-dataset generalization remains untested.
+- Iterative and answer-stage results use one seed, and model outputs remain provider- and version-dependent.
+- The iterative recovery-rate lift is not statistically conclusive at the aggregate level.
 
 ## Project map
 
