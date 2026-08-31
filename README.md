@@ -5,6 +5,7 @@
 **When one stage fails, repair that stage—not the entire pipeline.**
 
 [![CI](https://github.com/santinomarial/forward-repair-lm-pipelines/actions/workflows/ci.yml/badge.svg)](https://github.com/santinomarial/forward-repair-lm-pipelines/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 </div>
 
@@ -259,3 +260,7 @@ outputs/                    # saved runs, summaries, figures, and tables
 ```
 
 The implementation favors explicit interfaces, saved intermediate results, and analysis that can be repeated without paying for another model run. That keeps backend changes isolated and experimental claims auditable.
+
+## License
+
+Released under the [MIT License](LICENSE).
