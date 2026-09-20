@@ -1,6 +1,7 @@
 import copy
 import json
 import sys
+from contextlib import nullcontext
 from types import SimpleNamespace
 
 import pytest
@@ -222,3 +223,99 @@ def test_analyze_only_never_initializes_llm(tmp_path, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["answer_ablation", "--analyze-only", str(source), "--resamples", "10"])
     answer_ablation.main()
     assert json.loads(summary.read_text())["examples"] == 4
+
+
+def test_live_cli_and_resume_with_mock_lm(tmp_path, monkeypatch, source):
+    input_path = tmp_path / "source.jsonl"
+    input_path.write_text(json.dumps(source) + "\n")
+    results = tmp_path / "results.jsonl"
+    summary = tmp_path / "summary.json"
+    calls = []
+    models_created = []
+    model = SimpleNamespace(history=[])
+
+    def create_lm(**kwargs):
+        models_created.append(kwargs)
+        return model
+
+    def backend(*args, **kwargs):
+        assert kwargs["cache"] is False
+        return SimpleNamespace(create_lm=create_lm)
+
+    original_modules = build_modules
+
+    def modules():
+        result = original_modules()
+        for mode, module in result.items():
+            mock = _fake_modules(calls, model)[mode]
+            mock.signature = module.generate.signature
+            module.generate = mock
+        return result
+
+    monkeypatch.setattr(answer_ablation, "build_modules", modules)
+    monkeypatch.setattr(answer_ablation, "build_llm_backend", backend)
+    monkeypatch.setattr(answer_ablation.dspy, "context", lambda **kwargs: nullcontext())
+    monkeypatch.setattr(answer_ablation, "experiment_paths", lambda _: (results, summary))
+    argv = ["answer_ablation", "--input", str(input_path), "--max-examples", "1", "--resamples", "10"]
+    monkeypatch.setattr(sys, "argv", argv)
+    answer_ablation.main()
+    saved = results.read_text()
+    report = json.loads(summary.read_text())
+    assert report["complete"] is True
+    assert report["run_config"]["lm_cache"] is False
+    assert report["run_config"]["temperature"] == 0
+    assert set(report["run_config"]["prompt_sha256"]) == set(CONDITIONS)
+    assert models_created == [{"temperature": 0, "seed": 0}]
+    assert len(calls) == 3
+
+    monkeypatch.setattr(sys, "argv", [*argv, "--resume"])
+    answer_ablation.main()
+    assert results.read_text() == saved
+    assert len(calls) == 3
+    assert len(models_created) == 1
+    input_path.write_text(json.dumps({**source, "gold": "different"}) + "\n")
+    with pytest.raises(ValueError, match="same input"):
+        answer_ablation.main()
+    assert len(calls) == 3
+
+
+def test_partial_run_summary_is_explicit():
+    rows = _scored_rows()
+    for row in rows:
+        row["run_config"] = {"examples": 300}
+    assert summarize_ablation(rows, n_resamples=10)["complete"] is False
+
+
+@pytest.mark.parametrize("arguments", [
+    ["--max-examples", "0"],
+    ["--max-tokens", "0"],
+    ["--resamples", "0"],
+    ["--confidence", "1"],
+    ["--output-suffix", "../source"],
+])
+def test_cli_rejects_unsafe_arguments(arguments, monkeypatch):
+    monkeypatch.setattr(sys, "argv", ["answer_ablation", *arguments])
+    with pytest.raises(SystemExit) as exc:
+        answer_ablation.main()
+    assert exc.value.code == 2
+
+
+@pytest.mark.parametrize("field,value", [("question", ""), ("docs", "not a list")])
+def test_source_validation_rejects_bad_fields(source, field, value):
+    if field == "question":
+        source[field] = value
+    else:
+        source["corrupted"][field] = value
+    with pytest.raises(ValueError):
+        validate_sources([source])
+
+
+@pytest.mark.parametrize("analyze_only", [True, False])
+def test_cli_rejects_overwriting_source(tmp_path, monkeypatch, analyze_only):
+    path = tmp_path / "source.jsonl"
+    monkeypatch.setattr(answer_ablation, "experiment_paths", lambda _: (tmp_path / "results", path))
+    flag = "--analyze-only" if analyze_only else "--input"
+    monkeypatch.setattr(sys, "argv", ["answer_ablation", flag, str(path)])
+    with pytest.raises(SystemExit) as exc:
+        answer_ablation.main()
+    assert exc.value.code == 2

@@ -23,4 +23,4 @@ jobs:
       - name: Type check core utilities
         run: mypy -m metrics -m retriever -m routing -m train_router -m significance -m answer_ablation
       - name: Test
-        run: pytest --cov=metrics --cov=retriever --cov=routing --cov-report=term-missing --cov-fail-under=90
+        run: pytest --cov=metrics --cov=retriever --cov=routing --cov=answer_ablation --cov-report=term-missing --cov-fail-under=90

@@ -15,7 +15,7 @@ The result is a reproducible [DSPy](https://github.com/stanfordnlp/dspy) evaluat
 
 - Architected a **Python/DSPy** framework that injects, isolates, and repairs query- or answer-stage RAG failures without rerunning unaffected stages.
 - Demonstrated across **300 HotpotQA examples** that query repair improved exact match by **19.3 percentage points**, while answer repair recovered only **2.2%** of failures.
-- Engineered interchangeable **BM25/dense retrieval** and **OpenAI/Ollama** backends with cost and latency telemetry, deterministic tests, **93% targeted coverage**, and automated CI.
+- Engineered interchangeable **BM25/dense retrieval** and **OpenAI/Ollama** backends with cost and latency telemetry, **82 deterministic tests**, **96% targeted coverage**, and automated CI.
 
 ## Why this matters
 
@@ -245,12 +245,12 @@ Results are written to `outputs/<suffix>_results.jsonl`; aggregate summaries go 
 The test suite uses deterministic fixtures and mocks—never live LLM calls.
 
 ```bash
-pytest --cov=metrics --cov=retriever --cov=routing --cov-report=term-missing --cov-fail-under=90
+pytest --cov=metrics --cov=retriever --cov=routing --cov=answer_ablation --cov-report=term-missing --cov-fail-under=90
 ruff check src tests demo
 mypy -m metrics -m retriever -m routing -m train_router -m significance -m answer_ablation
 ```
 
-CI runs the same checks on every push and pull request. The suite covers metric normalization and recovery math, BM25 ranking and union semantics, backend contracts, telemetry, significance testing, and stratification.
+CI runs the same checks on every push and pull request. The suite covers metric normalization and recovery math, BM25 ranking and union semantics, backend contracts, telemetry, significance testing, stratification, and the ablation CLI's evidence isolation and resume safety. Targeted coverage spans metrics, retrieval, routing, and the answer ablation.
 
 ## Limitations
 

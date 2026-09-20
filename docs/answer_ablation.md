@@ -51,7 +51,8 @@ benchmark.
 
 The JSONL records evidence once per example, all generated answers, execution
 order, usage, and a run configuration with input/prompt hashes and DSPy version.
-The summary is reproducible without API access.
+The summary is reproducible without API access. Offline reports mark incomplete
+runs with `complete: false`; do not present those as the full planned evaluation.
 
 ## Run
 

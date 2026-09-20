@@ -197,6 +197,7 @@ def summarize_ablation(
         if any(row.get("run_config") != config for row in rows):
             raise ValueError("cannot combine different run configurations")
         summary["run_config"] = config
+        summary["complete"] = len(rows) == config["examples"]
     return summary
 
 

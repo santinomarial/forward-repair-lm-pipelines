@@ -5,7 +5,7 @@ PYTHON ?= .venv/bin/python
 check: lint typecheck test
 
 test:
-	$(PYTHON) -m pytest --cov=metrics --cov=retriever --cov=routing --cov-report=term-missing --cov-fail-under=90
+	$(PYTHON) -m pytest --cov=metrics --cov=retriever --cov=routing --cov=answer_ablation --cov-report=term-missing --cov-fail-under=90
 
 lint:
 	$(PYTHON) -m ruff check src tests demo
