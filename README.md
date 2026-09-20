@@ -125,6 +125,12 @@ An [offline error audit](outputs/error_audit/report.md) flags 21 of 57 EM recove
 
 ### Cost of repair
 
+The final [natural-error study](docs/natural_study.md) is in progress: 600 fresh
+questions, a locked 300-question holdout, evidence-preserving repair, and
+natural-outcome/damage-aware controllers under one **$5 reservation cap**.
+This follow-up uses a new pooled corpus; its EM is not directly comparable to the
+historical table. No positive result is assumed in advance.
+
 Cold-cache snapshot · 10 examples · `gpt-4o-mini`
 
 | Condition | Calls / example | Tokens / example | Cost / example | Latency / example |
@@ -347,6 +353,9 @@ src/
 ├── outcome_routing.py      # cost-sensitive policy learned from action outcomes
 ├── reliability_study.py    # budgeted collection, model freeze, held-out evaluation
 ├── reliability_analysis.py # paired, question-clustered recovery and harm report
+├── natural_study.py        # fresh natural errors, shared-query controls, $5 cap
+├── natural_routing.py      # natural-outcome and damage-penalized controllers
+├── natural_analysis.py     # frozen holdout, paired intervals, review queue
 ├── experiment_budget.py    # persistent spending guard and request pacing
 ├── case_explorer.py        # verified, read-only replay and case filtering
 ├── error_audit.py          # automatic signals and pending review queue
