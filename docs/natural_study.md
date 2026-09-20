@@ -127,3 +127,20 @@ that still answered “the Netherlands,” producing an EM regression. In
 failing EM. These were the two pilot preservation regressions. The relevant
 reference passages remained present. This is not an independent human review,
 but it shows why **EM damage must not be equated with factual harm**.
+
+## Frozen controllers
+
+Development completed before held-out collection: 240 training and 60 validation
+questions, 2,400 calls, $0.354752 estimated completed-response cost, and $1.082384
+reserved. The validation-selected settings are saved in
+[models.json](../outputs/natural_study/models.json):
+
+| Controller | Ridge | Required predicted gain |
+|:--|--:|--:|
+| Natural, original actions | 0.1 | 0.05 |
+| Natural, augmented actions | 0.1 | 0.05 |
+| Natural, augmented + damage penalty | 100 | 0.00 |
+
+The models and completed development outcomes were committed before the first
+held-out request. The test lock also hashes the analysis code. No controller is
+refit using test outcomes.
