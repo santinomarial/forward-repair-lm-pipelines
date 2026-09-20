@@ -52,3 +52,17 @@ def test_natural_replay_missing_artifacts_is_offline(tmp_path, monkeypatch):
     app.radio(key="app_mode").set_value("Natural errors · free").run()
     assert not app.exception
     assert any("could not be verified" in i.value for i in app.info)
+
+
+def test_published_natural_snapshot_replays_offline(monkeypatch):
+    monkeypatch.syspath_prepend(str(APP.parent))
+    import natural_replay
+    monkeypatch.setattr(dspy.LM, "forward", lambda *a, **k: pytest.fail("published replay called provider"))
+    natural_replay.snapshot.clear()
+    report, rows, corpus = natural_replay.snapshot(())
+    assert len(rows) == report["test_questions"] == 300
+    assert len(corpus) == 5924
+    assert sum(r["transition"] == "Recovered" for r in rows) == 16
+    assert sum(r["transition"] == "Harmed" for r in rows) == 1
+    assert report["collection"]["completed_calls"] == 4800
+    assert report["collection"]["reserved_usd"] < report["collection"]["reservation_cap_usd"] == 5

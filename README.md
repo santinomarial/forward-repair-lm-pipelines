@@ -17,7 +17,7 @@ Try the [saved-case explorer](#interactive-demo)—no API key or model download 
 
 - Architected a **Python/DSPy** framework that injects, isolates, and repairs query- or answer-stage RAG failures without rerunning unaffected stages.
 - Evaluated repair across **900 distinct HotpotQA questions**, including a frozen **300-question natural-error holdout** where selective repair improved exact match by **5.0 points [95% CI: 2.3–7.7]**.
-- Engineered interchangeable **BM25/dense retrieval** and **OpenAI/Ollama** backends with cost and latency telemetry, **169 deterministic tests**, **96%+ targeted coverage**, and automated CI.
+- Engineered interchangeable **BM25/dense retrieval** and **OpenAI/Ollama** backends with cost and latency telemetry, **170 deterministic tests**, **96%+ targeted coverage**, and automated CI.
 
 ## Why this matters
 
