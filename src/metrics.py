@@ -1,5 +1,6 @@
 import re
 import string
+from collections import Counter
 
 
 def normalize(text: str) -> str:
@@ -30,6 +31,23 @@ def exact_match(prediction: str, gold: str) -> int:
 
 def contains_answer(prediction: str, gold: str) -> int:
     return int(normalize(gold) in normalize(prediction))
+
+
+def token_f1(prediction: str, gold: str) -> float:
+    """Normalized token overlap; a lexical robustness check, not factuality.
+
+    Binary answers use the project's existing leading yes/no convention.
+    """
+    pred, target = _normalize_em(prediction), _normalize_em(gold)
+    if target in ("yes", "no"):
+        return float(exact_match(prediction, gold))
+    if pred in ("yes", "no", "unknown") and pred != target:
+        return 0.0
+    p, g = pred.split(), target.split()
+    if not p or not g:
+        return float(p == g)
+    overlap = sum((Counter(p) & Counter(g)).values())
+    return 2.0 * overlap / (len(p) + len(g))
 
 
 def recall_at_k(retrieved_docs: list[dict], support_doc_ids: list[str]) -> int:

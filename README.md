@@ -155,6 +155,22 @@ These are attribution results, not end-to-end recovery claims. Iterative escalat
 
 ## Quick start
 
+### Outcome-based routing study
+
+A new [controlled study](docs/reliability_study.md) trains a cost-sensitive router
+on observed action outcomes, then evaluates held-out questions, two unseen
+corruption mechanisms, and unmodified baseline errors. It compares no repair,
+query rewrite, context expansion, and fresh generation. The protocol separates
+training, validation, and test questions and caps collection reservations at $3.
+Results are pending; the stage-attribution results above are a separate experiment.
+
+```bash
+python src/reliability_study.py collect
+python src/reliability_study.py fit
+python src/reliability_study.py collect --phase test
+python src/reliability_study.py report
+```
+
 Python 3.11 is recommended.
 
 ```bash

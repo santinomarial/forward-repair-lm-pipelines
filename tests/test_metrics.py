@@ -92,3 +92,14 @@ def test_recovery_rate_handles_no_broken_examples():
         "repaired_fixed_count": 0,
         "recovery_rate": 0.0,
     }
+@pytest.mark.parametrize("prediction,gold,expected", [
+    ("The red red fox", "red fox", .8),
+    ("Paris is in France", "France", .4),
+    ("Yes, both are French", "yes", 1.0),
+    ("UNKNOWN", "France", 0.0),
+    ("", "", 1.0),
+    ("", "France", 0.0),
+])
+def test_token_overlap_f1(prediction, gold, expected):
+    from metrics import token_f1
+    assert token_f1(prediction, gold) == pytest.approx(expected)
