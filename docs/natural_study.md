@@ -131,7 +131,7 @@ but it shows why **EM damage must not be equated with factual harm**.
 ## Frozen controllers
 
 Development completed before held-out collection: 240 training and 60 validation
-questions, 2,400 calls, $0.354752 estimated completed-response cost, and $1.082384
+questions, 2,400 calls, $0.354752 estimated completed-response cost, and $1.082351
 reserved. The validation-selected settings are saved in
 [models.json](../outputs/natural_study/models.json):
 
