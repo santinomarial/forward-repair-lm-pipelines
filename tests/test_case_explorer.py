@@ -54,7 +54,7 @@ def test_load_replay_recomputes_policy_and_exports_exact_evidence(snapshot_fixtu
     ("context", "context hash"), ("order", "document order"), ("missing", "missing from"),
     ("features", "features"), ("accept", "preserve"), ("metrics", "metrics"),
     ("annotations", "annotations"), ("corpus", "corpus differs"), ("duplicate", "duplicate"),
-    ("support", "support missing"),
+    ("support", "support missing"), ("initial_context", "initial evidence"),
 ])
 def test_replay_refuses_inconsistent_artifacts(snapshot_fixture, mutation, message):
     path, row, corpus, manifest = snapshot_fixture
@@ -76,6 +76,8 @@ def test_replay_refuses_inconsistent_artifacts(snapshot_fixture, mutation, messa
         (path / "examples.jsonl").write_text(json.dumps(example))
     elif mutation == "corpus":
         manifest["sources"]["corpus"]["sha256"] = "changed"
+    elif mutation == "initial_context":
+        row["initial"]["context"] = "changed"
     else:
         (path / "corpus.jsonl").write_text("\n".join(json.dumps(corpus[0]) for _ in range(2)))
         manifest["sources"]["corpus"]["sha256"] = digest(path / "corpus.jsonl")

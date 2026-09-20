@@ -28,6 +28,26 @@ metrics, and verifies document order and context hashes for every action.
   the chosen action did not. This is a hindsight diagnostic, not a runtime oracle.
 - **34 initially correct outputs were kept without repair.**
 
+The four EM regressions span **three questions**, and all four changed to
+`UNKNOWN`. They are lost exact matches, not four newly fabricated claims.
+
+### Worked examples from the saved records
+
+These observations were checked by the coding assistant against the saved
+answers and document IDs. They are **not independent human annotations** and
+do not establish a causal mechanism inside the model.
+
+| Case | Recorded change | Evidence change |
+|:--|:--|:--|
+| `5a7166395542994082a3e814:vague_query` | `Kansas Song` → `UNKNOWN` | Query rewriting drops the `kansas_song` document from the top five. |
+| `5a8361b65542992ef85e22a0:query_term_substitution` | `International Boxing Hall of Fame` → `UNKNOWN` | Query rewriting drops `international_boxing_federation`, one of the annotated support documents. |
+| `5ab51dae5542991779162d82:natural` and `:ignore_context` | Correct leading `No` answers → `UNKNOWN` | Context expansion keeps both airport support documents and adds five documents. |
+
+The first two show that rewriting can lose useful evidence. The airport cases
+show that missing annotated support is not the explanation for every EM
+regression. Whether the extra context, prompt behavior, or other factors caused
+the abstention requires a separate controlled test.
+
 Flags are deliberately narrow. Gold-phrase presence is not correctness: a
 negated or contradictory response can contain the reference answer. Missing
 annotated support does not rule out sufficient alternative evidence. Having all

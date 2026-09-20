@@ -19,6 +19,8 @@ def test_audit_reproducible_damage_first_and_not_human_reviewed(snapshot):
     assert all(r["status"] == "pending" and not r["before_labels"] for r in queue)
     assert summary["groups"]["all"]["recovery_with_gold_already_present"] == 21
     assert summary["groups"]["all"]["missed_recovery"] == 15
+    assert summary["groups"]["all"]["harm_to_unknown"] == 4
+    assert summary["groups"]["all"]["harmed_questions"] == 3
     assert audit.review_sample(list(reversed(snapshot.cases))) == audit.review_sample(snapshot.cases)
     assert len(audit.review_sample(snapshot.cases, 1000)) == 300
     assert audit.review_sample([]) == []
@@ -36,6 +38,7 @@ def test_review_requires_explicit_labels_rationale_and_evidence(snapshot):
     assert template["status"] == "pending"
     for change in ({"reviewer": ""}, {"rationale": ""}, {"before_labels": []},
                    {"after_labels": ["invented"]}, {"evidence_doc_ids": ["wrong"]},
+                   {"after_labels": ["no_error", "reasoning_error"]},
                    {"after_labels": ["no_error"], "evidence_doc_ids": []}):
         with pytest.raises(ValueError):
             audit.completed_review(template, **(kwargs | change))

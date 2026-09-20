@@ -25,7 +25,9 @@
       },
       "kept_correct": 34,
       "missed_recovery": 15,
-      "recovery_with_gold_already_present": 21
+      "recovery_with_gold_already_present": 21,
+      "harmed_questions": 3,
+      "harm_to_unknown": 4
     },
     "ignore_context": {
       "cases": 60,
@@ -45,7 +47,9 @@
       },
       "kept_correct": 0,
       "missed_recovery": 3,
-      "recovery_with_gold_already_present": 20
+      "recovery_with_gold_already_present": 20,
+      "harmed_questions": 1,
+      "harm_to_unknown": 1
     },
     "natural": {
       "cases": 60,
@@ -65,7 +69,9 @@
       },
       "kept_correct": 12,
       "missed_recovery": 3,
-      "recovery_with_gold_already_present": 0
+      "recovery_with_gold_already_present": 0,
+      "harmed_questions": 1,
+      "harm_to_unknown": 1
     },
     "query_term_substitution": {
       "cases": 60,
@@ -85,7 +91,9 @@
       },
       "kept_correct": 8,
       "missed_recovery": 4,
-      "recovery_with_gold_already_present": 1
+      "recovery_with_gold_already_present": 1,
+      "harmed_questions": 1,
+      "harm_to_unknown": 1
     },
     "retrieval_rank_dropout": {
       "cases": 60,
@@ -104,7 +112,9 @@
       },
       "kept_correct": 8,
       "missed_recovery": 4,
-      "recovery_with_gold_already_present": 0
+      "recovery_with_gold_already_present": 0,
+      "harmed_questions": 0,
+      "harm_to_unknown": 0
     },
     "vague_query": {
       "cases": 60,
@@ -124,7 +134,9 @@
       },
       "kept_correct": 6,
       "missed_recovery": 1,
-      "recovery_with_gold_already_present": 0
+      "recovery_with_gold_already_present": 0,
+      "harmed_questions": 1,
+      "harm_to_unknown": 1
     }
   },
   "review_sample": {

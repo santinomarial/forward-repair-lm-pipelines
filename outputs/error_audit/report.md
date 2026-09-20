@@ -22,6 +22,8 @@ Missed recovery means another saved action achieved EM=1 when the selected actio
 - before: annotated support missing: 195
 - before: gold phrase present despite EM failure: 63
 
+The 4 EM regressions span 3 questions; 4 change to UNKNOWN. An EM regression is not automatically a newly fabricated claim.
+
 Of 57 EM recoveries, 21 already contained the whole normalized gold phrase before repair (excluding yes/no). This is a formatting-review candidate, not proof the original answer was correct.
 
 ## Human review

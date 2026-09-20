@@ -13,9 +13,11 @@ This project studies failure recovery in a multi-stage RAG system. It injects a 
 
 The result is a reproducible [DSPy](https://github.com/stanfordnlp/dspy) evaluation pipeline with swappable retrieval and LLM backends, gold-free failure routing, paired statistical tests, and per-stage cost and latency telemetry.
 
+Try the [saved-case explorer](#interactive-demo)—no API key or model download required.
+
 - Architected a **Python/DSPy** framework that injects, isolates, and repairs query- or answer-stage RAG failures without rerunning unaffected stages.
 - Demonstrated across **300 HotpotQA examples** that query repair improved exact match by **19.3 percentage points**, while answer repair recovered only **2.2%** of failures.
-- Engineered interchangeable **BM25/dense retrieval** and **OpenAI/Ollama** backends with cost and latency telemetry, **148 deterministic tests**, **96%+ targeted coverage**, and automated CI.
+- Engineered interchangeable **BM25/dense retrieval** and **OpenAI/Ollama** backends with cost and latency telemetry, **155 deterministic tests**, **96%+ targeted coverage**, and automated CI.
 
 ## Why this matters
 
@@ -252,7 +254,23 @@ pip install -r requirements-demo.txt
 streamlit run demo/app.py
 ```
 
-The demo exposes the generated query, ranked documents, and answer, then shows corruption and repair side by side. It uses the same pipeline code as the experiment runner.
+The default **Saved experiments** mode replays all 300 held-out states without an API key:
+
+- Filter recoveries, harmful repairs, correct answers kept unchanged, or missed recovery opportunities.
+- Inspect the frozen router's decision, before/after evidence, and all four saved action outcomes.
+- Compare recorded calls, tokens, cost, and latency; export a complete case with source hashes.
+- Review the 20-case audit queue and download your annotations. Reviews stay in the browser session until downloaded; published results are never changed.
+
+Start with **Recovered → Harmed → Kept correct**. Case links preserve the selected ID in `?case=…`.
+“Correct” here means exact match; the interface distinguishes lexical scores from semantic judgments.
+
+The separate **Live playground** retains the original corruption/repair demo using the experiment pipeline. It requires a configured backend and can incur API charges; the study collection cap does not apply. Nothing runs until you click a generation button.
+
+Regenerate the audit without paid calls:
+
+```bash
+python src/error_audit.py
+```
 
 ## Reproduce the study
 
@@ -302,7 +320,7 @@ The test suite uses deterministic fixtures and mocks—never live LLM calls.
 make check  # lint, type checks, tests, and a 90% targeted coverage gate
 ```
 
-CI runs the same checks on every push and pull request. Tests cover metrics, retrieval, backend contracts, telemetry, paired statistics, leakage guards, and resumable experiment collection. Targeted coverage includes both routing studies, answer ablation, and the spending guard.
+CI runs the same checks on every push and pull request. Tests cover metrics, retrieval, backend contracts, telemetry, paired statistics, leakage guards, resumable collection, and offline evidence reconstruction. Headless Streamlit tests cover filters, deep links, saved alternatives, review exports, and live-mode isolation, with provider calls forbidden. Targeted coverage includes both routing studies, answer ablation, the spending guard, and audit/replay utilities.
 
 ## Limitations
 
@@ -330,10 +348,12 @@ src/
 ├── reliability_study.py    # budgeted collection, model freeze, held-out evaluation
 ├── reliability_analysis.py # paired, question-clustered recovery and harm report
 ├── experiment_budget.py    # persistent spending guard and request pacing
+├── case_explorer.py        # verified, read-only replay and case filtering
+├── error_audit.py          # automatic signals and pending review queue
 ├── stratified_analysis.py  # single-hop and multi-hop analysis
 └── make_final_figures.py   # publication-ready figures and tables
 
-demo/app.py                 # Streamlit walkthrough
+demo/app.py                 # offline-first Streamlit explorer + live playground
 tests/                      # deterministic unit and integration tests
 outputs/                    # saved runs, summaries, figures, and tables
 ```

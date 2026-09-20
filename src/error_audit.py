@@ -8,6 +8,7 @@ from pathlib import Path
 
 from case_explorer import Snapshot, load_snapshot
 from config import ERROR_AUDIT_DIR, RELIABILITY_STUDY_DIR
+from metrics import normalize
 
 
 REVIEW_LABELS = ("format_only", "missing_evidence", "reasoning_error", "unsupported_claim",
@@ -49,6 +50,8 @@ def completed_review(template: dict, *, reviewer: str, before_labels: list[str],
         raise ValueError("provide reviewer, both label sets, and an evidence-based rationale")
     if not set(before_labels + after_labels).issubset(REVIEW_LABELS):
         raise ValueError("unknown review label")
+    if any("no_error" in labels and len(set(labels)) > 1 for labels in (before_labels, after_labels)):
+        raise ValueError("no_error cannot be combined with another label")
     if not set(evidence_doc_ids).issubset(allowed_doc_ids):
         raise ValueError("evidence IDs must belong to this case")
     if not evidence_doc_ids and "uncertain" not in before_labels + after_labels:
@@ -70,6 +73,9 @@ def build_audit(snapshot: Snapshot, sample_size: int = 20) -> tuple[dict, list[d
             "kept_correct": sum(c["kept_correct"] for c in rows),
             "missed_recovery": sum(c["missed_recovery"] for c in rows),
             "recovery_with_gold_already_present": sum(c["recovery_with_gold_already_present"] for c in rows),
+            "harmed_questions": len({c["question_id"] for c in rows if c["transition"] == "Harmed"}),
+            "harm_to_unknown": sum(c["transition"] == "Harmed" and normalize(
+                snapshot.rows[c["case_id"]]["outcomes"][c["action"]]["answer"]) == "unknown" for c in rows),
         }
     return {"provenance": snapshot.provenance, "groups": groups,
             "review_sample": {"size": len(queue), "reviewed": 0,
@@ -91,7 +97,9 @@ def audit_markdown(summary: dict) -> str:
     for flag, count in sorted(summary["groups"]["all"]["automatic_flags"].items()):
         lines.append(f"- {flag}: {count}")
     group = summary["groups"]["all"]
-    lines.extend(["", f"Of {group['transitions'].get('Recovered', 0)} EM recoveries, "
+    lines.extend(["", f"The {group['transitions'].get('Harmed', 0)} EM regressions span {group['harmed_questions']} questions; "
+                  f"{group['harm_to_unknown']} change to UNKNOWN. An EM regression is not automatically a newly fabricated claim.",
+                  "", f"Of {group['transitions'].get('Recovered', 0)} EM recoveries, "
                   f"{group['recovery_with_gold_already_present']} already contained the whole normalized gold phrase before repair "
                   "(excluding yes/no). This is a formatting-review candidate, not proof the original answer was correct.", "",
                   "## Human review", "", f"The queue contains {summary['review_sample']['size']} cases; **0 are human-reviewed**. "
