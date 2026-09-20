@@ -98,6 +98,15 @@ collection cost includes all counterfactual actions, not only the actions the
 learned policy would choose. Latency is a three-worker API experiment and is
 not a production serving benchmark.
 
+After a provider token-per-minute rejection during development collection, a
+shared rolling-minute limiter was added at 180,000 tokens/minute. Completed
+cases were retained and the interrupted collection resumed without prompt or
+selection changes. Measured wall/stage times include local throttle waits;
+the final JSON also reports throttle time and wall time minus those waits.
+Earlier development records predate this instrumentation. All held-out test
+records use the same paced collector. Pacing affects timing, not the fixed
+quality-evaluation protocol.
+
 ## Spending and recovery
 
 A persistent ledger reserves uncached input cost plus the maximum output cost

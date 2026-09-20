@@ -4,7 +4,7 @@ import json
 import dspy
 import pytest
 
-from experiment_budget import BudgetExceeded, BudgetedLM, ExperimentBudget
+from experiment_budget import BudgetExceeded, BudgetedLM, ExperimentBudget, TokenRateLimiter
 
 
 def test_budget_persists_and_refuses_overspend(tmp_path):
@@ -76,3 +76,16 @@ def test_corrupt_ledger_is_not_silently_reset(tmp_path):
     path.write_text(json.dumps({"limit_usd": 1, "reserved_usd": -1}))
     with pytest.raises(ValueError):
         ExperimentBudget(path, 1)
+
+
+def test_rate_limiter_waits_and_restores_recent_history(monkeypatch):
+    import experiment_budget as module
+    clock = [100.0]
+    monkeypatch.setattr(module.time, "time", lambda: clock[0])
+    monkeypatch.setattr(module.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(module.time, "sleep", lambda delay: clock.__setitem__(0, clock[0] + delay))
+    limiter = TokenRateLimiter(limit=10, recent=[{"timestamp": 90, "rate_tokens": 8}])
+    assert limiter.acquire(3) == 50
+    assert sum(value for _, value in limiter.events) == 3
+    with pytest.raises(ValueError):
+        limiter.acquire(11)

@@ -1,4 +1,6 @@
 import copy
+import json
+import sys
 from types import SimpleNamespace
 
 import pytest
@@ -92,3 +94,105 @@ def test_study_lock_prevents_concurrent_collectors(tmp_path):
         with pytest.raises(RuntimeError, match="another process"):
             with study.study_lock(tmp_path):
                 pass
+
+
+@pytest.fixture
+def offline_collection(tmp_path, monkeypatch, corpus):
+    """Exercise the real collector/checkpoints while replacing all paid work."""
+    source = [{"id": str(i), "question": f"Question {i}?", "gold": "France",
+               "corrupted": {}, "baseline": {}} for i in range(5)]
+    paths = [tmp_path / name for name in ("query.jsonl", "answer.jsonl", "corpus.jsonl")]
+    for path, rows in zip(paths, (source, source, corpus)):
+        path.write_text("\n".join(json.dumps(row) for row in rows) + "\n")
+    monkeypatch.setattr(study, "FIGURE_QUERY_SEED_PATHS", [paths[0]])
+    monkeypatch.setattr(study, "FIGURE_ANSWER_PATH", paths[1])
+    monkeypatch.setattr(study, "CORPUS_PATH", paths[2])
+    monkeypatch.setattr(study, "OPENAI_API_KEY", "test-not-a-real-key")
+    monkeypatch.setattr(study, "BudgetedLM", lambda *args, **kwargs: None)
+
+    def mocked_case(case, source, corpus, retriever, lm):
+        from test_reliability_analysis import case_row
+        return case_row(case)
+
+    monkeypatch.setattr(study, "run_case", mocked_case)
+    directory = tmp_path / "study"
+    directory.mkdir()
+    return directory
+
+
+def collect_offline(directory, **overrides):
+    kwargs = dict(phase="development", workers=1, budget_usd=3, resume=False, limit=None)
+    study.collect(directory, **(kwargs | overrides))
+
+
+def test_collection_resume_freeze_and_heldout_phase(offline_collection):
+    directory = offline_collection
+    collect_offline(directory, limit=2)
+    assert len(study.load_jsonl(directory / "development_outcomes.jsonl")) == 2
+    with pytest.raises(ValueError, match="finish all"):
+        study.fit(directory)
+    with pytest.raises(FileExistsError, match="resume"):
+        collect_offline(directory)
+    collect_offline(directory, resume=True)
+    assert len(study.load_jsonl(directory / "development_outcomes.jsonl")) == 8
+    study.fit(directory)
+    collect_offline(directory, phase="test")
+    assert len(study.load_jsonl(directory / "test_outcomes.jsonl")) == 5
+    assert (directory / "test_model_lock.json").exists()
+    collect_offline(directory, phase="test", resume=True)
+    assert len(study.load_jsonl(directory / "test_outcomes.jsonl")) == 5
+    path = directory / "model.json"
+    model = json.loads(path.read_text())
+    model["policy"]["min_gain"] += .01
+    path.write_text(json.dumps(model))
+    with pytest.raises(ValueError, match="model changed"):
+        collect_offline(directory, phase="test", resume=True)
+
+
+def test_collection_preserves_completed_cases_after_failure(offline_collection, monkeypatch):
+    original = study.run_case
+    calls = []
+
+    def fail_second(*args):
+        calls.append(args[0]["case_id"])
+        if len(calls) == 2:
+            raise RuntimeError("simulated provider outage")
+        return original(*args)
+
+    monkeypatch.setattr(study, "run_case", fail_second)
+    with pytest.raises(RuntimeError, match="preserved"):
+        collect_offline(offline_collection)
+    assert len(study.load_jsonl(offline_collection / "development_outcomes.jsonl")) == 1
+    assert len(calls) == 2
+    monkeypatch.setattr(study, "run_case", original)
+    collect_offline(offline_collection, resume=True)
+    assert len(study.load_jsonl(offline_collection / "development_outcomes.jsonl")) == 8
+
+
+def test_collection_rejects_source_drift_before_calls(offline_collection):
+    collect_offline(offline_collection, limit=1)
+    path = study.FIGURE_ANSWER_PATH
+    rows = study.load_jsonl(path)
+    rows[0]["extra"] = "changed"
+    path.write_text("\n".join(json.dumps(row) for row in rows) + "\n")
+    with pytest.raises(ValueError, match="changed"):
+        collect_offline(offline_collection, resume=True)
+
+
+@pytest.mark.parametrize("command", ["collect", "fit", "report"])
+def test_cli_dispatch_without_live_calls(tmp_path, monkeypatch, command):
+    import reliability_analysis
+    called = []
+    monkeypatch.setattr(study, "collect", lambda *a, **k: called.append("collect"))
+    monkeypatch.setattr(study, "fit", lambda *a, **k: called.append("fit"))
+    monkeypatch.setattr(reliability_analysis, "create_report", lambda *a, **k: called.append("report"))
+    monkeypatch.setattr(sys, "argv", ["study", command, "--directory", str(tmp_path)])
+    study.main()
+    assert called == [command]
+
+
+def test_cli_rejects_excess_budget_before_work(monkeypatch):
+    monkeypatch.setattr(sys, "argv", ["study", "collect", "--budget-usd", "4"])
+    with pytest.raises(SystemExit) as exc:
+        study.main()
+    assert exc.value.code == 2

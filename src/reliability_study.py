@@ -132,8 +132,9 @@ def run_case(case: dict, source: dict, corpus: list[dict], retriever, lm) -> dic
     answerer, rewriter = AnswerGenerator(), QueryGenerator("repaired")
     initial = copy.deepcopy(source["run"])
     setup_usage = LMUsageSnapshot([lm])
+    setup_throttle = getattr(lm, "throttle_seconds", 0.0)
     setup_start = perf_counter()
-    mutation = {}
+    mutation: dict = {}
     family = case["family"]
     if family == "query_term_substitution":
         initial["query"], mutation = substitute_query(initial["query"], initial["docs"], corpus, case["case_id"])
@@ -147,7 +148,8 @@ def run_case(case: dict, source: dict, corpus: list[dict], retriever, lm) -> dic
         initial["context"] = context_for(initial["docs"])
         initial["answer"] = answerer(question=question, context=initial["context"]).answer
     initial = {key: initial[key] for key in ("query", "docs", "context", "answer")}
-    setup = {**setup_usage.finish(), "wall_clock_seconds": perf_counter() - setup_start}
+    setup = {**setup_usage.finish(), "wall_clock_seconds": perf_counter() - setup_start,
+             "throttle_seconds": getattr(lm, "throttle_seconds", 0.0) - setup_throttle}
     initial["metrics"] = score(initial["answer"], gold)
     initial["origin"] = "new_perturbation" if family in UNSEEN_FAMILIES else "saved_source_run"
     result = {**case, "question": question, "gold": gold, "initial": initial,
@@ -162,6 +164,7 @@ def run_case(case: dict, source: dict, corpus: list[dict], retriever, lm) -> dic
     result["action_order"] = order
     for action in order:
         usage = LMUsageSnapshot([lm])
+        throttle_started = getattr(lm, "throttle_seconds", 0.0)
         started = perf_counter()
         query, docs, context = initial["query"], initial["docs"], initial["context"]
         query_time = retrieval_time = 0.0
@@ -178,6 +181,7 @@ def run_case(case: dict, source: dict, corpus: list[dict], retriever, lm) -> dic
         answer = answerer(question=question, context=context).answer
         answer_time = perf_counter() - stage_start
         telemetry = {**usage.finish(), "wall_clock_seconds": perf_counter() - started,
+                     "throttle_seconds": getattr(lm, "throttle_seconds", 0.0) - throttle_started,
                      "latency_seconds": {"query_generation": query_time, "retrieval": retrieval_time,
                                          "answer_generation": answer_time}}
         if telemetry["priced_calls"] != telemetry["llm_calls"]:
@@ -238,8 +242,11 @@ def collect(directory: Path, *, phase: str, workers: int, budget_usd: float, res
     if phase == "test":
         model_path = directory / "model.json"
         payload = json.loads(model_path.read_text())
+        OutcomeRouter.load(model_path)
         if payload["metadata"]["manifest_sha256"] != manifest_sha:
             raise ValueError("model was fitted under a different manifest")
+        if payload["metadata"]["development_sha256"] != digest(directory / "development_outcomes.jsonl"):
+            raise ValueError("development data changed after model fit")
         lock_value = {"model_sha256": digest(model_path), "manifest_sha256": manifest_sha}
         lock_path = directory / "test_model_lock.json"
         if lock_path.exists():

@@ -15,7 +15,7 @@ The result is a reproducible [DSPy](https://github.com/stanfordnlp/dspy) evaluat
 
 - Architected a **Python/DSPy** framework that injects, isolates, and repairs query- or answer-stage RAG failures without rerunning unaffected stages.
 - Demonstrated across **300 HotpotQA examples** that query repair improved exact match by **19.3 percentage points**, while answer repair recovered only **2.2%** of failures.
-- Engineered interchangeable **BM25/dense retrieval** and **OpenAI/Ollama** backends with cost and latency telemetry, **83 deterministic tests**, **96% targeted coverage**, and automated CI.
+- Engineered interchangeable **BM25/dense retrieval** and **OpenAI/Ollama** backends with cost and latency telemetry, **126 deterministic tests**, **96% targeted coverage**, and automated CI.
 
 ## Why this matters
 
@@ -153,8 +153,6 @@ Training is grouped by question ID, so baseline, query-corrupted, and answer-cor
 
 These are attribution results, not end-to-end recovery claims. Iterative escalation remains heuristic because the current data contains only 24 iterative-only successes—too few for a defensible learned fourth class. The next evaluation is a held-out live run measuring recovered EM per added call.
 
-## Quick start
-
 ### Outcome-based routing study
 
 A new [controlled study](docs/reliability_study.md) trains a cost-sensitive router
@@ -163,6 +161,8 @@ corruption mechanisms, and unmodified baseline errors. It compares no repair,
 query rewrite, context expansion, and fresh generation. The protocol separates
 training, validation, and test questions and caps collection reservations at $3.
 Results are pending; the stage-attribution results above are a separate experiment.
+The collector is resumable and rate-limited; offline reports include paired,
+question-clustered confidence intervals and separate recovery from damage.
 
 ```bash
 python src/reliability_study.py collect
@@ -170,6 +170,8 @@ python src/reliability_study.py fit
 python src/reliability_study.py collect --phase test
 python src/reliability_study.py report
 ```
+
+## Quick start
 
 Python 3.11 is recommended.
 
@@ -271,7 +273,7 @@ The test suite uses deterministic fixtures and mocks—never live LLM calls.
 ```bash
 pytest --cov=metrics --cov=retriever --cov=routing --cov=answer_ablation --cov-report=term-missing --cov-fail-under=90
 ruff check src tests demo
-mypy -m metrics -m retriever -m routing -m train_router -m significance -m answer_ablation
+mypy -m metrics -m retriever -m routing -m train_router -m significance -m answer_ablation -m outcome_routing -m experiment_budget -m reliability_study -m reliability_analysis
 ```
 
 CI runs the same checks on every push and pull request. The suite covers metric normalization and recovery math, BM25 ranking and union semantics, backend contracts, telemetry, significance testing, stratification, and the ablation CLI's evidence isolation and resume safety. Targeted coverage spans metrics, retrieval, routing, and the answer ablation.
