@@ -144,3 +144,65 @@ reserved. The validation-selected settings are saved in
 The models and completed development outcomes were committed before the first
 held-out request. The test lock also hashes the analysis code. No controller is
 refit using test outcomes.
+
+## Final findings
+
+The held-out evaluation finished all 300 questions, with no extra tuning or sample
+expansion. The full 600-question collection used 4,800 calls and 4,553,463 tokens;
+completed-response cost was $0.70783845 and reservations were $2.158097625 under
+the unchanged $5 cap. All 4,800 reservations correspond to completed calls.
+
+1. **The primary selective policy improves natural-output EM.** It rises from
+   88/300 (29.3%) to 103/300 (34.3%): +5.0 percentage points, paired 95% CI
+   [2.3, 7.7]. It recovers 16/212 initially wrong outputs and regresses 1/88
+   initially correct outputs. Token F1 rises by 6.54 points [3.79, 9.53].
+2. **A strong fixed strategy remains competitive.** Always expanding context
+   reaches 33.7% EM. The primary router's +0.7-point advantage has CI [−2.0, 3.3],
+   so superiority is unestablished. Its recorded incremental cost is 40.3% lower
+   ($0.000136925 versus $0.000229361/question), while mean recorded wall time is
+   1.02s versus 0.99s. Lower token cost is not a demonstrated latency win.
+3. **Preservation alone is not the breakthrough.** Under the shared-query
+   top-10 control, both replacement and preservation reach 33.0% EM. Their paired
+   difference is 0.0 points [−2.7, 2.7], with eight questions favoring each arm.
+4. **Natural training alone is not enough.** With the original action set, the
+   natural-trained policy reaches 30.0%, versus 32.3% for the frozen synthetic
+   controller. Expanding the natural policy's action set yields an exploratory
+   +3.7 points [1.3, 6.0]. This does not isolate the value of preservation from the
+   additional top-10 replacement option; both were added together.
+5. **A damage penalty is not a safety guarantee.** The unpenalized augmented
+   policy recovers 13 errors with zero observed regressions; the damage-penalized
+   policy recovers 16 with one regression. Their EM difference is inconclusive,
+   +0.7 points [−0.7, 2.0]. Zero regressions among 88 correct outputs still has a
+   Wilson upper 95% bound of 4.2%.
+6. **The action set still limits recovery.** Only 34/212 initially wrong outputs
+   become exact matches under any recorded action. A hindsight selector including
+   accept reaches 122/300 (40.7%), not near-perfect accuracy. This is an action-set
+   ceiling for these sampled generations, not a deployable oracle or universal
+   limit on repair.
+
+### Illustrative evidence audit
+
+These examples were inspected by the assistant after the locked evaluation.
+They are not independent human annotations or a semantic accuracy estimate.
+All 17 primary-policy EM transitions remain pending in the exported review queue.
+
+- **Missing evidence recovered:** `5a7c04c85542996dd594b881` asks about the tribe of
+  the woman associated with Arizona State Route 51. Original evidence names Lori
+  Piestewa but not her tribe. Preservation adds the Lori Piestewa passage, which
+  identifies her as Hopi; the answer changes from UNKNOWN to Hopi.
+- **Formatting counted as recovery:** `5a80ae105542992bc0c4a7a2` changes a sentence
+  saying both people are writers and poets to the reference's singular “poet.”
+  Both original biography passages already support the shared occupation. The
+  exact-phrase diagnostic misses this plural/singular variation, so it cannot
+  establish that unflagged gains are factual improvements.
+- **Abstention counted as damage:** `5a89761d5542995153361310` changes Australian
+  to UNKNOWN. The original five passages name the song's performers but do not
+  establish the relevant nationality; the reference biography was not retrieved.
+  A lost exact match is not automatically a newly false claim, and the initial
+  correct string was not evidence-grounded by those passages.
+
+The defensible conclusion is a **positive, bounded lexical reliability result**:
+selective repair improves this held-out benchmark run and reduces observed repair
+token cost relative to always expanding context. It does not establish factuality,
+production safety, a benefit from preservation alone, or accuracy superiority over
+the strongest fixed baseline. The planned v1 research phase is complete.

@@ -16,8 +16,8 @@ The result is a reproducible [DSPy](https://github.com/stanfordnlp/dspy) evaluat
 Try the [saved-case explorer](#interactive-demo)—no API key or model download required.
 
 - Architected a **Python/DSPy** framework that injects, isolates, and repairs query- or answer-stage RAG failures without rerunning unaffected stages.
-- Demonstrated across **300 HotpotQA examples** that query repair improved exact match by **19.3 percentage points**, while answer repair recovered only **2.2%** of failures.
-- Engineered interchangeable **BM25/dense retrieval** and **OpenAI/Ollama** backends with cost and latency telemetry, **155 deterministic tests**, **96%+ targeted coverage**, and automated CI.
+- Evaluated repair across **900 distinct HotpotQA questions**, including a frozen **300-question natural-error holdout** where selective repair improved exact match by **5.0 points [95% CI: 2.3–7.7]**.
+- Engineered interchangeable **BM25/dense retrieval** and **OpenAI/Ollama** backends with cost and latency telemetry, **169 deterministic tests**, **96%+ targeted coverage**, and automated CI.
 
 ## Why this matters
 
@@ -123,13 +123,62 @@ The complete study collected **780 states and 3,240 successful calls**, costing 
 
 An [offline error audit](outputs/error_audit/report.md) flags 21 of 57 EM recoveries where the initial response already contained the gold phrase, plus 15 cases where another saved action succeeded. These are review signals, not semantic verdicts. A deterministic [20-case review queue](outputs/error_audit/review_queue.jsonl) includes all four harmful repairs; human review is still pending. See the [review rubric](docs/error_audit.md).
 
-### Cost of repair
+### Natural-error repair
 
-The final [natural-error study](docs/natural_study.md) is in progress: 600 fresh
-questions, a locked 300-question holdout, evidence-preserving repair, and
-natural-outcome/damage-aware controllers under one **$5 reservation cap**.
-This follow-up uses a new pooled corpus; its EM is not directly comparable to the
-historical table. No positive result is assumed in advance.
+Final study · 600 fresh questions · 240 train / 60 validation / 300 held out
+
+No corruption is injected. A new action preserves the original five documents and
+adds rewritten-query results, up to ten documents. A matched replacement arm uses
+the **same rewritten query** and the same document/token ceilings. Three controllers
+learn from natural outcomes; all models and the analysis are frozen before test
+collection. See the [locked protocol](docs/natural_study.md).
+
+| Policy | EM | Recovered / 212 | Regressed / 88 | Added calls | Added cost / question |
+|:--|--:|--:|--:|--:|--:|
+| No repair | 29.3% | 0 | 0 | 0.00 | $0 |
+| Always rewrite · 5 docs | 29.7% | 11 | 10 | 2.00 | $0.000182 |
+| Retrieve more · 10 docs | 33.7% | 19 | 6 | 1.00 | $0.000229 |
+| Fresh answer · same evidence | 29.7% | 1 | 0 | 1.00 | $0.000129 |
+| Always rewrite · 10 docs | 33.0% | 18 | 7 | 2.00 | $0.000282 |
+| Always preserve evidence | 33.0% | 16 | 5 | 2.00 | $0.000279 |
+| Frozen synthetic-trained router | 32.3% | 11 | 2 | 1.08 | $0.000118 |
+| Natural-trained · original actions | 30.0% | 2 | 0 | 0.13 | $0.000023 |
+| Natural-trained · augmented actions | 33.7% | 13 | 0 | 0.62 | $0.000092 |
+| Natural-trained · augmented + damage penalty | **34.3%** | **16** | **1** | **0.91** | **$0.000137** |
+
+The preregistered primary controller improves EM by **5.0 pp [2.3, 7.7]** over no
+repair. Recovery is **16/212 (7.5%)** and EM regression is **1/88 (1.1%)**; the
+[full report](outputs/natural_study/report.md) includes uncertainty for both rates.
+It accepts 47% of outputs unchanged and adds 872 tokens and 1.02 seconds per
+question on average, including rate-limit waits. Latency is not a serving benchmark.
+
+**What this establishes:** selective repair can improve unmodified benchmark
+outputs in this setting. Its observed incremental cost is **40% lower** than always
+expanding context, but its EM advantage over that strategy is inconclusive:
+**+0.7 pp [−2.0, 3.3]**. This is not an equivalence or non-inferiority result.
+
+**What did not establish an advantage:** evidence preservation ties matched
+top-10 replacement on aggregate EM (**0.0 pp [−2.7, 2.7]**). Natural-data training
+with the original action set does not beat the frozen synthetic-trained router.
+The damage penalty also does not establish lower harm than the unpenalized
+augmented router, which had zero observed EM regressions in this sample.
+
+Intervals use 10,000 paired question bootstrap resamples. Only the first contrast
+is primary; the others are exploratory and not multiplicity-adjusted. These are
+lexical scores, not independently verified factuality: one recovery changes
+“writers and poets” to “poet,” while the sole regression changes “Australian” to
+“UNKNOWN.” A [17-case review queue](outputs/natural_study/review_queue.jsonl) is
+exported; human semantic review remains pending. The new pooled corpus and bounded
+passages also make its raw EM **not directly comparable** to the historical study.
+
+The complete final study used **4,800 calls and 4.55 million tokens**, with an
+estimated **$0.708** cost and **$2.158** in conservative reservations under the
+unchanged **$5 cap**. [Raw outcomes](outputs/natural_study/test_outcomes.jsonl),
+[frozen models](outputs/natural_study/models.json), and
+[machine-readable results](outputs/natural_study/summary.json) are included.
+This completes the planned v1 experiments; no further paid tuning is required.
+
+### Cost of repair
 
 Cold-cache snapshot · 10 examples · `gpt-4o-mini`
 
@@ -217,10 +266,10 @@ source .venv/bin/activate
 pip install -r requirements-dev.txt -c constraints-research.txt
 ```
 
-Verify the checkout with one command:
-
 The constraints preserve the published research runtime's direct dependency versions.
 Provider outputs and wall-clock latency can still change.
+
+Verify the checkout with one command:
 
 ```bash
 make check
@@ -273,6 +322,11 @@ Start with **Recovered → Harmed → Kept correct**. Case links preserve the se
 “Correct” here means exact match; the interface distinguishes lexical scores from semantic judgments.
 
 The separate **Live playground** retains the original corruption/repair demo using the experiment pipeline. It requires a configured backend and can incur API charges; the study collection cap does not apply. Nothing runs until you click a generation button.
+
+**Natural errors** provides a separate, free replay of the final 300-question
+holdout. It shows the damage-aware router's decision,
+all six saved actions, before/after evidence, and case exports. It never generates
+missing results or calls a provider.
 
 Regenerate the audit without paid calls:
 
@@ -373,4 +427,6 @@ The implementation favors explicit interfaces, saved intermediate results, and a
 
 ## License
 
-Released under the [MIT License](LICENSE).
+Original code and documentation are released under the [MIT License](LICENSE).
+HotpotQA-derived benchmark content retains its upstream CC BY-SA 4.0 license;
+see [data attribution](DATA_LICENSE.md).
