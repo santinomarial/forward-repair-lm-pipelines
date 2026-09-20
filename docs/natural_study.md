@@ -86,6 +86,13 @@ part of the v1 finish line.
 
 ## Reproduce
 
+For the published research runtime, use Python 3.11+ and
+`pip install -r requirements-dev.txt -c constraints-research.txt`. Collection used
+CPython 3.14.0 on macOS. The constraints pin direct runtime dependencies, not every
+transitive package or the remote model snapshot. Cached provider behavior and API
+latency are not reproducible guarantees. DSPy version and collection source hashes
+are checked before resuming or analyzing a frozen run.
+
 ```bash
 python src/natural_study.py prepare --directory outputs/my_natural_study
 python src/natural_study.py collect --directory outputs/my_natural_study --phase pilot

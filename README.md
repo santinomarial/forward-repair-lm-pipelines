@@ -214,11 +214,13 @@ Python 3.11 is recommended.
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
-pip install -r requirements-dev.txt
+pip install -r requirements-dev.txt -c constraints-research.txt
 ```
 
 Verify the checkout with one command:
+
+The constraints preserve the published research runtime's direct dependency versions.
+Provider outputs and wall-clock latency can still change.
 
 ```bash
 make check

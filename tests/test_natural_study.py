@@ -258,3 +258,17 @@ def test_cli_dispatch(small_study, monkeypatch):
         monkeypatch.setattr(sys, "argv", ["natural_study", command, "--directory", str(small_study)])
         study.main()
         assert calls == [small_study]
+
+
+def test_published_cohort_is_disjoint_and_frozen():
+    directory = study.NATURAL_STUDY_DIR
+    manifest = study.verify_inputs(directory)
+    examples = load_jsonl(directory / "examples.jsonl")
+    historical = load_jsonl(study.EXAMPLES_PATH)
+    assert len(examples) == len({r["id"] for r in examples}) == 600
+    assert not ({r["id"] for r in examples} & {r["id"] for r in historical})
+    assert not ({r["question"].strip().casefold() for r in examples}
+                & {r["question"].strip().casefold() for r in historical})
+    assert [len(manifest["splits"][s]) for s in ("train", "validation", "test")] == [240, 60, 300]
+    assert manifest["budget_cap_usd"] == 5
+    assert (directory / "synthetic_model.json").read_bytes() == (study.RELIABILITY_STUDY_DIR / "model.json").read_bytes()
