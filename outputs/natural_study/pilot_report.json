@@ -1,0 +1,53 @@
+{
+  "questions": 60,
+  "actions": {
+    "accept": {
+      "em": 0.38333333333333336,
+      "recovered": 0,
+      "damaged": 0,
+      "discordance": 0.0,
+      "approx_95ci_halfwidth_at_n300_pp": 0.0
+    },
+    "rewrite_query": {
+      "em": 0.35,
+      "recovered": 1,
+      "damaged": 3,
+      "discordance": 0.06666666666666667,
+      "approx_95ci_halfwidth_at_n300_pp": 2.921795490599725
+    },
+    "expand_context": {
+      "em": 0.38333333333333336,
+      "recovered": 1,
+      "damaged": 1,
+      "discordance": 0.03333333333333333,
+      "approx_95ci_halfwidth_at_n300_pp": 2.0660214046433407
+    },
+    "regenerate": {
+      "em": 0.4,
+      "recovered": 1,
+      "damaged": 0,
+      "discordance": 0.016666666666666666,
+      "approx_95ci_halfwidth_at_n300_pp": 1.4608977452998626
+    },
+    "rewrite_query_10": {
+      "em": 0.43333333333333335,
+      "recovered": 3,
+      "damaged": 0,
+      "discordance": 0.05,
+      "approx_95ci_halfwidth_at_n300_pp": 2.530349119522179
+    },
+    "preserve_evidence": {
+      "em": 0.4,
+      "recovered": 3,
+      "damaged": 2,
+      "discordance": 0.08333333333333333,
+      "approx_95ci_halfwidth_at_n300_pp": 3.2666666666666666
+    }
+  },
+  "reserved_usd": 0.2152243125,
+  "completed_cost_usd": 0.0696123,
+  "heldout_questions": 300,
+  "sample_size_changed": false,
+  "note": "Pilot is training data, not confirmatory evidence. Approximate precision ignores effect mean; no power guarantee. Fixed 300-question test and no significance-based stopping.",
+  "development_sha256": "35fd893030dc1c5eb51ad8adc978fddb0617aae41a66cac0fc6342e9b06802cd"
+}
