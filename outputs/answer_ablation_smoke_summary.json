@@ -1,0 +1,285 @@
+{
+  "examples": 10,
+  "corrupted_broken_count": 7,
+  "corrupted_correct_count": 3,
+  "conditions": {
+    "corrupted": {
+      "exact_match": 0.3,
+      "contains_answer": 0.7,
+      "abstention_rate": 0.0,
+      "recovered_count": 0,
+      "recovery_rate": 0.0,
+      "damaged_count": 0,
+      "damage_rate": 0.0
+    },
+    "revision": {
+      "exact_match": 0.2,
+      "contains_answer": 0.5,
+      "abstention_rate": 0.3,
+      "recovered_count": 0,
+      "recovery_rate": 0.0,
+      "damaged_count": 1,
+      "damage_rate": 0.3333333333333333
+    },
+    "blind_revision": {
+      "exact_match": 0.2,
+      "contains_answer": 0.7,
+      "abstention_rate": 0.4,
+      "recovered_count": 0,
+      "recovery_rate": 0.0,
+      "damaged_count": 1,
+      "damage_rate": 0.3333333333333333
+    },
+    "fresh": {
+      "exact_match": 0.5,
+      "contains_answer": 0.7,
+      "abstention_rate": 0.4,
+      "recovered_count": 3,
+      "recovery_rate": 0.42857142857142855,
+      "damaged_count": 1,
+      "damage_rate": 0.3333333333333333
+    }
+  },
+  "comparisons": {
+    "blind_revision_minus_revision": {
+      "exact_match": {
+        "n": 10,
+        "estimate": 0.0,
+        "ci": [
+          0.0,
+          0.0
+        ]
+      },
+      "recovery": {
+        "n": 7,
+        "estimate": 0.0,
+        "ci": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "fresh_minus_revision": {
+      "exact_match": {
+        "n": 10,
+        "estimate": 0.3,
+        "ci": [
+          0.0,
+          0.6
+        ]
+      },
+      "recovery": {
+        "n": 7,
+        "estimate": 0.42857142857142855,
+        "ci": [
+          0.14285714285714285,
+          0.8571428571428571
+        ]
+      }
+    },
+    "revision_minus_corrupted": {
+      "exact_match": {
+        "n": 10,
+        "estimate": -0.1,
+        "ci": [
+          -0.3,
+          0.0
+        ]
+      },
+      "recovery": {
+        "n": 7,
+        "estimate": 0.0,
+        "ci": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "blind_revision_minus_corrupted": {
+      "exact_match": {
+        "n": 10,
+        "estimate": -0.1,
+        "ci": [
+          -0.3,
+          0.0
+        ]
+      },
+      "recovery": {
+        "n": 7,
+        "estimate": 0.0,
+        "ci": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "fresh_minus_corrupted": {
+      "exact_match": {
+        "n": 10,
+        "estimate": 0.2,
+        "ci": [
+          -0.2,
+          0.6
+        ]
+      },
+      "recovery": {
+        "n": 7,
+        "estimate": 0.42857142857142855,
+        "ci": [
+          0.14285714285714285,
+          0.8571428571428571
+        ]
+      }
+    }
+  },
+  "statistics": {
+    "method": "paired percentile bootstrap by question",
+    "confidence": 0.95,
+    "n_resamples": 10000,
+    "seed": 0,
+    "primary_contrast": "blind_revision_minus_revision",
+    "note": "Pointwise intervals; secondary contrasts are exploratory, not multiplicity-adjusted."
+  },
+  "response_format_audit": {
+    "status": "post-hoc descriptive analysis; not a pre-specified endpoint",
+    "blind_only_exact_matches": 0,
+    "revision_only_exact_matches": 0,
+    "blind_gains_where_revision_contains_gold": 0,
+    "note": "Contains-answer is a loose substring check, not a semantic factuality score. Inspect response formatting before interpreting EM gains as factual gains."
+  },
+  "instrumentation": {
+    "cost_note": "estimated_cost_usd is DSPy/LiteLLM provider-reported cost; cache hits and local calls may report zero",
+    "revision": {
+      "examples": 10,
+      "llm_calls": {
+        "total": 10,
+        "per_example": 1.0
+      },
+      "tokens": {
+        "prompt_total": 8202,
+        "completion_total": 338,
+        "total": 8540,
+        "per_example": 854.0
+      },
+      "estimated_cost_usd": {
+        "total": 0.0014330999999999999,
+        "per_example": 0.00014330999999999998
+      },
+      "wall_clock_seconds": {
+        "total": 7.984782251063734,
+        "per_example": 0.7984782251063735,
+        "p95": 1.1717351231491193
+      },
+      "stage_latency_seconds": {
+        "query_generation": {
+          "total": 0.0,
+          "per_example": 0.0
+        },
+        "retrieval": {
+          "total": 0.0,
+          "per_example": 0.0
+        },
+        "answer_generation": {
+          "total": 7.984782251063734,
+          "per_example": 0.7984782251063735
+        }
+      },
+      "priced_calls": 10
+    },
+    "blind_revision": {
+      "examples": 10,
+      "llm_calls": {
+        "total": 10,
+        "per_example": 1.0
+      },
+      "tokens": {
+        "prompt_total": 7445,
+        "completion_total": 251,
+        "total": 7696,
+        "per_example": 769.6
+      },
+      "estimated_cost_usd": {
+        "total": 0.00126735,
+        "per_example": 0.000126735
+      },
+      "wall_clock_seconds": {
+        "total": 10.662365207099356,
+        "per_example": 1.0662365207099356,
+        "p95": 2.3794826453668043
+      },
+      "stage_latency_seconds": {
+        "query_generation": {
+          "total": 0.0,
+          "per_example": 0.0
+        },
+        "retrieval": {
+          "total": 0.0,
+          "per_example": 0.0
+        },
+        "answer_generation": {
+          "total": 10.662365207099356,
+          "per_example": 1.0662365207099356
+        }
+      },
+      "priced_calls": 10
+    },
+    "fresh": {
+      "examples": 10,
+      "llm_calls": {
+        "total": 10,
+        "per_example": 1.0
+      },
+      "tokens": {
+        "prompt_total": 7435,
+        "completion_total": 135,
+        "total": 7570,
+        "per_example": 757.0
+      },
+      "estimated_cost_usd": {
+        "total": 0.0011962499999999998,
+        "per_example": 0.00011962499999999998
+      },
+      "wall_clock_seconds": {
+        "total": 7.338818082003854,
+        "per_example": 0.7338818082003854,
+        "p95": 1.3101517768984192
+      },
+      "stage_latency_seconds": {
+        "query_generation": {
+          "total": 0.0,
+          "per_example": 0.0
+        },
+        "retrieval": {
+          "total": 0.0,
+          "per_example": 0.0
+        },
+        "answer_generation": {
+          "total": 7.338818082003854,
+          "per_example": 0.7338818082003854
+        }
+      },
+      "priced_calls": 10
+    }
+  },
+  "cost_scope": "Incremental answer generation only. Saved query, retrieval, and corruption are excluded. Unpriced calls are not evidence of free inference.",
+  "run_config": {
+    "protocol_version": 1,
+    "input_name": "hotpot_300_answer_corruption_seed0_results_renormalized.jsonl",
+    "input_sha256": "563da2692b95dc7b6901ebf4d3c99d1f2fc84c3b5bb20b0f8e1cb766f2ddd587",
+    "examples": 10,
+    "backend": "openai",
+    "model": "gpt-4o-mini",
+    "ollama_api_base": null,
+    "temperature": 0,
+    "max_tokens": 300,
+    "seed": 0,
+    "lm_cache": false,
+    "dspy_version": "3.2.1",
+    "prompt_sha256": {
+      "revision": "59ebf9a3ed6050c0f57543e8ea41574b318b97c38fef899ca60ee42b7e5e9223",
+      "blind_revision": "bb23725832bc5229e9995f28010be46d00bf649477acaa803b70a2ab8a7af834",
+      "fresh": "0deff7de7203266cbbd4da2a887899e3bb793d8e5c38bf4cd04536eb40230266"
+    }
+  },
+  "complete": true
+}

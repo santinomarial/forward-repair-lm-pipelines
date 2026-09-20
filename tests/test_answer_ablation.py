@@ -165,6 +165,18 @@ def test_empty_eligible_stratum_is_undefined_not_zero(corrupted_answer):
     json.dumps(result, allow_nan=False)
 
 
+def test_posthoc_format_audit_distinguishes_exact_match_from_answer_containment():
+    rows = _scored_rows()
+    for row in rows:
+        row["revision"]["answer"] = "Ada was born in London."
+    report = summarize_ablation(rows, n_resamples=10)
+    audit = report["response_format_audit"]
+    assert audit["blind_only_exact_matches"] == 4
+    assert audit["revision_only_exact_matches"] == 0
+    assert audit["blind_gains_where_revision_contains_gold"] == 4
+    assert "post-hoc" in audit["status"]
+
+
 def test_reject_empty_duplicate_or_mixed_run_analysis():
     with pytest.raises(ValueError, match="no rows"):
         summarize_ablation([])

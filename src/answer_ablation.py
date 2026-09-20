@@ -179,6 +179,23 @@ def summarize_ablation(
             "exact_match": difference(reference, candidate, list(range(len(rows)))),
             "recovery": difference(reference, candidate, broken),
         }
+    blind_gains = [
+        i for i in range(len(rows)) if em["blind_revision"][i] and not em["revision"][i]
+    ]
+    summary["response_format_audit"] = {
+        "status": "post-hoc descriptive analysis; not a pre-specified endpoint",
+        "blind_only_exact_matches": len(blind_gains),
+        "revision_only_exact_matches": sum(
+            em["revision"][i] and not em["blind_revision"][i] for i in range(len(rows))
+        ),
+        "blind_gains_where_revision_contains_gold": sum(
+            scores["revision"][i]["contains_answer"] for i in blind_gains
+        ),
+        "note": (
+            "Contains-answer is a loose substring check, not a semantic factuality score. "
+            "Inspect response formatting before interpreting EM gains as factual gains."
+        ),
+    }
     instrumentation = summarize_instrumentation(rows, list(CONDITIONS))
     for mode in CONDITIONS:
         instrumentation[mode]["wall_clock_seconds"]["p95"] = float(

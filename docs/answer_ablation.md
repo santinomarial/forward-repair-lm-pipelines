@@ -94,3 +94,62 @@ against one another.
 The next extension is replication across seeds and natural failures, with
 evidence-sufficiency strata. Do not train or tune a router on this evaluation set
 and then report its performance on the same questions.
+
+## Observed results
+
+The completed run contains 300 paired examples and 900 recorded calls, with no
+additional recorded formatting calls. Model: `gpt-4o-mini`; DSPy: 3.2.1; seed: 0;
+temperature: 0; output limit: 300 tokens; bootstrap resamples: 20,000.
+The input file and prompt hashes are recorded in the
+[summary](../outputs/answer_ablation_seed0_summary.json).
+
+| Condition | Exact matches / 300 | Recovered / 277 | Damaged / 23 | Abstentions / 300 |
+|:--|--:|--:|--:|--:|
+| Revision | 25 | 10 | 8 | 101 |
+| Blind revision | 58 | 41 | 6 | 96 |
+| Fresh generation | 95 | 74 | 2 | 83 |
+
+The primary EM difference is **+11.0 percentage points**, with a 95% paired
+bootstrap interval of **[7.3, 15.0]**. The recovery-rate difference is +11.2 points
+[7.2, 15.5]. Fresh generation versus revision, a secondary comparison, gives an
+EM difference of +23.3 points [18.3, 28.3]. Damage estimates use only 23 initially
+correct examples and should not be treated as precise population rates.
+
+### Interpretation and response-format audit
+
+Blind revision alone matched the gold answer on 36 questions; visible-answer
+revision alone matched on 3, giving the net 33-question EM gain. On 30 of those
+36 gains, the visible-answer revision already contained the gold answer under
+the existing substring metric. This is a post-hoc descriptive audit, not another
+pre-specified endpoint. Contains-answer rates were 48.0%, 49.0%, and 47.3% for
+revision, blind revision, and fresh generation respectively; the corrupted
+source answers scored 65.0% on this loose metric despite only 7.7% EM.
+
+For example, question `5a8a3e745542996c9b8d5e70` has the gold answer
+`Arena of Khazan`. Revision returned:
+
+> The name of the adventure in "Tunnels and Trolls" is "Arena of Khazan."
+
+Blind revision and fresh generation each returned `Arena of Khazan`. The same
+fact appears in all three outputs, but only the latter two receive exact match.
+
+The controlled intervention improves exact-match performance, with a substantial
+response-format component. It does not establish an 11-point factuality gain or
+prove a general anchoring mechanism. A follow-up should control concise-answer
+instructions across arms and use a validated semantic or evidence-support score
+before making a stronger factual reliability claim. These results also concern
+injected failures on one dataset and one provider-seed run.
+
+### Incremental cost and latency
+
+All 900 calls reported cost. Historical retrieval and corruption are excluded.
+
+| Condition | Calls / example | Tokens / example | Cost / example | Mean latency | p95 latency |
+|:--|--:|--:|--:|--:|--:|
+| Revision | 1 | 928 | $0.000152 | 0.650s | 0.976s |
+| Blind revision | 1 | 851 | $0.000138 | 0.700s | 1.059s |
+| Fresh generation | 1 | 844 | $0.000134 | 0.554s | 0.744s |
+
+Total estimated cost was $0.12736, plus $0.00390 for the separate 10-question
+smoke run. The smoke run is not pooled into the evaluation. Latency reflects
+this sequential API run, not a production serving benchmark.

@@ -15,7 +15,7 @@ The result is a reproducible [DSPy](https://github.com/stanfordnlp/dspy) evaluat
 
 - Architected a **Python/DSPy** framework that injects, isolates, and repairs query- or answer-stage RAG failures without rerunning unaffected stages.
 - Demonstrated across **300 HotpotQA examples** that query repair improved exact match by **19.3 percentage points**, while answer repair recovered only **2.2%** of failures.
-- Engineered interchangeable **BM25/dense retrieval** and **OpenAI/Ollama** backends with cost and latency telemetry, **82 deterministic tests**, **96% targeted coverage**, and automated CI.
+- Engineered interchangeable **BM25/dense retrieval** and **OpenAI/Ollama** backends with cost and latency telemetry, **83 deterministic tests**, **96% targeted coverage**, and automated CI.
 
 ## Why this matters
 
@@ -61,15 +61,23 @@ The query-repair gain is clearly positive. The aggregate iterative lift is promi
 
 ### Answer repair versus fresh generation
 
-The next experiment compares three prompts on **identical saved evidence**:
+Follow-up run · 300 questions · `gpt-4o-mini` · fixed saved evidence · seed 0
 
-| Condition | Previous answer visible? | Instructions |
-|:--|:--:|:--|
-| Revision | Yes | Existing answer-repair prompt |
-| Blind revision | No | Same repair instructions, previous-answer field removed |
-| Fresh generation | No | Existing baseline answer prompt |
+Revision sees the previous answer. Blind revision removes only that input field, keeping the repair instructions. Fresh generation uses the baseline answer prompt without the previous answer.
 
-Blind revision versus revision is the primary comparison. Fresh generation also changes the task instructions, so it is a secondary comparison. Every condition uses the same model, temperature, and output-token limit; DSPy caching is disabled and execution order is randomized per question.
+| Condition | Exact match | Contains answer | Recovery | Damage |
+|:--|--:|--:|--:|--:|
+| Revision | 8.3% | 48.0% | 3.6% | 34.8% |
+| Blind revision | 19.3% | 49.0% | 14.8% | 26.1% |
+| Fresh generation | **31.7%** | 47.3% | **26.7%** | **8.7%** |
+
+Recovery uses the 277 initially wrong answers; damage uses the 23 initially correct answers. All three conditions were generated in this new run, with the same model settings, randomized execution order, and DSPy caching disabled.
+
+Removing the previous-answer field improved EM by **11.0 pp [7.3, 15.0]**. Fresh generation improved EM over revision by **23.3 pp [18.3, 28.3]**, but also changed the instructions. Intervals use 20,000 paired bootstrap resamples; the first contrast is primary and the second exploratory.
+
+**Interpretation:** this is an exact-match gain, not an equivalent factuality gain. In 30 of the 36 cases where blind revision gained an exact match, the visible-answer revision already contained the gold answer. Response format is an important part of the effect. The result qualifies the earlier anchoring hypothesis rather than establishing a general failure of answer repair.
+
+The full comparison used **900 calls**, at an estimated **$0.127** for answer generation. Fresh generation cost about 12% less per example than revision in this run. Raw answers, confidence intervals, and telemetry are saved in the [results](outputs/answer_ablation_seed0_results.jsonl) and [summary](outputs/answer_ablation_seed0_summary.json).
 
 ```bash
 # Small live check: three answer generations per example.
@@ -79,7 +87,7 @@ python src/answer_ablation.py --max-examples 10 --output-suffix answer_ablation_
 python src/answer_ablation.py --max-examples 300
 ```
 
-The report includes paired confidence intervals, recovery, damage to previously correct answers, abstention, and incremental cost/latency. See the [protocol](docs/answer_ablation.md) for resuming runs and offline analysis. Results are pending; the existing results above are unchanged.
+Use a new `--output-suffix` for another run, or `--resume` to reuse completed records. See the [protocol and detailed results](docs/answer_ablation.md) for offline analysis and limitations. The historical results above are unchanged.
 
 ### Cost of repair
 
