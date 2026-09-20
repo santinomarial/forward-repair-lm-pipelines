@@ -272,3 +272,11 @@ def test_published_cohort_is_disjoint_and_frozen():
     assert [len(manifest["splits"][s]) for s in ("train", "validation", "test")] == [240, 60, 300]
     assert manifest["budget_cap_usd"] == 5
     assert (directory / "synthetic_model.json").read_bytes() == (study.RELIABILITY_STUDY_DIR / "model.json").read_bytes()
+
+
+def test_zero_event_uncertainty_is_not_zero_risk():
+    interval = analysis.wilson_interval(0, 30)
+    assert interval[0] == pytest.approx(0)
+    assert interval[1] == pytest.approx(.11351339)
+    assert analysis.wilson_interval(30, 30)[0] == pytest.approx(1-interval[1])
+    assert analysis.wilson_interval(0, 0) is None

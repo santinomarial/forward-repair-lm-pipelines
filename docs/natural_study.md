@@ -66,6 +66,10 @@ intervals. Other contrasts are exploratory, with pointwise rather than
 multiplicity-adjusted intervals. A small sample or inconclusive interval is not
 evidence of equivalence or safety.
 
+Recovery and damage rates also receive descriptive Wilson binomial intervals,
+which retain an upper uncertainty bound when there are zero observed events.
+These supplement, rather than replace, the preregistered paired-bootstrap contrasts.
+
 Inspect the pilot for collection validity, expense, and approximate paired
 precision; keep the declared 300-question holdout regardless of observed gains.
 Lock models and analysis hashes before any held-out generation. Never expand the
@@ -108,3 +112,18 @@ Saved data and report generation need no API calls. Use a new directory for a ne
 study. `--resume` never refunds reservations or overwrites completed observations.
 The generated review queue is a template; save human annotations in a different
 file because report regeneration replaces derived outputs.
+
+## Pilot observations (development only)
+
+The 60-question pilot used 480 calls, approximately $0.070 in completed-response
+costs and $0.215 in conservative reservations. The sample size and action set were
+not changed after inspecting it. Full pilot counts are in
+[pilot_report.json](../outputs/natural_study/pilot_report.json).
+
+An assistant-inspected illustration of metric sensitivity: in case
+`5a7796e05542992a6e59df0f`, preservation changed “The Netherlands” to a full sentence
+that still answered “the Netherlands,” producing an EM regression. In
+`5abce3015542993a06baf995`, it changed “Approximately 85 nations.” to “85,” also
+failing EM. These were the two pilot preservation regressions. The relevant
+reference passages remained present. This is not an independent human review,
+but it shows why **EM damage must not be equated with factual harm**.

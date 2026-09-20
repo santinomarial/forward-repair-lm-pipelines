@@ -16,6 +16,18 @@ from reliability_analysis import ClusterBootstrap
 from reliability_study import context_for, digest, score
 
 
+def wilson_interval(successes: int, total: int) -> list[float] | None:
+    """Descriptive binomial interval; unlike a bootstrap, nonzero at zero events."""
+    if total == 0:
+        return None
+    z = 1.959963984540054
+    p = successes / total
+    denominator = 1 + z*z / total
+    center = (p + z*z / (2*total)) / denominator
+    radius = z * np.sqrt(p*(1-p)/total + z*z/(4*total*total)) / denominator
+    return [float(max(0, center-radius)), float(min(1, center+radius))]
+
+
 def paired_comparison(rows: list[dict], choices_a: list[str], choices_b: list[str], bootstrap) -> dict:
     initial = np.asarray([r["initial"]["metrics"]["exact_match"] for r in rows])
     outcomes = [[r["outcomes"][a] for r, a in zip(rows, choices)] for choices in (choices_a, choices_b)]
@@ -42,6 +54,8 @@ def policy_metrics(rows: list[dict], choices: list[str], bootstrap) -> dict:
         "damage": bootstrap.ratio((1 - em) * initial, initial),
         "recovered_count": int((em * (1 - initial)).sum()),
         "damaged_count": int(((1 - em) * initial).sum()),
+        "recovery_wilson95_ci": wilson_interval(int((em * (1 - initial)).sum()), int((1-initial).sum())),
+        "damage_wilson95_ci": wilson_interval(int(((1-em) * initial).sum()), int(initial.sum())),
         "abstention_rate": float(np.mean([o["answer"].strip().rstrip(".").upper() == "UNKNOWN" for o in selected])),
         "recoveries_with_gold_phrase_already_present": sum(
             int(not r["initial"]["metrics"]["exact_match"] and o["metrics"]["exact_match"]
@@ -131,6 +145,14 @@ def markdown(report: dict) -> str:
     for name, values in report["comparisons"].items():
         em = values["exact_match"]
         lines.append(f"| {name} | {100*em['estimate']:+.1f} pp | [{100*em['ci'][0]:.1f}, {100*em['ci'][1]:.1f}] | {values['a_only_correct']} / {values['b_only_correct']} |")
+    lines += ["", "## Recovery and damage uncertainty", "",
+              "Primary-policy rates use paired bootstrap intervals in JSON, supplemented here with "
+              "Wilson binomial intervals. Zero observed events do not imply zero population risk.", ""]
+    primary = report["policies"]["natural_damage_augmented"]
+    for name in ("recovery", "damage"):
+        rate, interval = primary[name], primary[f"{name}_wilson95_ci"]
+        if interval is not None:
+            lines.append(f"- {name.capitalize()}: {rate['estimate']:.1%}; Wilson 95% CI [{interval[0]:.1%}, {interval[1]:.1%}]; denominator {rate['eligible_count']}.")
     lines += ["", "## Limits", "", report["limitations"], "",
               "Costs are selected-policy estimates from offline observed actions, not an online deployment. "
               "Wall times include provider/local pacing and exclude router CPU; unthrottled and baseline-inclusive totals are in JSON. "
