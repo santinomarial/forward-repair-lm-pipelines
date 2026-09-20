@@ -7,6 +7,29 @@ testing that policy on held-out questions, unseen perturbations, and natural
 benchmark errors. It is a bounded, single-provider-seed study, not a production
 reliability claim or a cross-dataset evaluation.
 
+## Completed results
+
+All 480 development and 300 test cases are collected. The frozen policy improved
+EM over no repair by 29.2 percentage points on seen failures (95% CI 18.3–40.0)
+and 15.0 points on unseen perturbations (8.3–22.5). Gains over always rewriting
+were small and inconclusive. On natural outputs it recovered one of 39 initial
+EM errors but damaged one of 21 correct answers: no net EM improvement.
+
+Read the [full comparison and confidence intervals](../outputs/reliability_study/report.md)
+or [JSON summary](../outputs/reliability_study/summary.json). Completed cases used
+3,240 calls and 2,918,437 tokens, with estimated cost $0.4548963. The persistent
+ledger holds 3,250 reservations totaling $1.432373625; the ten extra reservations
+cover failed or discarded work from the development interruption. Completed-case
+cost excludes that work, while the reservation total conservatively includes it.
+The original $3 ceiling was never raised.
+
+The two unseen families differ: EM rises from 30.0% to 40.0% for query-term
+substitution and from 15.0% to 35.0% for rank dropout. These are two mechanisms
+within one benchmark, not a broad out-of-distribution guarantee. Exact match
+and token F1 do not independently establish factuality.
+
+## Study design
+
 The existing 300 HotpotQA questions are split by question ID with seed 17:
 180 training, 60 validation, 60 test. All variants of a question stay in its
 split. The corpus is a shared retrieval knowledge base; no gold answer or
@@ -130,16 +153,19 @@ record causes a failure instead of being silently discarded.
 ## Commands
 
 ```bash
-# First collect a resumable two-case smoke check.
-python src/reliability_study.py collect --limit 2
-python src/reliability_study.py collect --resume
+# Rebuild the published report offline; no paid calls.
+python src/reliability_study.py report
+
+# A new paid replication needs a fresh directory, not the published artifacts.
+python src/reliability_study.py collect --directory outputs/reliability_replication --limit 2
+python src/reliability_study.py collect --directory outputs/reliability_replication --resume
 
 # Fit once, then lock the model before collecting test outcomes.
-python src/reliability_study.py fit
-python src/reliability_study.py collect --phase test
+python src/reliability_study.py fit --directory outputs/reliability_replication
+python src/reliability_study.py collect --directory outputs/reliability_replication --phase test
 
 # Offline report: no API key or paid calls required.
-python src/reliability_study.py report
+python src/reliability_study.py report --directory outputs/reliability_replication
 ```
 
 The default artifact directory is `outputs/reliability_study/`. Artifacts include

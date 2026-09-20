@@ -89,6 +89,36 @@ python src/answer_ablation.py --max-examples 300
 
 Use a new `--output-suffix` for another run, or `--resume` to reuse completed records. See the [protocol and detailed results](docs/answer_ablation.md) for offline analysis and limitations. The historical results above are unchanged.
 
+### Outcome routing and generalization
+
+A cost-sensitive controller learns from observed action outcomes on 180 training questions; 60 validation questions select its settings. The model is frozen before evaluating 60 held-out questions across five states each. Two corruption mechanisms—query-term substitution and retrieval-rank dropout—appear only at test time.
+
+| Policy | Seen failures · EM | Unseen corruptions · EM | Natural outputs · EM |
+|:--|--:|--:|--:|
+| No repair | 7.5% | 22.5% | 35.0% |
+| Always rewrite query | 35.0% | 35.0% | 35.0% |
+| Retrieve more documents | 25.0% | 36.7% | 36.7% |
+| Fresh answer, same evidence | 24.2% | 22.5% | 36.7% |
+| Outcome-trained router | **36.7%** | **37.5%** | 35.0% |
+
+Against no repair, the router gains **29.2 pp [18.3, 40.0]** on seen failures and **15.0 pp [8.3, 22.5]** on unseen corruptions. Its small advantages over always rewriting are **not conclusive**. Natural outputs show **no net EM gain: 0.0 pp [−5.0, 5.0]**. These are 95% pointwise intervals from 10,000 paired question-clustered bootstrap resamples, without multiplicity adjustment.
+
+Recovery is 37/111 (33.3%) on seen failures, 19/93 (20.4%) on unseen corruptions, and 1/39 (2.6%) on natural errors. The router also damages 2/9, 1/27, and 1/21 initially correct answers, respectively. Small harm denominators matter; the [full report](outputs/reliability_study/report.md) includes their wide confidence intervals.
+
+Selected router actions, incremental per case:
+
+| Test group | Calls | Tokens | Estimated cost | Mean wall time |
+|:--|--:|--:|--:|--:|
+| Seen failures | 1.32 | 1,229 | $0.000196 | 1.03s |
+| Unseen corruptions | 1.47 | 937 | $0.000152 | 1.39s |
+| Natural outputs | 1.12 | 878 | $0.000131 | 1.16s |
+
+Fewer calls do not always mean lower cost: on seen failures, context expansion makes the router slightly more expensive than always rewriting ($0.000190/case). Wall times include API pacing and exclude the original forward pass; they are not serving benchmarks.
+
+**Takeaway:** the policy transfers to these two new perturbations, but that does not establish an improvement on naturally occurring errors or superiority over strong fixed strategies. This is one model seed within HotpotQA, evaluated offline from observed action outcomes—not a production trial.
+
+The complete study collected **780 states and 3,240 successful calls**, costing an estimated **$0.455** for completed cases. Conservative reservations, including interrupted requests, totaled **$1.43** under a $3 cap. See the [protocol](docs/reliability_study.md) and [machine-readable results](outputs/reliability_study/summary.json).
+
 ### Cost of repair
 
 Cold-cache snapshot · 10 examples · `gpt-4o-mini`
@@ -124,8 +154,8 @@ flowchart LR
 |:--|:--|
 | Retrieval | BM25; sentence-transformer cosine similarity |
 | LLM | OpenAI; local Ollama models through DSPy/LiteLLM |
-| Routing | Gold-free lexical diagnostics; transparent heuristic repair policy |
-| Evaluation | Exact match, contains-answer, Recall@K, AllSupport@K, recovery rate |
+| Routing | Gold-free diagnostics; heuristic, stage-attribution, and outcome-trained policies |
+| Evaluation | Exact match, token F1, contains-answer, retrieval metrics, recovery and damage |
 | Analysis | Multi-hop strata, seed aggregation, paired bootstrap confidence intervals |
 
 ### Adaptive routing
@@ -151,26 +181,21 @@ python src/experiment.py \
 
 Training is grouped by question ID, so baseline, query-corrupted, and answer-corrupted variants of a question never cross the train/test boundary. Across five 80/20 grouped holdouts, the router reaches **79.3% ± 2.0% accuracy** and **0.788 ± 0.020 macro-F1** on stage attribution. On this balanced attribution benchmark, it predicts repair for **70.7% ± 4.0%** of cases, avoiding about 29% of unconditional repairs.
 
-These are attribution results, not end-to-end recovery claims. Iterative escalation remains heuristic because the current data contains only 24 iterative-only successes—too few for a defensible learned fourth class. The next evaluation is a held-out live run measuring recovered EM per added call.
+These are attribution results, not end-to-end recovery claims. Iterative escalation remains heuristic because the current data contains only 24 iterative-only successes—too few for a defensible learned fourth class. The outcome-based study above evaluates a separate policy using observed repair success and cost.
 
 ### Outcome-based routing study
 
-A new [controlled study](docs/reliability_study.md) trains a cost-sensitive router
-on observed action outcomes, then evaluates held-out questions, two unseen
-corruption mechanisms, and unmodified baseline errors. It compares no repair,
-query rewrite, context expansion, and fresh generation. The protocol separates
-training, validation, and test questions and caps collection reservations at $3.
-The controller is fitted and frozen after 480 development cases; held-out results
-are pending. The stage-attribution results above are a separate experiment.
-The collector is resumable and rate-limited; offline reports include paired,
-question-clustered confidence intervals and separate recovery from damage.
+The frozen outcome router predicts `EM − 100 × incremental USD cost` from
+gold-free initial-state features. Its [model artifact](outputs/reliability_study/model.json)
+records validation selection and input hashes. Rebuild the published report
+without API calls:
 
 ```bash
-python src/reliability_study.py collect
-python src/reliability_study.py fit
-python src/reliability_study.py collect --phase test
 python src/reliability_study.py report
 ```
+
+For a new paid run, follow the [replication commands](docs/reliability_study.md#commands).
+Collection is resumable, rate-limited, and capped at $3 in request reservations.
 
 ## Quick start
 
@@ -272,16 +297,14 @@ Results are written to `outputs/<suffix>_results.jsonl`; aggregate summaries go 
 The test suite uses deterministic fixtures and mocks—never live LLM calls.
 
 ```bash
-pytest --cov=metrics --cov=retriever --cov=routing --cov=answer_ablation --cov-report=term-missing --cov-fail-under=90
-ruff check src tests demo
-mypy -m metrics -m retriever -m routing -m train_router -m significance -m answer_ablation -m outcome_routing -m experiment_budget -m reliability_study -m reliability_analysis
+make check  # lint, type checks, tests, and a 90% targeted coverage gate
 ```
 
-CI runs the same checks on every push and pull request. The suite covers metric normalization and recovery math, BM25 ranking and union semantics, backend contracts, telemetry, significance testing, stratification, and the ablation CLI's evidence isolation and resume safety. Targeted coverage spans metrics, retrieval, routing, and the answer ablation.
+CI runs the same checks on every push and pull request. Tests cover metrics, retrieval, backend contracts, telemetry, paired statistics, leakage guards, and resumable experiment collection. Targeted coverage includes both routing studies, answer ablation, and the spending guard.
 
 ## Limitations
 
-- Failures are deliberately injected, so their frequency does not represent production traffic.
+- Injected failures and unmodified benchmark errors do not represent production traffic.
 - The learned router is evaluated within the HotpotQA benchmark family; cross-dataset generalization remains untested.
 - Iterative and answer-stage results use one seed, and model outputs remain provider- and version-dependent.
 - The iterative recovery-rate lift is not statistically conclusive at the aggregate level.
@@ -301,6 +324,10 @@ src/
 ├── telemetry.py            # calls, tokens, cost, and stage latency
 ├── significance.py         # paired bootstrap comparisons
 ├── answer_ablation.py      # fixed-evidence revision versus regeneration study
+├── outcome_routing.py      # cost-sensitive policy learned from action outcomes
+├── reliability_study.py    # budgeted collection, model freeze, held-out evaluation
+├── reliability_analysis.py # paired, question-clustered recovery and harm report
+├── experiment_budget.py    # persistent spending guard and request pacing
 ├── stratified_analysis.py  # single-hop and multi-hop analysis
 └── make_final_figures.py   # publication-ready figures and tables
 

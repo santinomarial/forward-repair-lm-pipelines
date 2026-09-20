@@ -152,6 +152,14 @@ def report_markdown(report: dict) -> str:
             effect = metrics["exact_match"]
             low, high = effect["ci"]
             lines.append(f"- {comparison}: {100 * effect['estimate']:+.1f} [{100 * low:.1f}, {100 * high:.1f}]")
+        lines.extend(["", "Learned-policy rates with 95% intervals:", "",
+                      "| Metric | Estimate | 95% CI | Eligible cases |",
+                      "|:--|--:|:--|--:|"])
+        for metric in ("exact_match", "token_f1", "recovery", "damage"):
+            value = group["policies"]["learned"][metric]
+            estimate = "—" if value["estimate"] is None else f"{value['estimate']:.1%}"
+            interval = "—" if value["ci"] is None else f"[{value['ci'][0]:.1%}, {value['ci'][1]:.1%}]"
+            lines.append(f"| {metric} | {estimate} | {interval} | {value['eligible_count']} |")
         lines.append("")
     lines.extend([
         "## Interpretation limits", "",

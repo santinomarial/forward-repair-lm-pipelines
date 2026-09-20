@@ -1,0 +1,4368 @@
+{
+  "complete": true,
+  "manifest_sha256": "f22db3037c0ae183a653c3891efeb323c0710b632e0171778b4771c0240ec471",
+  "model_sha256": "73093bf4ee16c1042c5e7cccd606f8c9aaa69d70028237022ee6b1aabf236bc5",
+  "provider_seed": 0,
+  "development_cases": 480,
+  "test_cases": 300,
+  "statistics": {
+    "method": "paired cluster percentile bootstrap by question ID",
+    "confidence": 0.95,
+    "resamples": 10000,
+    "seed": 17,
+    "multiplicity_adjusted": false
+  },
+  "selected_policy": {
+    "ridge": 100.0,
+    "min_gain": 0.1,
+    "cost_penalty": 100.0
+  },
+  "groups": {
+    "seen": {
+      "cases": 120,
+      "questions": 60,
+      "initially_wrong": 111,
+      "initially_correct": 9,
+      "policies": {
+        "accept": {
+          "exact_match": {
+            "estimate": 0.075,
+            "ci": [
+              0.03333333333333333,
+              0.125
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.20016614840046246,
+            "ci": [
+              0.14859881026095284,
+              0.25724503003186094
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.44166666666666665,
+          "recovery": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 111,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 9,
+            "valid_resamples": 9996
+          },
+          "recovered_count": 0,
+          "damaged_count": 0,
+          "utility": 0.075,
+          "action_counts": {
+            "accept": 120
+          },
+          "incremental": {
+            "calls_per_case": 0.0,
+            "tokens_per_case": 0.0,
+            "cost_usd_per_case": {
+              "estimate": 0.0,
+              "ci": [
+                0.0,
+                0.0
+              ],
+              "eligible_count": 120,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.0,
+            "priced_calls": 0,
+            "latency_seconds_mean": 0.0,
+            "latency_seconds_p95": 0.0,
+            "throttle_seconds_mean": 0.0,
+            "unthrottled_seconds_mean": 0.0,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.0,
+              "answer_generation": 0.0
+            }
+          }
+        },
+        "rewrite_query": {
+          "exact_match": {
+            "estimate": 0.35,
+            "ci": [
+              0.23333333333333334,
+              0.466874999999997
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.5147384514636836,
+            "ci": [
+              0.41443050845353463,
+              0.6181662700546213
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.5416666666666666,
+          "recovery": {
+            "estimate": 0.32432432432432434,
+            "ci": [
+              0.21428571428571427,
+              0.4435024154589368
+            ],
+            "eligible_count": 111,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.3333333333333333,
+            "ci": [
+              0.0,
+              0.6666666666666666
+            ],
+            "eligible_count": 9,
+            "valid_resamples": 9996
+          },
+          "recovered_count": 36,
+          "damaged_count": 3,
+          "utility": 0.330999125,
+          "action_counts": {
+            "rewrite_query": 120
+          },
+          "incremental": {
+            "calls_per_case": 2.0,
+            "tokens_per_case": 1143.1666666666667,
+            "cost_usd_per_case": {
+              "estimate": 0.00019000874999999999,
+              "ci": [
+                0.00018339118750000002,
+                0.00019732875
+              ],
+              "eligible_count": 120,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.02280105,
+            "priced_calls": 240,
+            "latency_seconds_mean": 1.8889251312221556,
+            "latency_seconds_p95": 2.09938794352347,
+            "throttle_seconds_mean": 0.6873498577003677,
+            "unthrottled_seconds_mean": 1.2015752735217877,
+            "stage_seconds_per_case": {
+              "query_generation": 1.049492514267331,
+              "retrieval": 0.012370037879251564,
+              "answer_generation": 0.8270507858299728
+            }
+          }
+        },
+        "expand_context": {
+          "exact_match": {
+            "estimate": 0.25,
+            "ci": [
+              0.16666666666666666,
+              0.3416666666666667
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.3927448800387397,
+            "ci": [
+              0.315058852210168,
+              0.47327874864333197
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.4083333333333333,
+          "recovery": {
+            "estimate": 0.2072072072072072,
+            "ci": [
+              0.13513513513513514,
+              0.28440366972477066
+            ],
+            "eligible_count": 111,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.2222222222222222,
+            "ci": [
+              0.0,
+              0.5
+            ],
+            "eligible_count": 9,
+            "valid_resamples": 9996
+          },
+          "recovered_count": 23,
+          "damaged_count": 2,
+          "utility": 0.22429549999999995,
+          "action_counts": {
+            "expand_context": 120
+          },
+          "incremental": {
+            "calls_per_case": 1.0,
+            "tokens_per_case": 1684.7083333333333,
+            "cost_usd_per_case": {
+              "estimate": 0.00025704499999999996,
+              "ci": [
+                0.00024887115625000004,
+                0.00026574393750000003
+              ],
+              "eligible_count": 120,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.0308454,
+            "priced_calls": 120,
+            "latency_seconds_mean": 1.2349788878365264,
+            "latency_seconds_p95": 2.642547379166352,
+            "throttle_seconds_mean": 0.6404469697745905,
+            "unthrottled_seconds_mean": 0.594531918061936,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.009711215933202766,
+              "answer_generation": 1.2252590159429626
+            }
+          }
+        },
+        "regenerate": {
+          "exact_match": {
+            "estimate": 0.24166666666666667,
+            "ci": [
+              0.16666666666666666,
+              0.325
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.35049171345223973,
+            "ci": [
+              0.27359668979899243,
+              0.43348641654398223
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.35,
+          "recovery": {
+            "estimate": 0.18018018018018017,
+            "ci": [
+              0.11607142857142858,
+              0.25225225225225223
+            ],
+            "eligible_count": 111,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 9,
+            "valid_resamples": 9996
+          },
+          "recovered_count": 20,
+          "damaged_count": 0,
+          "utility": 0.22756904166666664,
+          "action_counts": {
+            "regenerate": 120
+          },
+          "incremental": {
+            "calls_per_case": 1.0,
+            "tokens_per_case": 911.1166666666667,
+            "cost_usd_per_case": {
+              "estimate": 0.00014097625,
+              "ci": [
+                0.00013687365624999998,
+                0.00014515387499999997
+              ],
+              "eligible_count": 120,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.01691715,
+            "priced_calls": 120,
+            "latency_seconds_mean": 0.8456861757110649,
+            "latency_seconds_p95": 1.0694969367526936,
+            "throttle_seconds_mean": 0.31108046778826975,
+            "unthrottled_seconds_mean": 0.5346057079227952,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.0,
+              "answer_generation": 0.8456758205313235
+            }
+          }
+        },
+        "learned": {
+          "exact_match": {
+            "estimate": 0.36666666666666664,
+            "ci": [
+              0.25833333333333336,
+              0.48333333333333334
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.5247494834600098,
+            "ci": [
+              0.42675560403290663,
+              0.6254041212199106
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.5666666666666667,
+          "recovery": {
+            "estimate": 0.3333333333333333,
+            "ci": [
+              0.22429906542056074,
+              0.44954128440366975
+            ],
+            "eligible_count": 111,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.2222222222222222,
+            "ci": [
+              0.0,
+              0.5454545454545454
+            ],
+            "eligible_count": 9,
+            "valid_resamples": 9996
+          },
+          "recovered_count": 37,
+          "damaged_count": 2,
+          "utility": 0.34705966666666666,
+          "action_counts": {
+            "expand_context": 52,
+            "rewrite_query": 53,
+            "accept": 14,
+            "regenerate": 1
+          },
+          "incremental": {
+            "calls_per_case": 1.325,
+            "tokens_per_case": 1229.3833333333334,
+            "cost_usd_per_case": {
+              "estimate": 0.00019606999999999998,
+              "ci": [
+                0.00018257865625,
+                0.00020917525000000006
+              ],
+              "eligible_count": 120,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.023528399999999998,
+            "priced_calls": 159,
+            "latency_seconds_mean": 1.0302862208278385,
+            "latency_seconds_p95": 1.9710621086414901,
+            "throttle_seconds_mean": 0.2182000267416394,
+            "unthrottled_seconds_mean": 0.812086194086199,
+            "stage_seconds_per_case": {
+              "query_generation": 0.30931762189623746,
+              "retrieval": 0.009158184009720571,
+              "answer_generation": 0.7118019219352087
+            }
+          }
+        }
+      },
+      "comparisons": {
+        "learned_minus_accept": {
+          "exact_match": {
+            "estimate": 0.2916666666666667,
+            "ci": [
+              0.18333333333333332,
+              0.4
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.32458333505954734,
+            "ci": [
+              0.2341800071527688,
+              0.4164146223636415
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.3333333333333333,
+            "ci": [
+              0.22429906542056074,
+              0.44954128440366975
+            ],
+            "eligible_count": 111,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.2222222222222222,
+            "ci": [
+              0.0,
+              0.5454545454545454
+            ],
+            "eligible_count": 9,
+            "valid_resamples": 9996
+          },
+          "cost_usd_per_case": {
+            "estimate": 0.00019606999999999998,
+            "ci": [
+              0.00018257865625,
+              0.00020917525000000006
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_rewrite_query": {
+          "exact_match": {
+            "estimate": 0.016666666666666666,
+            "ci": [
+              -0.016666666666666666,
+              0.05
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.01001103199632611,
+            "ci": [
+              -0.01606880932248579,
+              0.03746292650704415
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.009009009009009009,
+            "ci": [
+              -0.018518518518518517,
+              0.03930367018602185
+            ],
+            "eligible_count": 111,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": -0.1111111111111111,
+            "ci": [
+              -0.36363636363636365,
+              0.0
+            ],
+            "eligible_count": 9,
+            "valid_resamples": 9996
+          },
+          "cost_usd_per_case": {
+            "estimate": 6.061250000000004e-06,
+            "ci": [
+              -5.8450624999999975e-06,
+              1.703940624999999e-05
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_expand_context": {
+          "exact_match": {
+            "estimate": 0.11666666666666667,
+            "ci": [
+              0.058333333333333334,
+              0.18333333333333332
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.1320046034212701,
+            "ci": [
+              0.06807849912433245,
+              0.19912757235048897
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.12612612612612611,
+            "ci": [
+              0.06363636363636363,
+              0.19090909090909092
+            ],
+            "eligible_count": 111,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.0,
+            "ci": [
+              -0.3333333333333333,
+              0.3333333333333333
+            ],
+            "eligible_count": 9,
+            "valid_resamples": 9996
+          },
+          "cost_usd_per_case": {
+            "estimate": -6.0975000000000005e-05,
+            "ci": [
+              -7.314e-05,
+              -4.961990624999999e-05
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_regenerate": {
+          "exact_match": {
+            "estimate": 0.125,
+            "ci": [
+              0.058333333333333334,
+              0.19166666666666668
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.17425777000777,
+            "ci": [
+              0.10880224520849521,
+              0.2381537686850187
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.15315315315315314,
+            "ci": [
+              0.09259259259259259,
+              0.21428571428571427
+            ],
+            "eligible_count": 111,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.2222222222222222,
+            "ci": [
+              0.0,
+              0.5454545454545454
+            ],
+            "eligible_count": 9,
+            "valid_resamples": 9996
+          },
+          "cost_usd_per_case": {
+            "estimate": 5.5093749999999994e-05,
+            "ci": [
+              4.3362125e-05,
+              6.593253125e-05
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          }
+        }
+      }
+    },
+    "unseen": {
+      "cases": 120,
+      "questions": 60,
+      "initially_wrong": 93,
+      "initially_correct": 27,
+      "policies": {
+        "accept": {
+          "exact_match": {
+            "estimate": 0.225,
+            "ci": [
+              0.15,
+              0.30833333333333335
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.29852621915121913,
+            "ci": [
+              0.22764949807137308,
+              0.3732028937497687
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.3333333333333333,
+          "recovery": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 93,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 27,
+            "valid_resamples": 10000
+          },
+          "recovered_count": 0,
+          "damaged_count": 0,
+          "utility": 0.225,
+          "action_counts": {
+            "accept": 120
+          },
+          "incremental": {
+            "calls_per_case": 0.0,
+            "tokens_per_case": 0.0,
+            "cost_usd_per_case": {
+              "estimate": 0.0,
+              "ci": [
+                0.0,
+                0.0
+              ],
+              "eligible_count": 120,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.0,
+            "priced_calls": 0,
+            "latency_seconds_mean": 0.0,
+            "latency_seconds_p95": 0.0,
+            "throttle_seconds_mean": 0.0,
+            "unthrottled_seconds_mean": 0.0,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.0,
+              "answer_generation": 0.0
+            }
+          }
+        },
+        "rewrite_query": {
+          "exact_match": {
+            "estimate": 0.35,
+            "ci": [
+              0.23333333333333334,
+              0.475
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.5207303161807806,
+            "ci": [
+              0.4202924050672696,
+              0.6243629732246024
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.5416666666666666,
+          "recovery": {
+            "estimate": 0.21505376344086022,
+            "ci": [
+              0.1276595744680851,
+              0.32184865900383125
+            ],
+            "eligible_count": 93,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.18518518518518517,
+            "ci": [
+              0.043478260869565216,
+              0.35714285714285715
+            ],
+            "eligible_count": 27,
+            "valid_resamples": 10000
+          },
+          "recovered_count": 20,
+          "damaged_count": 5,
+          "utility": 0.33096875000000003,
+          "action_counts": {
+            "rewrite_query": 120
+          },
+          "incremental": {
+            "calls_per_case": 2.0,
+            "tokens_per_case": 1146.6083333333333,
+            "cost_usd_per_case": {
+              "estimate": 0.00019031249999999997,
+              "ci": [
+                0.0001837021875,
+                0.00019753781249999997
+              ],
+              "eligible_count": 120,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.022837499999999997,
+            "priced_calls": 240,
+            "latency_seconds_mean": 1.6969037309017343,
+            "latency_seconds_p95": 2.149617828603368,
+            "throttle_seconds_mean": 0.49102432225384596,
+            "unthrottled_seconds_mean": 1.2058794086478883,
+            "stage_seconds_per_case": {
+              "query_generation": 0.6515761864410403,
+              "retrieval": 0.01190278956783004,
+              "answer_generation": 1.0334035527746892
+            }
+          }
+        },
+        "expand_context": {
+          "exact_match": {
+            "estimate": 0.36666666666666664,
+            "ci": [
+              0.25833333333333336,
+              0.48333333333333334
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.5248082349749017,
+            "ci": [
+              0.4275748284894118,
+              0.6248794793169792
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.5583333333333333,
+          "recovery": {
+            "estimate": 0.21505376344086022,
+            "ci": [
+              0.12941176470588237,
+              0.3132530120481928
+            ],
+            "eligible_count": 93,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.1111111111111111,
+            "ci": [
+              0.0,
+              0.24
+            ],
+            "eligible_count": 27,
+            "valid_resamples": 10000
+          },
+          "recovered_count": 20,
+          "damaged_count": 3,
+          "utility": 0.3442904166666666,
+          "action_counts": {
+            "expand_context": 120
+          },
+          "incremental": {
+            "calls_per_case": 1.0,
+            "tokens_per_case": 1610.95,
+            "cost_usd_per_case": {
+              "estimate": 0.0002237625,
+              "ci": [
+                0.00021148471875,
+                0.00023647656249999998
+              ],
+              "eligible_count": 120,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.0268515,
+            "priced_calls": 120,
+            "latency_seconds_mean": 2.647154095496323,
+            "latency_seconds_p95": 22.958257421152663,
+            "throttle_seconds_mean": 1.9147285333359225,
+            "unthrottled_seconds_mean": 0.7324255621604,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.010851555184732813,
+              "answer_generation": 2.636291922899545
+            }
+          }
+        },
+        "regenerate": {
+          "exact_match": {
+            "estimate": 0.225,
+            "ci": [
+              0.15,
+              0.30833333333333335
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.30224284974284976,
+            "ci": [
+              0.23188155363155363,
+              0.3764848484848485
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.3416666666666667,
+          "recovery": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 93,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 27,
+            "valid_resamples": 10000
+          },
+          "recovered_count": 0,
+          "damaged_count": 0,
+          "utility": 0.213166375,
+          "action_counts": {
+            "regenerate": 120
+          },
+          "incremental": {
+            "calls_per_case": 1.0,
+            "tokens_per_case": 759.725,
+            "cost_usd_per_case": {
+              "estimate": 0.00011833624999999999,
+              "ci": [
+                0.00011398359375,
+                0.00012288634375
+              ],
+              "eligible_count": 120,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.014200349999999999,
+            "priced_calls": 120,
+            "latency_seconds_mean": 1.316060566609182,
+            "latency_seconds_p95": 1.3181314795743673,
+            "throttle_seconds_mean": 0.6379424809196886,
+            "unthrottled_seconds_mean": 0.6781180856894935,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.0,
+              "answer_generation": 1.316049651032275
+            }
+          }
+        },
+        "learned": {
+          "exact_match": {
+            "estimate": 0.375,
+            "ci": [
+              0.25833333333333336,
+              0.5
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.5257725451935978,
+            "ci": [
+              0.42185037562340194,
+              0.6312309416582443
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.5583333333333333,
+          "recovery": {
+            "estimate": 0.20430107526881722,
+            "ci": [
+              0.11827956989247312,
+              0.3103448275862069
+            ],
+            "eligible_count": 93,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.037037037037037035,
+            "ci": [
+              0.0,
+              0.13043478260869565
+            ],
+            "eligible_count": 27,
+            "valid_resamples": 10000
+          },
+          "recovered_count": 19,
+          "damaged_count": 1,
+          "utility": 0.359806,
+          "action_counts": {
+            "rewrite_query": 83,
+            "expand_context": 10,
+            "accept": 27
+          },
+          "incremental": {
+            "calls_per_case": 1.4666666666666666,
+            "tokens_per_case": 936.7833333333333,
+            "cost_usd_per_case": {
+              "estimate": 0.00015194,
+              "ci": [
+                0.00013423749999999998,
+                0.0001686976875
+              ],
+              "eligible_count": 120,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.0182328,
+            "priced_calls": 176,
+            "latency_seconds_mean": 1.385697835761433,
+            "latency_seconds_p95": 2.053242868511006,
+            "throttle_seconds_mean": 0.48956711082331217,
+            "unthrottled_seconds_mean": 0.8961307249381207,
+            "stage_seconds_per_case": {
+              "query_generation": 0.46287959096080156,
+              "retrieval": 0.009673584354459308,
+              "answer_generation": 0.9131261243106564
+            }
+          }
+        }
+      },
+      "comparisons": {
+        "learned_minus_accept": {
+          "exact_match": {
+            "estimate": 0.15,
+            "ci": [
+              0.08333333333333333,
+              0.225
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.22724632604237865,
+            "ci": [
+              0.16442206295166825,
+              0.2953244391755904
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.20430107526881722,
+            "ci": [
+              0.11827956989247312,
+              0.3103448275862069
+            ],
+            "eligible_count": 93,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.037037037037037035,
+            "ci": [
+              0.0,
+              0.13043478260869565
+            ],
+            "eligible_count": 27,
+            "valid_resamples": 10000
+          },
+          "cost_usd_per_case": {
+            "estimate": 0.00015194,
+            "ci": [
+              0.00013423749999999998,
+              0.0001686976875
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_rewrite_query": {
+          "exact_match": {
+            "estimate": 0.025,
+            "ci": [
+              -0.008333333333333333,
+              0.06666666666666667
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.005042229012817248,
+            "ci": [
+              -0.017341450216450213,
+              0.03128302722604192
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": -0.010752688172043012,
+            "ci": [
+              -0.03409090909090909,
+              0.0
+            ],
+            "eligible_count": 93,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": -0.14814814814814814,
+            "ci": [
+              -0.30434782608695654,
+              -0.034482758620689655
+            ],
+            "eligible_count": 27,
+            "valid_resamples": 10000
+          },
+          "cost_usd_per_case": {
+            "estimate": -3.83725e-05,
+            "ci": [
+              -5.3273781249999985e-05,
+              -2.4640843750000004e-05
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_expand_context": {
+          "exact_match": {
+            "estimate": 0.008333333333333333,
+            "ci": [
+              -0.05,
+              0.075
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.000964310218696185,
+            "ci": [
+              -0.057798569729490774,
+              0.06358005519902447
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": -0.010752688172043012,
+            "ci": [
+              -0.08333333333333333,
+              0.06666666666666667
+            ],
+            "eligible_count": 93,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": -0.07407407407407407,
+            "ci": [
+              -0.18181818181818182,
+              0.0
+            ],
+            "eligible_count": 27,
+            "valid_resamples": 10000
+          },
+          "cost_usd_per_case": {
+            "estimate": -7.18225e-05,
+            "ci": [
+              -8.99890625e-05,
+              -5.4296937500000004e-05
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_regenerate": {
+          "exact_match": {
+            "estimate": 0.15,
+            "ci": [
+              0.08333333333333333,
+              0.225
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.22352969545074808,
+            "ci": [
+              0.1595097599038389,
+              0.293065256965257
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.20430107526881722,
+            "ci": [
+              0.11827956989247312,
+              0.3103448275862069
+            ],
+            "eligible_count": 93,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.037037037037037035,
+            "ci": [
+              0.0,
+              0.13043478260869565
+            ],
+            "eligible_count": 27,
+            "valid_resamples": 10000
+          },
+          "cost_usd_per_case": {
+            "estimate": 3.360375e-05,
+            "ci": [
+              1.7610875e-05,
+              4.8602593749999985e-05
+            ],
+            "eligible_count": 120,
+            "valid_resamples": 10000
+          }
+        }
+      }
+    },
+    "natural": {
+      "cases": 60,
+      "questions": 60,
+      "initially_wrong": 39,
+      "initially_correct": 21,
+      "policies": {
+        "accept": {
+          "exact_match": {
+            "estimate": 0.35,
+            "ci": [
+              0.23333333333333334,
+              0.48333333333333334
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.5076573085783612,
+            "ci": [
+              0.39929751559356824,
+              0.6168109636464899
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.5166666666666667,
+          "recovery": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 21,
+            "valid_resamples": 10000
+          },
+          "recovered_count": 0,
+          "damaged_count": 0,
+          "utility": 0.35,
+          "action_counts": {
+            "accept": 60
+          },
+          "incremental": {
+            "calls_per_case": 0.0,
+            "tokens_per_case": 0.0,
+            "cost_usd_per_case": {
+              "estimate": 0.0,
+              "ci": [
+                0.0,
+                0.0
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.0,
+            "priced_calls": 0,
+            "latency_seconds_mean": 0.0,
+            "latency_seconds_p95": 0.0,
+            "throttle_seconds_mean": 0.0,
+            "unthrottled_seconds_mean": 0.0,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.0,
+              "answer_generation": 0.0
+            }
+          }
+        },
+        "rewrite_query": {
+          "exact_match": {
+            "estimate": 0.35,
+            "ci": [
+              0.23333333333333334,
+              0.4666666666666667
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.5339970679475324,
+            "ci": [
+              0.4282341950275386,
+              0.6428159328975118
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.5666666666666667,
+          "recovery": {
+            "estimate": 0.02564102564102564,
+            "ci": [
+              0.0,
+              0.08571428571428572
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.047619047619047616,
+            "ci": [
+              0.0,
+              0.15789473684210525
+            ],
+            "eligible_count": 21,
+            "valid_resamples": 10000
+          },
+          "recovered_count": 1,
+          "damaged_count": 1,
+          "utility": 0.33111650000000004,
+          "action_counts": {
+            "rewrite_query": 60
+          },
+          "incremental": {
+            "calls_per_case": 2.0,
+            "tokens_per_case": 1151.95,
+            "cost_usd_per_case": {
+              "estimate": 0.00018883499999999996,
+              "ci": [
+                0.00018204237499999998,
+                0.00019619775
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.011330099999999997,
+            "priced_calls": 120,
+            "latency_seconds_mean": 1.7048916416688977,
+            "latency_seconds_p95": 1.8979186731739897,
+            "throttle_seconds_mean": 0.49772802490430573,
+            "unthrottled_seconds_mean": 1.207163616764592,
+            "stage_seconds_per_case": {
+              "query_generation": 1.0547871181120476,
+              "retrieval": 0.011591430503176525,
+              "answer_generation": 0.638500324357301
+            }
+          }
+        },
+        "expand_context": {
+          "exact_match": {
+            "estimate": 0.36666666666666664,
+            "ci": [
+              0.25,
+              0.48333333333333334
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.5437465341675868,
+            "ci": [
+              0.4406517830853357,
+              0.6495621546582072
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.5833333333333334,
+          "recovery": {
+            "estimate": 0.05128205128205128,
+            "ci": [
+              0.0,
+              0.13046338672768837
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.047619047619047616,
+            "ci": [
+              0.0,
+              0.15789473684210525
+            ],
+            "eligible_count": 21,
+            "valid_resamples": 10000
+          },
+          "recovered_count": 2,
+          "damaged_count": 1,
+          "utility": 0.3467201666666666,
+          "action_counts": {
+            "expand_context": 60
+          },
+          "incremental": {
+            "calls_per_case": 1.0,
+            "tokens_per_case": 1654.35,
+            "cost_usd_per_case": {
+              "estimate": 0.00019946499999999996,
+              "ci": [
+                0.00018344925,
+                0.00021606537499999998
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.011967899999999998,
+            "priced_calls": 60,
+            "latency_seconds_mean": 2.7654521993147987,
+            "latency_seconds_p95": 24.229199073201745,
+            "throttle_seconds_mean": 2.1997221305597727,
+            "unthrottled_seconds_mean": 0.5657300687550256,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.00919747220274682,
+              "answer_generation": 2.7562458458181935
+            }
+          }
+        },
+        "regenerate": {
+          "exact_match": {
+            "estimate": 0.36666666666666664,
+            "ci": [
+              0.25,
+              0.5
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.5281623590834117,
+            "ci": [
+              0.42103591291749193,
+              0.6385547438672438
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.5333333333333333,
+          "recovery": {
+            "estimate": 0.02564102564102564,
+            "ci": [
+              0.0,
+              0.08571428571428572
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 21,
+            "valid_resamples": 10000
+          },
+          "recovered_count": 1,
+          "damaged_count": 0,
+          "utility": 0.35332416666666666,
+          "action_counts": {
+            "regenerate": 60
+          },
+          "incremental": {
+            "calls_per_case": 1.0,
+            "tokens_per_case": 880.1166666666667,
+            "cost_usd_per_case": {
+              "estimate": 0.00013342499999999998,
+              "ci": [
+                0.00012815249999999998,
+                0.00013907518749999996
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.008005499999999999,
+            "priced_calls": 60,
+            "latency_seconds_mean": 0.7053510450738637,
+            "latency_seconds_p95": 1.6077744165551848,
+            "throttle_seconds_mean": 0.12318801323805625,
+            "unthrottled_seconds_mean": 0.5821630318358075,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.0,
+              "answer_generation": 0.7053361653117463
+            }
+          }
+        },
+        "learned": {
+          "exact_match": {
+            "estimate": 0.35,
+            "ci": [
+              0.23333333333333334,
+              0.4666666666666667
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.5440627919838446,
+            "ci": [
+              0.4414521369712159,
+              0.649848051948052
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.5833333333333334,
+          "recovery": {
+            "estimate": 0.02564102564102564,
+            "ci": [
+              0.0,
+              0.08333333333333333
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.047619047619047616,
+            "ci": [
+              0.0,
+              0.15789473684210525
+            ],
+            "eligible_count": 21,
+            "valid_resamples": 10000
+          },
+          "recovered_count": 1,
+          "damaged_count": 1,
+          "utility": 0.33693300000000004,
+          "action_counts": {
+            "accept": 20,
+            "rewrite_query": 27,
+            "expand_context": 13
+          },
+          "incremental": {
+            "calls_per_case": 1.1166666666666667,
+            "tokens_per_case": 877.5333333333333,
+            "cost_usd_per_case": {
+              "estimate": 0.00013067,
+              "ci": [
+                0.00010544987499999999,
+                0.00015537499999999997
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.0078402,
+            "priced_calls": 67,
+            "latency_seconds_mean": 1.1647631271160208,
+            "latency_seconds_p95": 1.9020020460709923,
+            "throttle_seconds_mean": 0.4992077395339341,
+            "unthrottled_seconds_mean": 0.6655553875820867,
+            "stage_seconds_per_case": {
+              "query_generation": 0.6738255167127742,
+              "retrieval": 0.008297483231096218,
+              "answer_generation": 0.482632863909627
+            }
+          }
+        }
+      },
+      "comparisons": {
+        "learned_minus_accept": {
+          "exact_match": {
+            "estimate": 0.0,
+            "ci": [
+              -0.05,
+              0.05
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.036405483405483406,
+            "ci": [
+              -0.01922222222222222,
+              0.09289172077922075
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.02564102564102564,
+            "ci": [
+              0.0,
+              0.08333333333333333
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.047619047619047616,
+            "ci": [
+              0.0,
+              0.15789473684210525
+            ],
+            "eligible_count": 21,
+            "valid_resamples": 10000
+          },
+          "cost_usd_per_case": {
+            "estimate": 0.00013067,
+            "ci": [
+              0.00010544987499999999,
+              0.00015537499999999997
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_rewrite_query": {
+          "exact_match": {
+            "estimate": 0.0,
+            "ci": [
+              -0.05,
+              0.05
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.010065724036312269,
+            "ci": [
+              -0.02560391882083059,
+              0.04569202787952786
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.0,
+            "ci": [
+              -0.075,
+              0.075
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 21,
+            "valid_resamples": 10000
+          },
+          "cost_usd_per_case": {
+            "estimate": -5.8164999999999996e-05,
+            "ci": [
+              -8.260287499999999e-05,
+              -3.459893750000001e-05
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_expand_context": {
+          "exact_match": {
+            "estimate": -0.016666666666666666,
+            "ci": [
+              -0.05,
+              0.0
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.00031625781625781814,
+            "ci": [
+              -0.0477056277056277,
+              0.04764309764309764
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": -0.02564102564102564,
+            "ci": [
+              -0.08571428571428572,
+              0.0
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 21,
+            "valid_resamples": 10000
+          },
+          "cost_usd_per_case": {
+            "estimate": -6.8795e-05,
+            "ci": [
+              -9.68203125e-05,
+              -4.249987500000001e-05
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_regenerate": {
+          "exact_match": {
+            "estimate": -0.016666666666666666,
+            "ci": [
+              -0.06666666666666667,
+              0.03333333333333333
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.015900432900432897,
+            "ci": [
+              -0.04362721861471862,
+              0.07489269480519478
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.0,
+            "ci": [
+              -0.075,
+              0.075
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.047619047619047616,
+            "ci": [
+              0.0,
+              0.15789473684210525
+            ],
+            "eligible_count": 21,
+            "valid_resamples": 10000
+          },
+          "cost_usd_per_case": {
+            "estimate": -2.755000000000001e-06,
+            "ci": [
+              -2.7677625e-05,
+              2.1380874999999982e-05
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          }
+        }
+      }
+    },
+    "natural_errors": {
+      "cases": 39,
+      "questions": 39,
+      "initially_wrong": 39,
+      "initially_correct": 0,
+      "policies": {
+        "accept": {
+          "exact_match": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.24254970550517108,
+            "ci": [
+              0.1565713782768439,
+              0.3357197396620473
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.2564102564102564,
+          "recovery": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": null,
+            "ci": null,
+            "eligible_count": 0,
+            "valid_resamples": 0
+          },
+          "recovered_count": 0,
+          "damaged_count": 0,
+          "utility": 0.0,
+          "action_counts": {
+            "accept": 39
+          },
+          "incremental": {
+            "calls_per_case": 0.0,
+            "tokens_per_case": 0.0,
+            "cost_usd_per_case": {
+              "estimate": 0.0,
+              "ci": [
+                0.0,
+                0.0
+              ],
+              "eligible_count": 39,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.0,
+            "priced_calls": 0,
+            "latency_seconds_mean": 0.0,
+            "latency_seconds_p95": 0.0,
+            "throttle_seconds_mean": 0.0,
+            "unthrottled_seconds_mean": 0.0,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.0,
+              "answer_generation": 0.0
+            }
+          }
+        },
+        "rewrite_query": {
+          "exact_match": {
+            "estimate": 0.02564102564102564,
+            "ci": [
+              0.0,
+              0.07692307692307693
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.3087134378679985,
+            "ci": [
+              0.21264267831081357,
+              0.41304632569409894
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.3333333333333333,
+          "recovery": {
+            "estimate": 0.02564102564102564,
+            "ci": [
+              0.0,
+              0.07692307692307693
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": null,
+            "ci": null,
+            "eligible_count": 0,
+            "valid_resamples": 0
+          },
+          "recovered_count": 1,
+          "damaged_count": 0,
+          "utility": 0.006609102564102566,
+          "action_counts": {
+            "rewrite_query": 39
+          },
+          "incremental": {
+            "calls_per_case": 2.0,
+            "tokens_per_case": 1159.2051282051282,
+            "cost_usd_per_case": {
+              "estimate": 0.00019031923076923073,
+              "ci": [
+                0.0001811691346153846,
+                0.00020010067307692304
+              ],
+              "eligible_count": 39,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.007422449999999999,
+            "priced_calls": 78,
+            "latency_seconds_mean": 1.9470167372298117,
+            "latency_seconds_p95": 2.0214725377969445,
+            "throttle_seconds_mean": 0.7215147253352766,
+            "unthrottled_seconds_mean": 1.225502011894535,
+            "stage_seconds_per_case": {
+              "query_generation": 1.2574344134788054,
+              "retrieval": 0.012537542685794715,
+              "answer_generation": 0.6770313269673631
+            }
+          }
+        },
+        "expand_context": {
+          "exact_match": {
+            "estimate": 0.05128205128205128,
+            "ci": [
+              0.0,
+              0.1282051282051282
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.32371261666808226,
+            "ci": [
+              0.22665287928445824,
+              0.42427632230567447
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.358974358974359,
+          "recovery": {
+            "estimate": 0.05128205128205128,
+            "ci": [
+              0.0,
+              0.1282051282051282
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": null,
+            "ci": null,
+            "eligible_count": 0,
+            "valid_resamples": 0
+          },
+          "recovered_count": 2,
+          "damaged_count": 0,
+          "utility": 0.030252435897435898,
+          "action_counts": {
+            "expand_context": 39
+          },
+          "incremental": {
+            "calls_per_case": 1.0,
+            "tokens_per_case": 1683.5384615384614,
+            "cost_usd_per_case": {
+              "estimate": 0.00021029615384615381,
+              "ci": [
+                0.00018985384615384618,
+                0.00023112336538461535
+              ],
+              "eligible_count": 39,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.008201549999999998,
+            "priced_calls": 39,
+            "latency_seconds_mean": 2.587195711538721,
+            "latency_seconds_p95": 18.87027114999947,
+            "throttle_seconds_mean": 2.006685944453168,
+            "unthrottled_seconds_mean": 0.5805097670855526,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.009044935896944923,
+              "answer_generation": 2.578141519232677
+            }
+          }
+        },
+        "regenerate": {
+          "exact_match": {
+            "estimate": 0.02564102564102564,
+            "ci": [
+              0.0,
+              0.07692307692307693
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.27409593705140267,
+            "ci": [
+              0.18126419389577286,
+              0.37560562132424474
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.28205128205128205,
+          "recovery": {
+            "estimate": 0.02564102564102564,
+            "ci": [
+              0.0,
+              0.07692307692307693
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": null,
+            "ci": null,
+            "eligible_count": 0,
+            "valid_resamples": 0
+          },
+          "recovered_count": 1,
+          "damaged_count": 0,
+          "utility": 0.01216833333333334,
+          "action_counts": {
+            "regenerate": 39
+          },
+          "incremental": {
+            "calls_per_case": 1.0,
+            "tokens_per_case": 897.2307692307693,
+            "cost_usd_per_case": {
+              "estimate": 0.00013472692307692306,
+              "ci": [
+                0.00012855375,
+                0.0001410153846153846
+              ],
+              "eligible_count": 39,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.00525435,
+            "priced_calls": 39,
+            "latency_seconds_mean": 0.714448339672974,
+            "latency_seconds_p95": 1.633169316651766,
+            "throttle_seconds_mean": 0.11128933659981555,
+            "unthrottled_seconds_mean": 0.6031590030731585,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.0,
+              "answer_generation": 0.7144366891439765
+            }
+          }
+        },
+        "learned": {
+          "exact_match": {
+            "estimate": 0.02564102564102564,
+            "ci": [
+              0.0,
+              0.07692307692307693
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.32419916715463276,
+            "ci": [
+              0.22714246766878343,
+              0.4270021177652756
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.358974358974359,
+          "recovery": {
+            "estimate": 0.02564102564102564,
+            "ci": [
+              0.0,
+              0.07692307692307693
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": null,
+            "ci": null,
+            "eligible_count": 0,
+            "valid_resamples": 0
+          },
+          "recovered_count": 1,
+          "damaged_count": 0,
+          "utility": 0.010240256410256408,
+          "action_counts": {
+            "accept": 8,
+            "rewrite_query": 21,
+            "expand_context": 10
+          },
+          "incremental": {
+            "calls_per_case": 1.3333333333333333,
+            "tokens_per_case": 1027.5128205128206,
+            "cost_usd_per_case": {
+              "estimate": 0.0001540076923076923,
+              "ci": [
+                0.00012551115384615383,
+                0.00018078086538461535
+              ],
+              "eligible_count": 39,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.0060063,
+            "priced_calls": 52,
+            "latency_seconds_mean": 1.5395138120272747,
+            "latency_seconds_p95": 2.1777914999518555,
+            "throttle_seconds_mean": 0.7495009668159466,
+            "unthrottled_seconds_mean": 0.7900128452113281,
+            "stage_seconds_per_case": {
+              "query_generation": 0.9286175897906128,
+              "retrieval": 0.01017001376618655,
+              "answer_generation": 0.6007173408348209
+            }
+          }
+        }
+      },
+      "comparisons": {
+        "learned_minus_accept": {
+          "exact_match": {
+            "estimate": 0.02564102564102564,
+            "ci": [
+              0.0,
+              0.07692307692307693
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.08164946164946164,
+            "ci": [
+              0.024023809523809527,
+              0.15399716949716952
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.02564102564102564,
+            "ci": [
+              0.0,
+              0.07692307692307693
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": null,
+            "ci": null,
+            "eligible_count": 0,
+            "valid_resamples": 0
+          },
+          "cost_usd_per_case": {
+            "estimate": 0.0001540076923076923,
+            "ci": [
+              0.00012551115384615383,
+              0.00018078086538461535
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_rewrite_query": {
+          "exact_match": {
+            "estimate": 0.0,
+            "ci": [
+              -0.07692307692307693,
+              0.07692307692307693
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.015485729286634258,
+            "ci": [
+              -0.0407479775126834,
+              0.0705691702298037
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.0,
+            "ci": [
+              -0.07692307692307693,
+              0.07692307692307693
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": null,
+            "ci": null,
+            "eligible_count": 0,
+            "valid_resamples": 0
+          },
+          "cost_usd_per_case": {
+            "estimate": -3.631153846153846e-05,
+            "ci": [
+              -6.369278846153845e-05,
+              -1.161038461538463e-05
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_expand_context": {
+          "exact_match": {
+            "estimate": -0.02564102564102564,
+            "ci": [
+              -0.07692307692307693,
+              0.0
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.0004865504865504873,
+            "ci": [
+              -0.07252007252007252,
+              0.07038776038776039
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": -0.02564102564102564,
+            "ci": [
+              -0.07692307692307693,
+              0.0
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": null,
+            "ci": null,
+            "eligible_count": 0,
+            "valid_resamples": 0
+          },
+          "cost_usd_per_case": {
+            "estimate": -5.628846153846154e-05,
+            "ci": [
+              -9.200817307692308e-05,
+              -2.4588269230769236e-05
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_regenerate": {
+          "exact_match": {
+            "estimate": 0.0,
+            "ci": [
+              -0.07692307692307693,
+              0.07692307692307693
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.0501032301032301,
+            "ci": [
+              -0.019918081918081913,
+              0.12812187812187814
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.0,
+            "ci": [
+              -0.07692307692307693,
+              0.07692307692307693
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": null,
+            "ci": null,
+            "eligible_count": 0,
+            "valid_resamples": 0
+          },
+          "cost_usd_per_case": {
+            "estimate": 1.9280769230769233e-05,
+            "ci": [
+              -1.1035e-05,
+              4.7166249999999986e-05
+            ],
+            "eligible_count": 39,
+            "valid_resamples": 10000
+          }
+        }
+      }
+    },
+    "vague_query": {
+      "cases": 60,
+      "questions": 60,
+      "initially_wrong": 53,
+      "initially_correct": 7,
+      "policies": {
+        "accept": {
+          "exact_match": {
+            "estimate": 0.11666666666666667,
+            "ci": [
+              0.05,
+              0.2
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.17792929292929294,
+            "ci": [
+              0.09054924242424243,
+              0.2768219696969696
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.18333333333333332,
+          "recovery": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 53,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 7,
+            "valid_resamples": 9990
+          },
+          "recovered_count": 0,
+          "damaged_count": 0,
+          "utility": 0.11666666666666667,
+          "action_counts": {
+            "accept": 60
+          },
+          "incremental": {
+            "calls_per_case": 0.0,
+            "tokens_per_case": 0.0,
+            "cost_usd_per_case": {
+              "estimate": 0.0,
+              "ci": [
+                0.0,
+                0.0
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.0,
+            "priced_calls": 0,
+            "latency_seconds_mean": 0.0,
+            "latency_seconds_p95": 0.0,
+            "throttle_seconds_mean": 0.0,
+            "unthrottled_seconds_mean": 0.0,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.0,
+              "answer_generation": 0.0
+            }
+          }
+        },
+        "rewrite_query": {
+          "exact_match": {
+            "estimate": 0.35,
+            "ci": [
+              0.23333333333333334,
+              0.4666666666666667
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.4996332741332742,
+            "ci": [
+              0.3913444481444481,
+              0.6109522435897434
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.5333333333333333,
+          "recovery": {
+            "estimate": 0.3018867924528302,
+            "ci": [
+              0.18,
+              0.43103448275862066
+            ],
+            "eligible_count": 53,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.2857142857142857,
+            "ci": [
+              0.0,
+              0.6666666666666666
+            ],
+            "eligible_count": 7,
+            "valid_resamples": 9990
+          },
+          "recovered_count": 16,
+          "damaged_count": 2,
+          "utility": 0.33106125000000003,
+          "action_counts": {
+            "rewrite_query": 60
+          },
+          "incremental": {
+            "calls_per_case": 2.0,
+            "tokens_per_case": 1131.8166666666666,
+            "cost_usd_per_case": {
+              "estimate": 0.0001893875,
+              "ci": [
+                0.00018240750000000003,
+                0.0001971051875
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.01136325,
+            "priced_calls": 120,
+            "latency_seconds_mean": 2.095841052037819,
+            "latency_seconds_p95": 2.117940897674997,
+            "throttle_seconds_mean": 0.881688315301047,
+            "unthrottled_seconds_mean": 1.214152736736772,
+            "stage_seconds_per_case": {
+              "query_generation": 1.0522271757149915,
+              "retrieval": 0.01157072295124332,
+              "answer_generation": 1.032031566069539
+            }
+          }
+        },
+        "expand_context": {
+          "exact_match": {
+            "estimate": 0.11666666666666667,
+            "ci": [
+              0.05,
+              0.2
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.2347590989257656,
+            "ci": [
+              0.1433266895141895,
+              0.335641524370691
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.23333333333333334,
+          "recovery": {
+            "estimate": 0.018867924528301886,
+            "ci": [
+              0.0,
+              0.06
+            ],
+            "eligible_count": 53,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.14285714285714285,
+            "ci": [
+              0.0,
+              0.5
+            ],
+            "eligible_count": 7,
+            "valid_resamples": 9990
+          },
+          "recovered_count": 1,
+          "damaged_count": 1,
+          "utility": 0.09070316666666665,
+          "action_counts": {
+            "expand_context": 60
+          },
+          "incremental": {
+            "calls_per_case": 1.0,
+            "tokens_per_case": 1714.8833333333334,
+            "cost_usd_per_case": {
+              "estimate": 0.000259635,
+              "ci": [
+                0.0002511598125,
+                0.000268307875
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.015578099999999998,
+            "priced_calls": 60,
+            "latency_seconds_mean": 1.4724334381443138,
+            "latency_seconds_p95": 3.1273998704971744,
+            "throttle_seconds_mean": 0.8915740201327329,
+            "unthrottled_seconds_mean": 0.5808594180115809,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.010005588169830541,
+              "answer_generation": 1.4624187700702653
+            }
+          }
+        },
+        "regenerate": {
+          "exact_match": {
+            "estimate": 0.11666666666666667,
+            "ci": [
+              0.05,
+              0.2
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.18269119769119768,
+            "ci": [
+              0.09506331168831168,
+              0.28190133477633467
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.18333333333333332,
+          "recovery": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 53,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 7,
+            "valid_resamples": 9990
+          },
+          "recovered_count": 0,
+          "damaged_count": 0,
+          "utility": 0.10219791666666667,
+          "action_counts": {
+            "regenerate": 60
+          },
+          "incremental": {
+            "calls_per_case": 1.0,
+            "tokens_per_case": 942.65,
+            "cost_usd_per_case": {
+              "estimate": 0.0001446875,
+              "ci": [
+                0.000138789875,
+                0.0001504575625
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.00868125,
+            "priced_calls": 60,
+            "latency_seconds_mean": 0.6143021153266697,
+            "latency_seconds_p95": 1.0500437079695983,
+            "throttle_seconds_mean": 0.0940965868649073,
+            "unthrottled_seconds_mean": 0.5202055284617624,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.0,
+              "answer_generation": 0.6142921555864935
+            }
+          }
+        },
+        "learned": {
+          "exact_match": {
+            "estimate": 0.36666666666666664,
+            "ci": [
+              0.25,
+              0.48333333333333334
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.5154349724349724,
+            "ci": [
+              0.4032981277981278,
+              0.6298521802271801
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.5666666666666667,
+          "recovery": {
+            "estimate": 0.3018867924528302,
+            "ci": [
+              0.18,
+              0.43103448275862066
+            ],
+            "eligible_count": 53,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.14285714285714285,
+            "ci": [
+              0.0,
+              0.5
+            ],
+            "eligible_count": 7,
+            "valid_resamples": 9990
+          },
+          "recovered_count": 16,
+          "damaged_count": 1,
+          "utility": 0.3517424166666666,
+          "action_counts": {
+            "rewrite_query": 46,
+            "accept": 13,
+            "expand_context": 1
+          },
+          "incremental": {
+            "calls_per_case": 1.55,
+            "tokens_per_case": 892.9333333333333,
+            "cost_usd_per_case": {
+              "estimate": 0.0001492425,
+              "ci": [
+                0.00012776225,
+                0.00017010006249999995
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.00895455,
+            "priced_calls": 93,
+            "latency_seconds_mean": 1.0661637805382875,
+            "latency_seconds_p95": 1.95101330599864,
+            "throttle_seconds_mean": 0.11907499791511024,
+            "unthrottled_seconds_mean": 0.9470887826231774,
+            "stage_seconds_per_case": {
+              "query_generation": 0.5285430909929952,
+              "retrieval": 0.00865519375850757,
+              "answer_generation": 0.5289568862024073
+            }
+          }
+        }
+      },
+      "comparisons": {
+        "learned_minus_accept": {
+          "exact_match": {
+            "estimate": 0.25,
+            "ci": [
+              0.13333333333333333,
+              0.36666666666666664
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.3375056795056795,
+            "ci": [
+              0.21941978484478483,
+              0.4575469696969695
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.3018867924528302,
+            "ci": [
+              0.18,
+              0.43103448275862066
+            ],
+            "eligible_count": 53,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.14285714285714285,
+            "ci": [
+              0.0,
+              0.5
+            ],
+            "eligible_count": 7,
+            "valid_resamples": 9990
+          },
+          "cost_usd_per_case": {
+            "estimate": 0.0001492425,
+            "ci": [
+              0.00012776225,
+              0.00017010006249999995
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_rewrite_query": {
+          "exact_match": {
+            "estimate": 0.016666666666666666,
+            "ci": [
+              0.0,
+              0.05
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.0158016983016983,
+            "ci": [
+              -0.010485347985347985,
+              0.05524891774891774
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 53,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": -0.14285714285714285,
+            "ci": [
+              -0.5,
+              0.0
+            ],
+            "eligible_count": 7,
+            "valid_resamples": 9990
+          },
+          "cost_usd_per_case": {
+            "estimate": -4.0144999999999996e-05,
+            "ci": [
+              -6.22129375e-05,
+              -1.9814875e-05
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_expand_context": {
+          "exact_match": {
+            "estimate": 0.25,
+            "ci": [
+              0.13333333333333333,
+              0.36666666666666664
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.28067587350920686,
+            "ci": [
+              0.15697393116143113,
+              0.40784177088343754
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.2830188679245283,
+            "ci": [
+              0.16363636363636364,
+              0.4107142857142857
+            ],
+            "eligible_count": 53,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.0,
+            "ci": [
+              -0.42857142857142855,
+              0.42857142857142855
+            ],
+            "eligible_count": 7,
+            "valid_resamples": 9990
+          },
+          "cost_usd_per_case": {
+            "estimate": -0.0001103925,
+            "ci": [
+              -0.000132565375,
+              -8.957699999999999e-05
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_regenerate": {
+          "exact_match": {
+            "estimate": 0.25,
+            "ci": [
+              0.13333333333333333,
+              0.36666666666666664
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.33274377474377476,
+            "ci": [
+              0.21201705516705519,
+              0.45375537888037887
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.3018867924528302,
+            "ci": [
+              0.18,
+              0.43103448275862066
+            ],
+            "eligible_count": 53,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.14285714285714285,
+            "ci": [
+              0.0,
+              0.5
+            ],
+            "eligible_count": 7,
+            "valid_resamples": 9990
+          },
+          "cost_usd_per_case": {
+            "estimate": 4.5549999999999945e-06,
+            "ci": [
+              -1.6402750000000008e-05,
+              2.4553124999999982e-05
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          }
+        }
+      }
+    },
+    "ignore_context": {
+      "cases": 60,
+      "questions": 60,
+      "initially_wrong": 58,
+      "initially_correct": 2,
+      "policies": {
+        "accept": {
+          "exact_match": {
+            "estimate": 0.03333333333333333,
+            "ci": [
+              0.0,
+              0.08333333333333333
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.22240300387163195,
+            "ci": [
+              0.17333148670978005,
+              0.2782208865577033
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.7,
+          "recovery": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 58,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 2,
+            "valid_resamples": 8677
+          },
+          "recovered_count": 0,
+          "damaged_count": 0,
+          "utility": 0.03333333333333333,
+          "action_counts": {
+            "accept": 60
+          },
+          "incremental": {
+            "calls_per_case": 0.0,
+            "tokens_per_case": 0.0,
+            "cost_usd_per_case": {
+              "estimate": 0.0,
+              "ci": [
+                0.0,
+                0.0
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.0,
+            "priced_calls": 0,
+            "latency_seconds_mean": 0.0,
+            "latency_seconds_p95": 0.0,
+            "throttle_seconds_mean": 0.0,
+            "unthrottled_seconds_mean": 0.0,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.0,
+              "answer_generation": 0.0
+            }
+          }
+        },
+        "rewrite_query": {
+          "exact_match": {
+            "estimate": 0.35,
+            "ci": [
+              0.23333333333333334,
+              0.4666666666666667
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.5298436287940932,
+            "ci": [
+              0.42249733120193644,
+              0.6394720899571131
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.55,
+          "recovery": {
+            "estimate": 0.3448275862068966,
+            "ci": [
+              0.22413793103448276,
+              0.47368421052631576
+            ],
+            "eligible_count": 58,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.5,
+            "ci": [
+              0.0,
+              1.0
+            ],
+            "eligible_count": 2,
+            "valid_resamples": 8677
+          },
+          "recovered_count": 20,
+          "damaged_count": 1,
+          "utility": 0.330937,
+          "action_counts": {
+            "rewrite_query": 60
+          },
+          "incremental": {
+            "calls_per_case": 2.0,
+            "tokens_per_case": 1154.5166666666667,
+            "cost_usd_per_case": {
+              "estimate": 0.00019062999999999996,
+              "ci": [
+                0.00018279493749999998,
+                0.00019946787499999994
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.011437799999999998,
+            "priced_calls": 120,
+            "latency_seconds_mean": 1.682009210406492,
+            "latency_seconds_p95": 2.0581939646450333,
+            "throttle_seconds_mean": 0.4930114000996885,
+            "unthrottled_seconds_mean": 1.1889978103068037,
+            "stage_seconds_per_case": {
+              "query_generation": 1.0467578528196706,
+              "retrieval": 0.013169352807259808,
+              "answer_generation": 0.6220700055904066
+            }
+          }
+        },
+        "expand_context": {
+          "exact_match": {
+            "estimate": 0.38333333333333336,
+            "ci": [
+              0.26666666666666666,
+              0.5
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.5507306611517138,
+            "ci": [
+              0.4450878222654538,
+              0.6571392372977899
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.5833333333333334,
+          "recovery": {
+            "estimate": 0.3793103448275862,
+            "ci": [
+              0.2542372881355932,
+              0.5084745762711864
+            ],
+            "eligible_count": 58,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.5,
+            "ci": [
+              0.0,
+              1.0
+            ],
+            "eligible_count": 2,
+            "valid_resamples": 8677
+          },
+          "recovered_count": 22,
+          "damaged_count": 1,
+          "utility": 0.35788783333333335,
+          "action_counts": {
+            "expand_context": 60
+          },
+          "incremental": {
+            "calls_per_case": 1.0,
+            "tokens_per_case": 1654.5333333333333,
+            "cost_usd_per_case": {
+              "estimate": 0.00025445499999999995,
+              "ci": [
+                0.00024167749999999996,
+                0.00026809024999999994
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.015267299999999998,
+            "priced_calls": 60,
+            "latency_seconds_mean": 0.9975243375287391,
+            "latency_seconds_p95": 2.256508385087362,
+            "throttle_seconds_mean": 0.3893199194164481,
+            "unthrottled_seconds_mean": 0.608204418112291,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.009416843696574992,
+              "answer_generation": 0.9880992618156597
+            }
+          }
+        },
+        "regenerate": {
+          "exact_match": {
+            "estimate": 0.36666666666666664,
+            "ci": [
+              0.25,
+              0.5
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.5182922292132818,
+            "ci": [
+              0.4113952621452621,
+              0.6297447960178222
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.5166666666666667,
+          "recovery": {
+            "estimate": 0.3448275862068966,
+            "ci": [
+              0.22413793103448276,
+              0.47368421052631576
+            ],
+            "eligible_count": 58,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 2,
+            "valid_resamples": 8677
+          },
+          "recovered_count": 20,
+          "damaged_count": 0,
+          "utility": 0.3529401666666666,
+          "action_counts": {
+            "regenerate": 60
+          },
+          "incremental": {
+            "calls_per_case": 1.0,
+            "tokens_per_case": 879.5833333333334,
+            "cost_usd_per_case": {
+              "estimate": 0.000137265,
+              "ci": [
+                0.000131572375,
+                0.00014338762500000002
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.008235899999999999,
+            "priced_calls": 60,
+            "latency_seconds_mean": 1.07707023609546,
+            "latency_seconds_p95": 1.0698996076011098,
+            "throttle_seconds_mean": 0.5280643487116322,
+            "unthrottled_seconds_mean": 0.5490058873838279,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.0,
+              "answer_generation": 1.0770594854761535
+            }
+          }
+        },
+        "learned": {
+          "exact_match": {
+            "estimate": 0.36666666666666664,
+            "ci": [
+              0.25,
+              0.48333333333333334
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.534063994485047,
+            "ci": [
+              0.4265904308410887,
+              0.6430523004773003
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.5666666666666667,
+          "recovery": {
+            "estimate": 0.3620689655172414,
+            "ci": [
+              0.2413793103448276,
+              0.49122807017543857
+            ],
+            "eligible_count": 58,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.5,
+            "ci": [
+              0.0,
+              1.0
+            ],
+            "eligible_count": 2,
+            "valid_resamples": 8677
+          },
+          "recovered_count": 21,
+          "damaged_count": 1,
+          "utility": 0.34237691666666664,
+          "action_counts": {
+            "expand_context": 51,
+            "rewrite_query": 7,
+            "regenerate": 1,
+            "accept": 1
+          },
+          "incremental": {
+            "calls_per_case": 1.1,
+            "tokens_per_case": 1565.8333333333333,
+            "cost_usd_per_case": {
+              "estimate": 0.00024289749999999998,
+              "ci": [
+                0.000226907375,
+                0.000257983375
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.01457385,
+            "priced_calls": 66,
+            "latency_seconds_mean": 0.9944086611173891,
+            "latency_seconds_p95": 2.062012785446131,
+            "throttle_seconds_mean": 0.31732505556816853,
+            "unthrottled_seconds_mean": 0.6770836055492206,
+            "stage_seconds_per_case": {
+              "query_generation": 0.09009215279947966,
+              "retrieval": 0.009661174260933573,
+              "answer_generation": 0.8946469576680102
+            }
+          }
+        }
+      },
+      "comparisons": {
+        "learned_minus_accept": {
+          "exact_match": {
+            "estimate": 0.3333333333333333,
+            "ci": [
+              0.2,
+              0.4666666666666667
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.3116609906134152,
+            "ci": [
+              0.20537463008571477,
+              0.4172789844886364
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.3620689655172414,
+            "ci": [
+              0.2413793103448276,
+              0.49122807017543857
+            ],
+            "eligible_count": 58,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.5,
+            "ci": [
+              0.0,
+              1.0
+            ],
+            "eligible_count": 2,
+            "valid_resamples": 8677
+          },
+          "cost_usd_per_case": {
+            "estimate": 0.00024289749999999998,
+            "ci": [
+              0.000226907375,
+              0.000257983375
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_rewrite_query": {
+          "exact_match": {
+            "estimate": 0.016666666666666666,
+            "ci": [
+              -0.03333333333333333,
+              0.06708333333332726
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.004220365690953924,
+            "ci": [
+              -0.05692293354793356,
+              0.06457853421088712
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.017241379310344827,
+            "ci": [
+              -0.0351033834586466,
+              0.077083333333331
+            ],
+            "eligible_count": 58,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 2,
+            "valid_resamples": 8677
+          },
+          "cost_usd_per_case": {
+            "estimate": 5.2267499999999994e-05,
+            "ci": [
+              3.7399875000000006e-05,
+              6.58275625e-05
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_expand_context": {
+          "exact_match": {
+            "estimate": -0.016666666666666666,
+            "ci": [
+              -0.05,
+              0.0
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": -0.016666666666666666,
+            "ci": [
+              -0.05,
+              0.0
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": -0.017241379310344827,
+            "ci": [
+              -0.05263157894736842,
+              0.0
+            ],
+            "eligible_count": 58,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 2,
+            "valid_resamples": 8677
+          },
+          "cost_usd_per_case": {
+            "estimate": -1.1557499999999997e-05,
+            "ci": [
+              -2.2642562499999996e-05,
+              -3.5448125000000016e-06
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_regenerate": {
+          "exact_match": {
+            "estimate": 0.0,
+            "ci": [
+              -0.06666666666666667,
+              0.06666666666666667
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.015771765271765274,
+            "ci": [
+              -0.049444444444444444,
+              0.0786068362193362
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.017241379310344827,
+            "ci": [
+              -0.0351033834586466,
+              0.077083333333331
+            ],
+            "eligible_count": 58,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.5,
+            "ci": [
+              0.0,
+              1.0
+            ],
+            "eligible_count": 2,
+            "valid_resamples": 8677
+          },
+          "cost_usd_per_case": {
+            "estimate": 0.00010563249999999999,
+            "ci": [
+              9.08549375e-05,
+              0.00011957543749999999
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          }
+        }
+      }
+    },
+    "query_term_substitution": {
+      "cases": 60,
+      "questions": 60,
+      "initially_wrong": 42,
+      "initially_correct": 18,
+      "policies": {
+        "accept": {
+          "exact_match": {
+            "estimate": 0.3,
+            "ci": [
+              0.18333333333333332,
+              0.4166666666666667
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.4121470658970659,
+            "ci": [
+              0.3016955116642617,
+              0.5279935515873015
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.45,
+          "recovery": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 42,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 18,
+            "valid_resamples": 10000
+          },
+          "recovered_count": 0,
+          "damaged_count": 0,
+          "utility": 0.3,
+          "action_counts": {
+            "accept": 60
+          },
+          "incremental": {
+            "calls_per_case": 0.0,
+            "tokens_per_case": 0.0,
+            "cost_usd_per_case": {
+              "estimate": 0.0,
+              "ci": [
+                0.0,
+                0.0
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.0,
+            "priced_calls": 0,
+            "latency_seconds_mean": 0.0,
+            "latency_seconds_p95": 0.0,
+            "throttle_seconds_mean": 0.0,
+            "unthrottled_seconds_mean": 0.0,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.0,
+              "answer_generation": 0.0
+            }
+          }
+        },
+        "rewrite_query": {
+          "exact_match": {
+            "estimate": 0.38333333333333336,
+            "ci": [
+              0.26666666666666666,
+              0.5166666666666667
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.5352533672038315,
+            "ci": [
+              0.4264877348600259,
+              0.647103620980556
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.5333333333333333,
+          "recovery": {
+            "estimate": 0.19047619047619047,
+            "ci": [
+              0.07692307692307693,
+              0.3170731707317073
+            ],
+            "eligible_count": 42,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.16666666666666666,
+            "ci": [
+              0.0,
+              0.3572142857142847
+            ],
+            "eligible_count": 18,
+            "valid_resamples": 10000
+          },
+          "recovered_count": 8,
+          "damaged_count": 3,
+          "utility": 0.3645478333333333,
+          "action_counts": {
+            "rewrite_query": 60
+          },
+          "incremental": {
+            "calls_per_case": 2.0,
+            "tokens_per_case": 1136.05,
+            "cost_usd_per_case": {
+              "estimate": 0.00018785500000000004,
+              "ci": [
+                0.00018168237499999998,
+                0.00019448262499999997
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.011271300000000001,
+            "priced_calls": 120,
+            "latency_seconds_mean": 1.6719208722061012,
+            "latency_seconds_p95": 1.7257703369192303,
+            "throttle_seconds_mean": 0.4809737507428508,
+            "unthrottled_seconds_mean": 1.1909471214632503,
+            "stage_seconds_per_case": {
+              "query_generation": 0.6238262319316467,
+              "retrieval": 0.010618356921865295,
+              "answer_generation": 1.0374645056203007
+            }
+          }
+        },
+        "expand_context": {
+          "exact_match": {
+            "estimate": 0.35,
+            "ci": [
+              0.23333333333333334,
+              0.4666666666666667
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.4996168029501363,
+            "ci": [
+              0.3890352633477634,
+              0.6096520863395863
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.5333333333333333,
+          "recovery": {
+            "estimate": 0.11904761904761904,
+            "ci": [
+              0.025,
+              0.22448979591836735
+            ],
+            "eligible_count": 42,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.1111111111111111,
+            "ci": [
+              0.0,
+              0.2857142857142857
+            ],
+            "eligible_count": 18,
+            "valid_resamples": 10000
+          },
+          "recovered_count": 5,
+          "damaged_count": 2,
+          "utility": 0.326092,
+          "action_counts": {
+            "expand_context": 60
+          },
+          "incremental": {
+            "calls_per_case": 1.0,
+            "tokens_per_case": 1567.25,
+            "cost_usd_per_case": {
+              "estimate": 0.00023908,
+              "ci": [
+                0.0002297595625,
+                0.0002491805
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.0143448,
+            "priced_calls": 60,
+            "latency_seconds_mean": 2.546190913225291,
+            "latency_seconds_p95": 23.63276474793092,
+            "throttle_seconds_mean": 1.9288277965718104,
+            "unthrottled_seconds_mean": 0.6173631166534809,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.012268271425273269,
+              "answer_generation": 2.5339132228885624
+            }
+          }
+        },
+        "regenerate": {
+          "exact_match": {
+            "estimate": 0.3,
+            "ci": [
+              0.18333333333333332,
+              0.4166666666666667
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.4195803270803271,
+            "ci": [
+              0.31004175685425683,
+              0.5351132455507456
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.4666666666666667,
+          "recovery": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 42,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 18,
+            "valid_resamples": 10000
+          },
+          "recovered_count": 0,
+          "damaged_count": 0,
+          "utility": 0.2865857499999999,
+          "action_counts": {
+            "regenerate": 60
+          },
+          "incremental": {
+            "calls_per_case": 1.0,
+            "tokens_per_case": 871.8833333333333,
+            "cost_usd_per_case": {
+              "estimate": 0.0001341425,
+              "ci": [
+                0.0001290673125,
+                0.0001394900625
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.00804855,
+            "priced_calls": 60,
+            "latency_seconds_mean": 1.6227599089654783,
+            "latency_seconds_p95": 2.247563800396122,
+            "throttle_seconds_mean": 0.8144968153035734,
+            "unthrottled_seconds_mean": 0.808263093661905,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.0,
+              "answer_generation": 1.6227492145476086
+            }
+          }
+        },
+        "learned": {
+          "exact_match": {
+            "estimate": 0.4,
+            "ci": [
+              0.2833333333333333,
+              0.5333333333333333
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.5276837636048162,
+            "ci": [
+              0.4158051775222828,
+              0.6418494104579631
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.55,
+          "recovery": {
+            "estimate": 0.16666666666666666,
+            "ci": [
+              0.06382978723404255,
+              0.28888888888888886
+            ],
+            "eligible_count": 42,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.05555555555555555,
+            "ci": [
+              0.0,
+              0.1875
+            ],
+            "eligible_count": 18,
+            "valid_resamples": 10000
+          },
+          "recovered_count": 7,
+          "damaged_count": 1,
+          "utility": 0.38511825,
+          "action_counts": {
+            "rewrite_query": 40,
+            "expand_context": 5,
+            "accept": 15
+          },
+          "incremental": {
+            "calls_per_case": 1.4166666666666667,
+            "tokens_per_case": 904.2,
+            "cost_usd_per_case": {
+              "estimate": 0.00014881750000000002,
+              "ci": [
+                0.00012545243749999998,
+                0.00017120281249999994
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.008929050000000001,
+            "priced_calls": 85,
+            "latency_seconds_mean": 1.3206520132216004,
+            "latency_seconds_p95": 1.7201257806678762,
+            "throttle_seconds_mean": 0.46463966817827895,
+            "unthrottled_seconds_mean": 0.8560123450433215,
+            "stage_seconds_per_case": {
+              "query_generation": 0.42240905759778496,
+              "retrieval": 0.008266479834370935,
+              "answer_generation": 0.8899676736735274
+            }
+          }
+        }
+      },
+      "comparisons": {
+        "learned_minus_accept": {
+          "exact_match": {
+            "estimate": 0.1,
+            "ci": [
+              0.016666666666666666,
+              0.2
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.11553669770775034,
+            "ci": [
+              0.02074843041948305,
+              0.21478241550116545
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.16666666666666666,
+            "ci": [
+              0.06382978723404255,
+              0.28888888888888886
+            ],
+            "eligible_count": 42,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.05555555555555555,
+            "ci": [
+              0.0,
+              0.1875
+            ],
+            "eligible_count": 18,
+            "valid_resamples": 10000
+          },
+          "cost_usd_per_case": {
+            "estimate": 0.00014881750000000002,
+            "ci": [
+              0.00012545243749999998,
+              0.00017120281249999994
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_rewrite_query": {
+          "exact_match": {
+            "estimate": 0.016666666666666666,
+            "ci": [
+              -0.03333333333333333,
+              0.08333333333333333
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": -0.007569603599015364,
+            "ci": [
+              -0.04313864485188015,
+              0.029523809523809518
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": -0.023809523809523808,
+            "ci": [
+              -0.07692307692307693,
+              0.0
+            ],
+            "eligible_count": 42,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": -0.1111111111111111,
+            "ci": [
+              -0.2777777777777778,
+              0.0
+            ],
+            "eligible_count": 18,
+            "valid_resamples": 10000
+          },
+          "cost_usd_per_case": {
+            "estimate": -3.9037499999999993e-05,
+            "ci": [
+              -6.0482812499999994e-05,
+              -1.8999874999999996e-05
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_expand_context": {
+          "exact_match": {
+            "estimate": 0.05,
+            "ci": [
+              -0.03333333333333333,
+              0.13333333333333333
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.02806696065467995,
+            "ci": [
+              -0.06490214646464647,
+              0.12366039499811428
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.047619047619047616,
+            "ci": [
+              -0.0625,
+              0.16666666666666666
+            ],
+            "eligible_count": 42,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": -0.05555555555555555,
+            "ci": [
+              -0.1875,
+              0.0
+            ],
+            "eligible_count": 18,
+            "valid_resamples": 10000
+          },
+          "cost_usd_per_case": {
+            "estimate": -9.02625e-05,
+            "ci": [
+              -0.00011249749999999998,
+              -6.95374375e-05
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_regenerate": {
+          "exact_match": {
+            "estimate": 0.1,
+            "ci": [
+              0.016666666666666666,
+              0.2
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.10810343652448916,
+            "ci": [
+              0.010914887500413814,
+              0.20992817513870135
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.16666666666666666,
+            "ci": [
+              0.06382978723404255,
+              0.28888888888888886
+            ],
+            "eligible_count": 42,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.05555555555555555,
+            "ci": [
+              0.0,
+              0.1875
+            ],
+            "eligible_count": 18,
+            "valid_resamples": 10000
+          },
+          "cost_usd_per_case": {
+            "estimate": 1.4674999999999998e-05,
+            "ci": [
+              -7.9521875e-06,
+              3.6320500000000006e-05
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          }
+        }
+      }
+    },
+    "retrieval_rank_dropout": {
+      "cases": 60,
+      "questions": 60,
+      "initially_wrong": 51,
+      "initially_correct": 9,
+      "policies": {
+        "accept": {
+          "exact_match": {
+            "estimate": 0.15,
+            "ci": [
+              0.06666666666666667,
+              0.25
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.1849053724053724,
+            "ci": [
+              0.10038156288156289,
+              0.28007771164021167
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.21666666666666667,
+          "recovery": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 51,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 9,
+            "valid_resamples": 10000
+          },
+          "recovered_count": 0,
+          "damaged_count": 0,
+          "utility": 0.15,
+          "action_counts": {
+            "accept": 60
+          },
+          "incremental": {
+            "calls_per_case": 0.0,
+            "tokens_per_case": 0.0,
+            "cost_usd_per_case": {
+              "estimate": 0.0,
+              "ci": [
+                0.0,
+                0.0
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.0,
+            "priced_calls": 0,
+            "latency_seconds_mean": 0.0,
+            "latency_seconds_p95": 0.0,
+            "throttle_seconds_mean": 0.0,
+            "unthrottled_seconds_mean": 0.0,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.0,
+              "answer_generation": 0.0
+            }
+          }
+        },
+        "rewrite_query": {
+          "exact_match": {
+            "estimate": 0.31666666666666665,
+            "ci": [
+              0.2,
+              0.43333333333333335
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.5062072651577295,
+            "ci": [
+              0.4009669506061534,
+              0.6152198193791071
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.55,
+          "recovery": {
+            "estimate": 0.23529411764705882,
+            "ci": [
+              0.125,
+              0.3584905660377358
+            ],
+            "eligible_count": 51,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.2222222222222222,
+            "ci": [
+              0.0,
+              0.5454545454545454
+            ],
+            "eligible_count": 9,
+            "valid_resamples": 10000
+          },
+          "recovered_count": 12,
+          "damaged_count": 2,
+          "utility": 0.2973896666666667,
+          "action_counts": {
+            "rewrite_query": 60
+          },
+          "incremental": {
+            "calls_per_case": 2.0,
+            "tokens_per_case": 1157.1666666666667,
+            "cost_usd_per_case": {
+              "estimate": 0.00019276999999999999,
+              "ci": [
+                0.00018395731250000003,
+                0.0002023601875
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.011566199999999999,
+            "priced_calls": 120,
+            "latency_seconds_mean": 1.7218865895973674,
+            "latency_seconds_p95": 2.251870652422075,
+            "throttle_seconds_mean": 0.501074893764841,
+            "unthrottled_seconds_mean": 1.2208116958325264,
+            "stage_seconds_per_case": {
+              "query_generation": 0.6793261409504339,
+              "retrieval": 0.013187222213794788,
+              "answer_generation": 1.0293425999290775
+            }
+          }
+        },
+        "expand_context": {
+          "exact_match": {
+            "estimate": 0.38333333333333336,
+            "ci": [
+              0.26666666666666666,
+              0.5
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.5499996669996671,
+            "ci": [
+              0.4440301587301587,
+              0.6566615453990452
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.5833333333333334,
+          "recovery": {
+            "estimate": 0.29411764705882354,
+            "ci": [
+              0.17307692307692307,
+              0.4230769230769231
+            ],
+            "eligible_count": 51,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.1111111111111111,
+            "ci": [
+              0.0,
+              0.375
+            ],
+            "eligible_count": 9,
+            "valid_resamples": 10000
+          },
+          "recovered_count": 15,
+          "damaged_count": 1,
+          "utility": 0.36248883333333326,
+          "action_counts": {
+            "expand_context": 60
+          },
+          "incremental": {
+            "calls_per_case": 1.0,
+            "tokens_per_case": 1654.65,
+            "cost_usd_per_case": {
+              "estimate": 0.00020844499999999997,
+              "ci": [
+                0.0001899925,
+                0.00022749037499999994
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.012506699999999999,
+            "priced_calls": 60,
+            "latency_seconds_mean": 2.748117277767354,
+            "latency_seconds_p95": 21.116798595804717,
+            "throttle_seconds_mean": 1.9006292701000347,
+            "unthrottled_seconds_mean": 0.8474880076673192,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.009434838944192355,
+              "answer_generation": 2.738670622910528
+            }
+          }
+        },
+        "regenerate": {
+          "exact_match": {
+            "estimate": 0.15,
+            "ci": [
+              0.06666666666666667,
+              0.25
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.1849053724053724,
+            "ci": [
+              0.10038156288156289,
+              0.28007771164021167
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.21666666666666667,
+          "recovery": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 51,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 9,
+            "valid_resamples": 10000
+          },
+          "recovered_count": 0,
+          "damaged_count": 0,
+          "utility": 0.139747,
+          "action_counts": {
+            "regenerate": 60
+          },
+          "incremental": {
+            "calls_per_case": 1.0,
+            "tokens_per_case": 647.5666666666667,
+            "cost_usd_per_case": {
+              "estimate": 0.00010253,
+              "ci": [
+                9.794500000000001e-05,
+                0.00010748012500000001
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.0061518,
+            "priced_calls": 60,
+            "latency_seconds_mean": 1.0093612242528858,
+            "latency_seconds_p95": 1.0938754899310876,
+            "throttle_seconds_mean": 0.4613881465358039,
+            "unthrottled_seconds_mean": 0.5479730777170819,
+            "stage_seconds_per_case": {
+              "query_generation": 0.0,
+              "retrieval": 0.0,
+              "answer_generation": 1.0093500875169412
+            }
+          }
+        },
+        "learned": {
+          "exact_match": {
+            "estimate": 0.35,
+            "ci": [
+              0.23333333333333334,
+              0.4666666666666667
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.5238613267823794,
+            "ci": [
+              0.4164791097791098,
+              0.6305470752931278
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "contains_answer": 0.5666666666666667,
+          "recovery": {
+            "estimate": 0.23529411764705882,
+            "ci": [
+              0.125,
+              0.3584905660377358
+            ],
+            "eligible_count": 51,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 9,
+            "valid_resamples": 10000
+          },
+          "recovered_count": 12,
+          "damaged_count": 0,
+          "utility": 0.33449375000000003,
+          "action_counts": {
+            "rewrite_query": 43,
+            "expand_context": 5,
+            "accept": 12
+          },
+          "incremental": {
+            "calls_per_case": 1.5166666666666666,
+            "tokens_per_case": 969.3666666666667,
+            "cost_usd_per_case": {
+              "estimate": 0.00015506249999999995,
+              "ci": [
+                0.00013357375,
+                0.0001758176875
+              ],
+              "eligible_count": 60,
+              "valid_resamples": 10000
+            },
+            "cost_usd_total": 0.009303749999999998,
+            "priced_calls": 91,
+            "latency_seconds_mean": 1.4507436583012654,
+            "latency_seconds_p95": 2.251870652422075,
+            "throttle_seconds_mean": 0.5144945534683454,
+            "unthrottled_seconds_mean": 0.9362491048329199,
+            "stage_seconds_per_case": {
+              "query_generation": 0.5033501243238182,
+              "retrieval": 0.01108068887454768,
+              "answer_generation": 0.9362845749477856
+            }
+          }
+        }
+      },
+      "comparisons": {
+        "learned_minus_accept": {
+          "exact_match": {
+            "estimate": 0.2,
+            "ci": [
+              0.1,
+              0.3
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.33895595437700704,
+            "ci": [
+              0.2346653991719781,
+              0.44724262842420737
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.23529411764705882,
+            "ci": [
+              0.125,
+              0.3584905660377358
+            ],
+            "eligible_count": 51,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 9,
+            "valid_resamples": 10000
+          },
+          "cost_usd_per_case": {
+            "estimate": 0.00015506249999999995,
+            "ci": [
+              0.00013357375,
+              0.0001758176875
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_rewrite_query": {
+          "exact_match": {
+            "estimate": 0.03333333333333333,
+            "ci": [
+              0.0,
+              0.08333333333333333
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.017654061624649855,
+            "ci": [
+              -0.009929971988795522,
+              0.05882155589508529
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 51,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": -0.2222222222222222,
+            "ci": [
+              -0.5454545454545454,
+              0.0
+            ],
+            "eligible_count": 9,
+            "valid_resamples": 10000
+          },
+          "cost_usd_per_case": {
+            "estimate": -3.77075e-05,
+            "ci": [
+              -5.72953125e-05,
+              -1.9817562500000033e-05
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_expand_context": {
+          "exact_match": {
+            "estimate": -0.03333333333333333,
+            "ci": [
+              -0.11666666666666667,
+              0.05
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": -0.026138340217287583,
+            "ci": [
+              -0.10284127617022355,
+              0.04771110979663611
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": -0.058823529411764705,
+            "ci": [
+              -0.14583333333333334,
+              0.02
+            ],
+            "eligible_count": 51,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": -0.1111111111111111,
+            "ci": [
+              -0.375,
+              0.0
+            ],
+            "eligible_count": 9,
+            "valid_resamples": 10000
+          },
+          "cost_usd_per_case": {
+            "estimate": -5.3382500000000006e-05,
+            "ci": [
+              -8.007256249999999e-05,
+              -2.7789187500000007e-05
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          }
+        },
+        "learned_minus_regenerate": {
+          "exact_match": {
+            "estimate": 0.2,
+            "ci": [
+              0.1,
+              0.3
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "token_f1": {
+            "estimate": 0.33895595437700704,
+            "ci": [
+              0.2346653991719781,
+              0.44724262842420737
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          },
+          "recovery": {
+            "estimate": 0.23529411764705882,
+            "ci": [
+              0.125,
+              0.3584905660377358
+            ],
+            "eligible_count": 51,
+            "valid_resamples": 10000
+          },
+          "damage": {
+            "estimate": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "eligible_count": 9,
+            "valid_resamples": 10000
+          },
+          "cost_usd_per_case": {
+            "estimate": 5.2532500000000006e-05,
+            "ci": [
+              3.1501937499999997e-05,
+              7.270256249999997e-05
+            ],
+            "eligible_count": 60,
+            "valid_resamples": 10000
+          }
+        }
+      }
+    }
+  },
+  "collection": {
+    "completed_case_calls": 3240,
+    "completed_case_tokens": 2918437,
+    "completed_case_cost_usd": 0.4548963,
+    "new_initial_state_cost_usd": 0.01451595,
+    "reserved_upper_usd": 1.4323736249999999,
+    "request_reservations": 3250,
+    "reservation_cap_usd": 3.0,
+    "note": "Reservation ledger also retains failed or discarded requests; completed-case cost may omit those."
+  },
+  "evaluation_note": "Full-information paired offline evaluation from observed actions, not an online deployment. Selected-policy costs/timings are incremental, excluding historical initial passes and router CPU. Naturally occurring errors are EM failures of unmodified benchmark baselines. One dataset and provider seed; no general production or cross-dataset claim."
+}
