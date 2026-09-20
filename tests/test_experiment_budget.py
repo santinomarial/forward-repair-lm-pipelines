@@ -62,6 +62,22 @@ def test_exhausted_budget_never_calls_provider(tmp_path, monkeypatch):
         lm.forward(prompt="hello")
 
 
+def test_five_dollar_cap_is_shared_across_resumed_phases(tmp_path, monkeypatch):
+    path = tmp_path / "natural_budget.jsonl"
+    budget = ExperimentBudget(path, 5)
+    budget.reserve(2, case_id="pilot")
+    budget = ExperimentBudget(path, 5)
+    budget.reserve(2.999999, case_id="development")
+    lm = BudgetedLM(ExperimentBudget(path, 5), "heldout", api_key="not-real", seed=0)
+    monkeypatch.setattr(dspy.LM, "forward", lambda *a, **k: pytest.fail("cap must block provider"))
+    with pytest.raises(BudgetExceeded):
+        lm.forward(prompt="hello")
+    assert len(path.read_text().splitlines()) == 2
+    assert ExperimentBudget(path, 5).reserved_usd < 5
+    with pytest.raises(ValueError, match="change"):
+        ExperimentBudget(path, 6)
+
+
 @pytest.mark.parametrize("amount", [-1, 0, float("nan"), float("inf")])
 def test_invalid_budget_amounts(tmp_path, amount):
     with pytest.raises(ValueError):
