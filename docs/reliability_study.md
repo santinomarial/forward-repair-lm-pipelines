@@ -52,6 +52,11 @@ validation utility; ties prefer lower cost, then higher minimum gain. The model
 is then serialized and hash-locked before any test action outcomes are collected.
 Test outcomes cannot be used to refit the locked policy.
 
+The completed development phase contains 360 training and 120 validation cases.
+Validation selected ridge strength **100** and minimum predicted gain **0.10**.
+The frozen [model](../outputs/reliability_study/model.json) includes all 12
+validation candidates and hashes of the development data and protocol manifest.
+
 ### Held-out evaluation
 
 Each of the 60 test questions contributes five states:

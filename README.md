@@ -160,7 +160,8 @@ on observed action outcomes, then evaluates held-out questions, two unseen
 corruption mechanisms, and unmodified baseline errors. It compares no repair,
 query rewrite, context expansion, and fresh generation. The protocol separates
 training, validation, and test questions and caps collection reservations at $3.
-Results are pending; the stage-attribution results above are a separate experiment.
+The controller is fitted and frozen after 480 development cases; held-out results
+are pending. The stage-attribution results above are a separate experiment.
 The collector is resumable and rate-limited; offline reports include paired,
 question-clustered confidence intervals and separate recovery from damage.
 
