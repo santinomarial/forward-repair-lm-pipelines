@@ -19,6 +19,7 @@ EXPERIMENT_DEFAULT_SUFFIX = "hotpot_50"
 ANALYSIS_DEFAULT_SUFFIX = "hotpot_50_final"
 ANSWER_ABLATION_DEFAULT_SUFFIX = "answer_ablation_seed0"
 RELIABILITY_STUDY_DIR = OUTPUT_DIR / "reliability_study"
+ERROR_AUDIT_DIR = OUTPUT_DIR / "error_audit"
 
 
 def experiment_paths(output_suffix: str) -> tuple[Path, Path]:

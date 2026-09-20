@@ -15,7 +15,7 @@ The result is a reproducible [DSPy](https://github.com/stanfordnlp/dspy) evaluat
 
 - Architected a **Python/DSPy** framework that injects, isolates, and repairs query- or answer-stage RAG failures without rerunning unaffected stages.
 - Demonstrated across **300 HotpotQA examples** that query repair improved exact match by **19.3 percentage points**, while answer repair recovered only **2.2%** of failures.
-- Engineered interchangeable **BM25/dense retrieval** and **OpenAI/Ollama** backends with cost and latency telemetry, **126 deterministic tests**, **96% targeted coverage**, and automated CI.
+- Engineered interchangeable **BM25/dense retrieval** and **OpenAI/Ollama** backends with cost and latency telemetry, **148 deterministic tests**, **96%+ targeted coverage**, and automated CI.
 
 ## Why this matters
 
@@ -118,6 +118,8 @@ Fewer calls do not always mean lower cost: on seen failures, context expansion m
 **Takeaway:** the policy transfers to these two new perturbations, but that does not establish an improvement on naturally occurring errors or superiority over strong fixed strategies. This is one model seed within HotpotQA, evaluated offline from observed action outcomes—not a production trial.
 
 The complete study collected **780 states and 3,240 successful calls**, costing an estimated **$0.455** for completed cases. Conservative reservations, including interrupted requests, totaled **$1.43** under a $3 cap. See the [protocol](docs/reliability_study.md) and [machine-readable results](outputs/reliability_study/summary.json).
+
+An [offline error audit](outputs/error_audit/report.md) flags 21 of 57 EM recoveries where the initial response already contained the gold phrase, plus 15 cases where another saved action succeeded. These are review signals, not semantic verdicts. A deterministic [20-case review queue](outputs/error_audit/review_queue.jsonl) includes all four harmful repairs; human review is still pending. See the [review rubric](docs/error_audit.md).
 
 ### Cost of repair
 

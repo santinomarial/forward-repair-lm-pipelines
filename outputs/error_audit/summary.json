@@ -1,0 +1,136 @@
+{
+  "provenance": {
+    "manifest.json": "f22db3037c0ae183a653c3891efeb323c0710b632e0171778b4771c0240ec471",
+    "model.json": "73093bf4ee16c1042c5e7cccd606f8c9aaa69d70028237022ee6b1aabf236bc5",
+    "test_outcomes.jsonl": "583f5cc251006b7bf92d9e744f5e515ec478819b2a02400d475e6cd52a773fa2",
+    "hotpot_corpus.jsonl": "96cd482488b15d4d8b5480189294132effa15e75484135533fa69a3e78c89a7b",
+    "hotpot_examples.jsonl": "275c893f7fc9f62f45fc7a60017c71ea2812526b2c7e33e60f10e79ac769140c"
+  },
+  "groups": {
+    "all": {
+      "cases": 300,
+      "transitions": {
+        "Still not exact match": 186,
+        "Harmed": 4,
+        "Recovered": 57,
+        "Still exact match": 53
+      },
+      "automatic_flags": {
+        "before: gold phrase present despite EM failure": 63,
+        "before: EM failure with all annotated support": 72,
+        "after: gold phrase present despite EM failure": 56,
+        "after: EM failure with all annotated support": 103,
+        "before: annotated support missing": 195,
+        "after: annotated support missing": 119
+      },
+      "kept_correct": 34,
+      "missed_recovery": 15,
+      "recovery_with_gold_already_present": 21
+    },
+    "ignore_context": {
+      "cases": 60,
+      "transitions": {
+        "Still not exact match": 37,
+        "Recovered": 21,
+        "Harmed": 1,
+        "Still exact match": 1
+      },
+      "automatic_flags": {
+        "before: gold phrase present despite EM failure": 39,
+        "before: EM failure with all annotated support": 37,
+        "after: gold phrase present despite EM failure": 11,
+        "after: EM failure with all annotated support": 26,
+        "before: annotated support missing": 22,
+        "after: annotated support missing": 15
+      },
+      "kept_correct": 0,
+      "missed_recovery": 3,
+      "recovery_with_gold_already_present": 20
+    },
+    "natural": {
+      "cases": 60,
+      "transitions": {
+        "Still not exact match": 38,
+        "Still exact match": 20,
+        "Recovered": 1,
+        "Harmed": 1
+      },
+      "automatic_flags": {
+        "before: gold phrase present despite EM failure": 10,
+        "before: EM failure with all annotated support": 20,
+        "after: gold phrase present despite EM failure": 13,
+        "after: EM failure with all annotated support": 24,
+        "before: annotated support missing": 22,
+        "after: annotated support missing": 20
+      },
+      "kept_correct": 12,
+      "missed_recovery": 3,
+      "recovery_with_gold_already_present": 0
+    },
+    "query_term_substitution": {
+      "cases": 60,
+      "transitions": {
+        "Still not exact match": 35,
+        "Recovered": 7,
+        "Still exact match": 17,
+        "Harmed": 1
+      },
+      "automatic_flags": {
+        "before: gold phrase present despite EM failure": 8,
+        "before: EM failure with all annotated support": 13,
+        "after: gold phrase present despite EM failure": 9,
+        "after: EM failure with all annotated support": 17,
+        "after: annotated support missing": 26,
+        "before: annotated support missing": 36
+      },
+      "kept_correct": 8,
+      "missed_recovery": 4,
+      "recovery_with_gold_already_present": 1
+    },
+    "retrieval_rank_dropout": {
+      "cases": 60,
+      "transitions": {
+        "Still not exact match": 39,
+        "Still exact match": 9,
+        "Recovered": 12
+      },
+      "automatic_flags": {
+        "before: annotated support missing": 59,
+        "after: gold phrase present despite EM failure": 12,
+        "after: EM failure with all annotated support": 22,
+        "after: annotated support missing": 28,
+        "before: gold phrase present despite EM failure": 3,
+        "before: EM failure with all annotated support": 1
+      },
+      "kept_correct": 8,
+      "missed_recovery": 4,
+      "recovery_with_gold_already_present": 0
+    },
+    "vague_query": {
+      "cases": 60,
+      "transitions": {
+        "Harmed": 1,
+        "Still not exact match": 37,
+        "Recovered": 16,
+        "Still exact match": 6
+      },
+      "automatic_flags": {
+        "before: annotated support missing": 56,
+        "after: annotated support missing": 30,
+        "after: EM failure with all annotated support": 14,
+        "after: gold phrase present despite EM failure": 11,
+        "before: gold phrase present despite EM failure": 3,
+        "before: EM failure with all annotated support": 1
+      },
+      "kept_correct": 6,
+      "missed_recovery": 1,
+      "recovery_with_gold_already_present": 0
+    }
+  },
+  "review_sample": {
+    "size": 20,
+    "reviewed": 0,
+    "selection": "all damage first (up to limit), then SHA256-ordered family/transition round-robin"
+  },
+  "note": "Post-hoc descriptive signals, not human judgments or estimates of semantic error prevalence. Support annotations are audit-only, never router inputs. Review sample is intentionally nonrepresentative."
+}
