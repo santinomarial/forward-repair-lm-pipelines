@@ -34,7 +34,7 @@ from metrics import (
 from pipeline import ForwardRepairPipeline
 from retriever import DenseRetriever, build_retriever
 from routing import HeuristicRepairPolicy, LearnedRepairPolicy, LexicalFailureDetector
-from telemetry import LMUsageSnapshot
+from telemetry import LMUsageSnapshot, summarize_instrumentation
 
 
 console = Console()
@@ -327,56 +327,6 @@ def summarize_routing(rows: list[dict]) -> dict:
         "action_counts": dict(actions),
         "repair_rate": repairs / len(rows),
     }
-
-
-def summarize_instrumentation(rows: list[dict], modes: list[str]) -> dict:
-    result = {
-        "cost_note": (
-            "estimated_cost_usd is DSPy/LiteLLM provider-reported cost; "
-            "cache hits and local calls may report zero"
-        )
-    }
-    for mode in modes:
-        telemetry = [row[mode]["telemetry"] for row in rows]
-        n = len(telemetry)
-        latency_keys = ["query_generation", "retrieval", "answer_generation"]
-        total_calls = sum(int(item["llm_calls"]) for item in telemetry)
-        total_tokens = sum(int(item["total_tokens"]) for item in telemetry)
-        total_cost = sum(float(item["estimated_cost_usd"]) for item in telemetry)
-        total_wall = sum(float(item["wall_clock_seconds"]) for item in telemetry)
-        result[mode] = {
-            "examples": n,
-            "llm_calls": {"total": total_calls, "per_example": total_calls / n},
-            "tokens": {
-                "prompt_total": sum(int(item["prompt_tokens"]) for item in telemetry),
-                "completion_total": sum(
-                    int(item["completion_tokens"]) for item in telemetry
-                ),
-                "total": total_tokens,
-                "per_example": total_tokens / n,
-            },
-            "estimated_cost_usd": {
-                "total": total_cost,
-                "per_example": total_cost / n,
-            },
-            "wall_clock_seconds": {
-                "total": total_wall,
-                "per_example": total_wall / n,
-            },
-            "stage_latency_seconds": {
-                key: {
-                    "total": sum(
-                        float(item["latency_seconds"][key]) for item in telemetry
-                    ),
-                    "per_example": sum(
-                        float(item["latency_seconds"][key]) for item in telemetry
-                    )
-                    / n,
-                }
-                for key in latency_keys
-            },
-        }
-    return result
 
 
 def print_summary(summary: dict) -> None:

@@ -17,6 +17,7 @@ CORPUS_PATH = DATA_DIR / "hotpot_corpus.jsonl"
 
 EXPERIMENT_DEFAULT_SUFFIX = "hotpot_50"
 ANALYSIS_DEFAULT_SUFFIX = "hotpot_50_final"
+ANSWER_ABLATION_DEFAULT_SUFFIX = "answer_ablation_seed0"
 
 
 def experiment_paths(output_suffix: str) -> tuple[Path, Path]:

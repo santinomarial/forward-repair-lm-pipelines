@@ -15,7 +15,7 @@ The result is a reproducible [DSPy](https://github.com/stanfordnlp/dspy) evaluat
 
 - Architected a **Python/DSPy** framework that injects, isolates, and repairs query- or answer-stage RAG failures without rerunning unaffected stages.
 - Demonstrated across **300 HotpotQA examples** that query repair improved exact match by **19.3 percentage points**, while answer repair recovered only **2.2%** of failures.
-- Engineered interchangeable **BM25/dense retrieval** and **OpenAI/Ollama** backends with cost and latency telemetry, **54 deterministic tests**, **93% targeted coverage**, and automated CI.
+- Engineered interchangeable **BM25/dense retrieval** and **OpenAI/Ollama** backends with cost and latency telemetry, deterministic tests, **93% targeted coverage**, and automated CI.
 
 ## Why this matters
 
@@ -27,7 +27,7 @@ This repository makes the failure boundary explicit:
 - Answer repair keeps retrieval fixed and revises only the answer.
 - Iterative repair decomposes a failed query into two searches and merges their ranked results.
 
-The main finding: **repairing retrieval upstream is effective; repairing an already-confident answer is not.**
+The main finding in these controlled runs: **query repair recovers substantially more failures than the tested answer-revision prompt.**
 
 ## Main results
 
@@ -44,7 +44,7 @@ Query repair: 300 examples × 3 seeds. Iterative and answer-stage analyses: 300 
 | Corrupted answer | 7.7% | 95.7% | 52.0% | — |
 | Answer repair | 7.0% | 95.7% | 52.0% | 2.2% |
 
-Query repair restores most of the baseline retrieval and exact-match performance. Iterative repair is especially useful on genuinely multi-hop questions: EM rises from 49.4% with single-shot repair to 61.0%. Answer-stage repair barely recovers failures despite receiving the same evidence, suggesting that revision remains anchored to the original wrong answer.
+Query repair restores most of the baseline retrieval and exact-match performance. In the multi-hop stratum, EM rises from 49.4% with single-shot repair to 61.0% with iterative repair. Answer-stage repair barely recovers failures despite receiving the same evidence. Anchoring to the previous answer is one possible explanation; the original experiment does not isolate that mechanism.
 
 ![Exact-match and retrieval results across repair conditions](outputs/figures/main_results.png)
 
@@ -58,6 +58,28 @@ Paired bootstrap · seed 0 · 20,000 resamples · 95% percentile intervals
 | Single-shot → iterative recovery | +2.6 pp | [−1.5, 7.1] |
 
 The query-repair gain is clearly positive. The aggregate iterative lift is promising but not conclusive; its strongest gains are concentrated in multi-hop and yes/no strata.
+
+### Answer repair versus fresh generation
+
+The next experiment compares three prompts on **identical saved evidence**:
+
+| Condition | Previous answer visible? | Instructions |
+|:--|:--:|:--|
+| Revision | Yes | Existing answer-repair prompt |
+| Blind revision | No | Same repair instructions, previous-answer field removed |
+| Fresh generation | No | Existing baseline answer prompt |
+
+Blind revision versus revision is the primary comparison. Fresh generation also changes the task instructions, so it is a secondary comparison. Every condition uses the same model, temperature, and output-token limit; DSPy caching is disabled and execution order is randomized per question.
+
+```bash
+# Small live check: three answer generations per example.
+python src/answer_ablation.py --max-examples 10 --output-suffix answer_ablation_smoke
+
+# Full evaluation, using the existing 300-example answer-corruption file.
+python src/answer_ablation.py --max-examples 300
+```
+
+The report includes paired confidence intervals, recovery, damage to previously correct answers, abstention, and incremental cost/latency. See the [protocol](docs/answer_ablation.md) for resuming runs and offline analysis. Results are pending; the existing results above are unchanged.
 
 ### Cost of repair
 
@@ -225,7 +247,7 @@ The test suite uses deterministic fixtures and mocks—never live LLM calls.
 ```bash
 pytest --cov=metrics --cov=retriever --cov=routing --cov-report=term-missing --cov-fail-under=90
 ruff check src tests demo
-mypy -m metrics -m retriever -m routing -m train_router
+mypy -m metrics -m retriever -m routing -m train_router -m significance -m answer_ablation
 ```
 
 CI runs the same checks on every push and pull request. The suite covers metric normalization and recovery math, BM25 ranking and union semantics, backend contracts, telemetry, significance testing, and stratification.
@@ -251,6 +273,7 @@ src/
 ├── train_router.py         # grouped training and held-out router evaluation
 ├── telemetry.py            # calls, tokens, cost, and stage latency
 ├── significance.py         # paired bootstrap comparisons
+├── answer_ablation.py      # fixed-evidence revision versus regeneration study
 ├── stratified_analysis.py  # single-hop and multi-hop analysis
 └── make_final_figures.py   # publication-ready figures and tables
 

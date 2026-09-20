@@ -11,7 +11,7 @@ lint:
 	$(PYTHON) -m ruff check src tests demo
 
 typecheck:
-	$(PYTHON) -m mypy -m metrics -m retriever -m routing -m train_router
+	$(PYTHON) -m mypy -m metrics -m retriever -m routing -m train_router -m significance -m answer_ablation
 
 train-router:
 	$(PYTHON) src/train_router.py

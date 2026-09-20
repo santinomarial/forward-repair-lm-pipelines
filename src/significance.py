@@ -121,6 +121,38 @@ def bootstrap_comparisons(
     }
 
 
+def paired_binary_difference(
+    reference: list[int],
+    candidate: list[int],
+    *,
+    n_resamples: int = 10_000,
+    confidence: float = 0.95,
+    seed: int = 0,
+) -> dict:
+    """Candidate minus reference, resampling paired examples together.
+
+    Empty eligible strata have an undefined estimate (JSON null), not zero.
+    Intervals are pointwise, not adjusted for multiple comparisons.
+    """
+    if len(reference) != len(candidate):
+        raise ValueError("paired arrays must have equal length")
+    if not 0 < confidence < 1 or n_resamples <= 0:
+        raise ValueError("invalid bootstrap confidence or resample count")
+    if any(value not in (0, 1) for value in reference + candidate):
+        raise ValueError("outcomes must be binary")
+    if not reference:
+        return {"n": 0, "estimate": None, "ci": None}
+    differences = np.asarray(candidate, dtype=float) - np.asarray(reference, dtype=float)
+    samples = _paired_bootstrap_means(
+        [differences], n_resamples=n_resamples, rng=np.random.default_rng(seed)
+    )[0]
+    return {
+        "n": len(reference),
+        "estimate": float(differences.mean()),
+        "ci": _interval(samples, confidence),
+    }
+
+
 def _percent(value: float) -> str:
     return f"{value:.1%}"
 

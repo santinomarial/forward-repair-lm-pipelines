@@ -21,6 +21,6 @@ jobs:
       - name: Lint
         run: ruff check src tests demo
       - name: Type check core utilities
-        run: mypy -m metrics -m retriever -m routing -m train_router
+        run: mypy -m metrics -m retriever -m routing -m train_router -m significance -m answer_ablation
       - name: Test
         run: pytest --cov=metrics --cov=retriever --cov=routing --cov-report=term-missing --cov-fail-under=90

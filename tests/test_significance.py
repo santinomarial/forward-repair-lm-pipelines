@@ -1,6 +1,6 @@
 import pytest
 
-from significance import bootstrap_comparisons
+from significance import bootstrap_comparisons, paired_binary_difference
 
 
 def _row(corrupted: int, repaired: int, iterative: int) -> dict:
@@ -44,3 +44,24 @@ def test_bootstrap_is_reproducible_and_validates_input():
         bootstrap_comparisons([])
     with pytest.raises(ValueError, match="at least one eligible"):
         bootstrap_comparisons([_row(1, 1, 1)])
+
+
+def test_binary_difference_keeps_pairs_and_handles_empty_strata():
+    # Pairwise cancellation would lose a zero-width interval if resampled independently.
+    result = paired_binary_difference([0, 1, 0, 1], [0, 1, 0, 1], n_resamples=50)
+    assert result == {"n": 4, "estimate": 0.0, "ci": [0.0, 0.0]}
+    assert paired_binary_difference([0, 0], [1, 1], n_resamples=50) == {
+        "n": 2, "estimate": 1.0, "ci": [1.0, 1.0],
+    }
+    assert paired_binary_difference([], []) == {"n": 0, "estimate": None, "ci": None}
+
+
+@pytest.mark.parametrize("kwargs", [
+    {"reference": [0], "candidate": []},
+    {"reference": [2], "candidate": [1]},
+    {"reference": [0], "candidate": [1], "n_resamples": 0},
+    {"reference": [0], "candidate": [1], "confidence": 1},
+])
+def test_binary_difference_rejects_invalid_inputs(kwargs):
+    with pytest.raises(ValueError):
+        paired_binary_difference(**kwargs)

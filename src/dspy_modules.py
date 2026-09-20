@@ -88,20 +88,24 @@ class IterativeQueryRepairer(dspy.Module):
         return self.generate(question=question, bad_query=bad_query)
 
 
+def guarded_answer_context(context: str) -> str:
+    """Keep evidence instructions identical across answer-stage conditions."""
+    return (
+        "Rules:\n"
+        "1. Use only the retrieved context below.\n"
+        "2. Do not use outside knowledge.\n"
+        "3. If the context does not explicitly support the answer, output UNKNOWN.\n\n"
+        f"{context}"
+    )
+
+
 class AnswerGenerator(dspy.Module):
     def __init__(self):
         super().__init__()
         self.generate = dspy.Predict(GenerateAnswer)
 
     def forward(self, question: str, context: str):
-        guarded_context = (
-            "Rules:\n"
-            "1. Use only the retrieved context below.\n"
-            "2. Do not use outside knowledge.\n"
-            "3. If the context does not explicitly support the answer, output UNKNOWN.\n\n"
-            f"{context}"
-        )
-        return self.generate(question=question, context=guarded_context)
+        return self.generate(question=question, context=guarded_answer_context(context))
 
 
 class CorruptedAnswerGenerator(dspy.Module):
@@ -119,11 +123,17 @@ class AnswerRepairer(dspy.Module):
         self.generate = dspy.Predict(RepairAnswer)
 
     def forward(self, question: str, context: str, bad_answer: str):
-        guarded_context = (
-            "Rules:\n"
-            "1. Use only the retrieved context below.\n"
-            "2. Do not use outside knowledge.\n"
-            "3. If the context does not explicitly support the answer, output UNKNOWN.\n\n"
-            f"{context}"
+        return self.generate(
+            question=question, context=guarded_answer_context(context), bad_answer=bad_answer
         )
-        return self.generate(question=question, context=guarded_context, bad_answer=bad_answer)
+
+
+class BlindAnswerRepairer(dspy.Module):
+    """Matched revision prompt with only the previous-answer field removed."""
+
+    def __init__(self):
+        super().__init__()
+        self.generate = dspy.Predict(RepairAnswer.delete("bad_answer"))
+
+    def forward(self, question: str, context: str):
+        return self.generate(question=question, context=guarded_answer_context(context))
